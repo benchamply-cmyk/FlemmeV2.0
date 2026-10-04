@@ -2,7 +2,7 @@
 /* =========================================================================
    FLEMME — logique de la page (JavaScript, sans framework)
    Le site est une « application d'une seule page » : toutes les étapes
-   (accueil, précisions, proposition, confirmation, facilitateur) sont dans
+   (accueil, demande, confirmation, facilitateur) sont dans
    index.html, et ce fichier affiche l'une ou l'autre selon le parcours.
    ========================================================================= */
 
@@ -28,10 +28,6 @@ const $$ = s => [...document.querySelectorAll(s)];
 const safe = f => { try { return f(); } catch (e) {} };
 const SS = window.sessionStorage;
 
-// Typographie française : espace insécable fine avant ? ! ; : pour éviter
-// qu'un « ? » se retrouve seul en début de ligne.
-const typo = t => String(t).replace(/ ([?!;:»])/g, ' $1').replace(/« /g, '« ');
-
 /* ---------- 2. Fonctions propres à l'application mobile ---------- */
 
 const plugin = n => window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins[n];
@@ -48,18 +44,32 @@ if (NATIVE) {
   const share = $('#shareBtn');
   share.hidden = false;
   share.addEventListener('click', () => safe(() =>
-    plugin('Share').share({ title: 'Flemme', text: 'T’as la flemme ? Flemme s’en occupe.', url: 'https://www.flemme.org' })));
+    plugin('Share').share({ title: 'Flemme', text: 'Aide-nous à comprendre les besoins du quotidien.', url: 'https://www.flemme.org' })));
+}
+
+if (!NATIVE) {
+  const share = $('#shareBtn');
+  share.hidden = false;
+  share.addEventListener('click', async () => {
+    const data = { title: 'Flemme · Bêta publique', text: 'Aide-nous à comprendre les besoins du quotidien.', url: 'https://www.flemme.org/' };
+    try {
+      if (navigator.share) await navigator.share(data);
+      else { await navigator.clipboard.writeText(data.url); share.textContent = 'Lien copié !'; }
+    } catch (err) {
+      if (err.name !== 'AbortError') share.textContent = 'Partage ce lien : https://www.flemme.org/';
+    }
+  });
 }
 
 /* ---------- 3. Navigation entre les écrans ---------- */
 
 const views = $$('.view');
-let task = '', pref = 'auto', offer = null, ref = '', cat = null;
+let task = '', offer = null, ref = '';
 
 // Affiche l'écran `id` et cache les autres. `push` ajoute une entrée dans
 // l'historique pour que le bouton Retour du navigateur fonctionne.
 function show(id, push = true, focus = true) {
-  if ((id === 'clarify' || id === 'offer') && !task) id = 'home'; // pas de demande = retour à l'accueil
+  if (id === 'offer' && !task) id = 'home'; // pas de demande = retour à l'accueil
   if (id === 'tracking' && !ref) id = 'home';
   if (!$('#' + id)) id = 'home';
   views.forEach(v => v.classList.toggle('active', v.id === id));
@@ -80,7 +90,6 @@ document.addEventListener('click', e => {
   const go = b.dataset.go;
   if (go === 'facilitateur') { $('#facForm').hidden = false; $('#facOk').hidden = true; }
   if (go === 'reset') resetApp();
-  else if (go === 'offer') buildOffer();
   else show(go);
 });
 addEventListener('popstate', () => show(location.hash.slice(1) || 'home', false));
@@ -96,8 +105,7 @@ $('#flemmeForm').addEventListener('submit', e => {
   e.preventDefault(); // on ne recharge pas la page : on passe à l'écran suivant
   task = taskInput.value.trim();
   if (!task) return;
-  $('#taskTitle').textContent = '“' + task + '”';
-  show('clarify');
+  buildOffer();
 });
 
 /* ---------- 5. Catégories ---------- */
@@ -113,125 +121,31 @@ function keywordRegex(words) {
 // Liste à plat de toutes les sous-catégories, triées par importance (étoiles).
 const CATS = (FL.categories.groupes || [])
   .flatMap(g => (g.sous || []).map(c => ({
-    id: c.id, e: c.emoji, n: c.nom, s: c.etoiles || 3, t: c.type || 'ia',
-    w: c.taches || [], re: keywordRegex(c.mots_cles),
+    id: c.id, e: c.emoji, n: c.nom, s: c.etoiles || 3, re: keywordRegex(c.mots_cles),
   })))
   .sort((a, b) => b.s - a.s);
 const byId = id => CATS.find(c => c.id === id);
-const GROUPS = (FL.categories.groupes || []).map(g => ({ id: g.id, e: g.emoji, n: g.nom, ids: (g.sous || []).map(c => c.id) }));
 
 // Ordre de détection dans le texte libre : les catégories les plus précises d'abord
 // (« résilier mon abonnement » doit tomber dans Abonnements avant Administratif).
 const DETECT = ['abos', 'demenag', 'retours', 'factures', 'voyages', 'voiture', 'cadeaux', 'courses', 'repas', 'compar', 'eco', 'emails', 'travail', 'maison', 'tel', 'orga', 'appels', 'rdv', 'admin', 'recherche'];
 const ORDER = [...DETECT.filter(byId), ...CATS.map(c => c.id).filter(i => !DETECT.includes(i))];
 
-const grid = $('#catGrid'), subs = $('#catSubs'), tasksBox = $('#catTasks');
+/* ---------- 6. Exemples et proposition ---------- */
 
-// Petite fabrique d'éléments : el('button', 'chip', 'Texte').
-// textContent (et jamais innerHTML) empêche toute injection de code.
-function el(tag, cls, text) {
-  const x = document.createElement(tag);
-  if (cls) x.className = cls;
-  if (text != null) x.textContent = text;
-  return x;
-}
+$$('[data-example]').forEach(b => b.addEventListener('click', () => { taskInput.value = b.dataset.example; setCounter(); saveDraft(); taskInput.focus(); }));
+$$('[data-focus-task]').forEach(b => b.addEventListener('click', () => { taskInput.scrollIntoView({ behavior: 'smooth', block: 'center' }); taskInput.focus({ preventScroll: true }); }));
+$('#ambassadorBtn').addEventListener('click', () => { $('#missionForm input[name=ambassadeur]').checked = true; taskInput.scrollIntoView({ behavior: 'smooth', block: 'center' }); taskInput.focus({ preventScroll: true }); });
 
-GROUPS.forEach(g => {
-  const b = el('button', 'cat', g.e + ' ' + g.n);
-  b.type = 'button'; b.dataset.g = g.id; b.setAttribute('aria-pressed', 'false');
-  grid.append(b);
-});
-
-function setCat(id) {
-  cat = id;
-  $$('.sub').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.id === id)));
-  const c = byId(id);
-  $('#catTag').hidden = !c;
-  if (c) $('#catTagTxt').textContent = c.e + ' ' + c.n;
-}
-
-function showGroup(id) {
-  $$('#catGrid .cat').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.g === id)));
-  subs.replaceChildren();
-  tasksBox.hidden = true;
-  const g = GROUPS.find(x => x.id === id);
-  if (!g) { subs.hidden = true; return; }
-  const list = el('div', 'sublist');
-  list.setAttribute('role', 'group');
-  list.setAttribute('aria-label', 'Sous-catégories : ' + g.n);
-  g.ids.map(byId).filter(Boolean).forEach(c => {
-    const b = el('button', 'sub', c.e + ' ' + c.n);
-    b.type = 'button'; b.dataset.id = c.id; b.setAttribute('aria-pressed', String(cat === c.id));
-    list.append(b);
-  });
-  subs.append(el('p', '', g.e + ' ' + g.n + ' : choisis une sous-catégorie'), list);
-  subs.hidden = false;
-}
-
-function showTasks(c) {
-  tasksBox.replaceChildren(el('p', '', 'Ce que les gens repoussent en « ' + c.n.toLowerCase() + ' » :'));
-  c.w.forEach(w => {
-    const chip = el('button', 'chip', w);
-    chip.type = 'button';
-    chip.addEventListener('click', () => {
-      taskInput.value = w + ' ';
-      setCounter(); saveDraft();
-      taskInput.focus();
-      taskInput.scrollIntoView({ block: 'center', behavior: 'smooth' });
-    });
-    tasksBox.append(chip);
-  });
-  tasksBox.hidden = false;
-}
-
-grid.addEventListener('click', e => { const b = e.target.closest('.cat'); if (b) showGroup(b.dataset.g); });
-subs.addEventListener('click', e => {
-  const b = e.target.closest('.sub');
-  if (!b) return;
-  setCat(b.dataset.id);
-  showTasks(byId(b.dataset.id));
-});
-$('#catClear').addEventListener('click', () => { setCat(null); tasksBox.hidden = true; });
-
-/* ---------- 6. Précisions et proposition ---------- */
-
-function setPref(v) {
-  pref = v;
-  $$('.choice').forEach(x => {
-    const on = x.dataset.v === v;
-    x.classList.toggle('selected', on);
-    x.setAttribute('aria-pressed', String(on));
-  });
-}
-$$('.choice').forEach(b => b.addEventListener('click', () => { setPref(b.dataset.v); buzz('light'); }));
-
-// Trois façons de traiter une demande : IA seule, IA + humain, IA + personne sur place.
-const TYPES = {
-  ia: { route: ['🤖 Agent IA'], delay: fast => fast ? 'Quelques minutes' : '< 2 h', saved: '30 à 90 min' },
-  h: { route: ['🤖 IA prépare', '🎧 Assistant humain'], delay: fast => fast ? 'Quelques heures' : '< 24 h', saved: '45 min à 2 h' },
-  f: { route: ['🤖 IA organise', '🧑 Flemmeur sur place'], delay: fast => fast ? 'Aujourd’hui' : '24–72 h', saved: '1 à 3 h' },
-};
-const ON_SITE = keywordRegex(['nettoy', 'terrasse', 'récupér', 'déposer', 'porter']);
-
-// Devine la catégorie et le type de prise en charge à partir du texte.
+// La catégorie sert à analyser les besoins, sans promettre une prestation.
 function classify(text) {
-  const c = cat ? byId(cat) : byId(ORDER.find(id => { const x = byId(id); return x.re && x.re.test(text); }));
-  const type = ON_SITE.test(text) ? 'f' : c ? c.t : 'ia';
-  const T = TYPES[type] || TYPES.ia;
-  return { cat: c, route: T.route, price: 'Sur devis', delay: T.delay(pref === 'fast'), saved: T.saved };
+  return { cat: byId(ORDER.find(id => { const x = byId(id); return x.re && x.re.test(text); })) };
 }
 
 function buildOffer() {
   offer = classify(task);
-  const r = $('#route');
-  r.replaceChildren();
-  offer.route.forEach((step, i) => { if (i) r.append(el('b', '', '→')); r.append(el('span', '', step)); });
-  r.hidden = offer.route.length < 2; // pas de puce « Agent IA » quand l'IA traite seule
-  $('#price').textContent = offer.price;
-  $('#delay').textContent = offer.delay;
   $('#summary').textContent = task;
-  $('#saved').textContent = offer.saved;
-  $('#mLabel').textContent = 'Mission' + (offer.cat ? ' · ' + offer.cat.e + ' ' + offer.cat.n : '');
+  $('#mLabel').textContent = 'Ton besoin' + (offer.cat ? ' · ' + offer.cat.e + ' ' + offer.cat.n : '');
   show('offer');
 }
 
@@ -278,20 +192,15 @@ $('#missionForm').addEventListener('submit', e => {
     return;
   }
   const n = genRef();
-  const prefs = { auto: 'Le moins d’effort', cheap: 'Le moins cher', fast: 'Le plus rapide' };
   // On recopie le parcours dans les champs cachés pour le recevoir avec la demande.
   f.elements.task.value = task;
-  f.elements.when.value = $('#when').value;
-  f.elements.pref.value = prefs[pref];
-  f.elements.route.value = offer.route.join(' → ');
-  f.elements.price.value = offer.price;
   f.elements.ref.value = n;
   f.elements.category.value = offer.cat ? offer.cat.n : '';
   sendForm(f, err, () => {
     ref = n;
     f.reset();
     safe(() => SS.removeItem('flemmeDraft'));
-    $('#missionRef').textContent = 'Mission ' + ref + ' · Nous analysons ta demande et t’envoyons un devis à l’adresse indiquée.';
+    $('#missionRef').textContent = 'Demande ' + ref + ' · Nous te recontacterons pour te dire si nous pouvons t’aider.';
     show('tracking');
   });
 });
@@ -308,9 +217,8 @@ $('#facForm').addEventListener('submit', e => {
 
 // Remet tout à zéro pour une nouvelle demande.
 function resetApp() {
-  setCat(null); showGroup(null); setPref('auto');
   task = ''; ref = ''; offer = null;
-  taskInput.value = ''; $('#when').selectedIndex = 0;
+  taskInput.value = ''; $('#missionForm').reset();
   setCounter();
   safe(() => SS.removeItem('flemmeDraft'));
   show('home');
@@ -318,56 +226,15 @@ function resetApp() {
 
 /* ---------- 8. Textes modifiables depuis /admin ---------- */
 
-// « **mot** » devient <strong>mot</strong>, sans jamais utiliser innerHTML.
-function rich(target, text) {
-  typo(text).split('**').forEach((part, i) => {
-    if (!part) return;
-    target.append(i % 2 ? el('strong', '', part) : document.createTextNode(part));
-  });
-}
-
 (() => {
   const A = FL.accueil || {};
   if (A.badge) $('.badge').textContent = A.badge;
   if (A.placeholder) taskInput.placeholder = A.placeholder;
-  const blocks = $$('.promise > div');
-  (A.blocs || []).slice(0, blocks.length).forEach((b, i) => {
-    blocks[i].querySelector('b').textContent = b.titre;
-    blocks[i].querySelector('span').textContent = b.texte;
-  });
-  if (A.phrases && A.phrases.length) {
-    const list = $('#rotList');
-    list.replaceChildren();
-    A.phrases.forEach((t, i) => { const p = el('p', 'lead' + (i ? '' : ' on')); rich(p, t); list.append(p); });
-  }
   const mail = $('footer a[href^="mailto:"]');
   if (mail && CT.email) mail.href = 'mailto:' + CT.email;
 })();
 
-/* ---------- 9. Phrases d'accroche qui défilent ---------- */
-
-(() => {
-  const phrases = $$('#rotList p'), pauseBtn = $('#rotPause'), nextBtn = $('#rotNext');
-  if (phrases.length < 2) { $('.rotctl').hidden = true; return; }
-  let i = 0, timer;
-  // Si l'utilisateur a demandé moins d'animations dans son système, on démarre en pause.
-  let paused = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const go = n => { phrases[i].classList.remove('on'); i = (n + phrases.length) % phrases.length; phrases[i].classList.add('on'); };
-  const tick = () => { clearTimeout(timer); if (!paused) timer = setTimeout(() => { go(i + 1); tick(); }, 5000); };
-  const setPaused = p => {
-    paused = p;
-    pauseBtn.textContent = p ? '▶' : '❚❚';
-    pauseBtn.setAttribute('aria-label', p ? 'Relancer les phrases d’accroche' : 'Mettre en pause les phrases d’accroche');
-    tick();
-  };
-  pauseBtn.addEventListener('click', () => setPaused(!paused));
-  nextBtn.addEventListener('click', () => { go(i + 1); tick(); });
-  // Économise la batterie : pas de défilement quand l'onglet est caché.
-  document.addEventListener('visibilitychange', () => document.hidden ? clearTimeout(timer) : tick());
-  setPaused(paused);
-})();
-
-/* ---------- 10. Démarrage ---------- */
+/* ---------- 9. Démarrage ---------- */
 
 const draft = safe(() => SS.getItem('flemmeDraft'));
 if (draft) { taskInput.value = draft; setCounter(); }

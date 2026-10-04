@@ -51,13 +51,18 @@ Attention : ces ZIP contiennent encore flemme.fr, le jaune, la grille à plat et
 2. Icône (assets/icon-only.png, icon-background.png) et écran de lancement (assets/splash.png) passés du jaune au vert #57d68d.
 3. Relancer `npx capacitor-assets generate` puis `npx cap sync` pour appliquer les nouvelles icônes.
 
-## Bêta — flemme-web-beta (4 oct. 2026)
-Copie de travail de la V2.2 pour tester des changements sans toucher au site en ligne.
-- Page d'accueil marquée noindex et titre « Flemme (bêta) » pour éviter l'indexation.
+## V2.3 bêta — flemme-web-beta (4 oct. 2026)
+- Accueil avec grand champ libre et exemples cliquables.
+- Texte de la bêta gratuite et demandes examinées avant acceptation.
+- Parcours court : problème, contact, détails et option ambassadeur facultatifs.
+- Formulaire Netlify beta-besoins, confirmation après envoi réussi et partage.
+- Retrait des prix et délais automatiques ; actualisation de la confidentialité et du cache.
+- Nettoyage : champs en double retirés du formulaire (when, pref), écran « précisions », catégories cliquables, phrases défilantes et blocs TOI / NOUS / GO supprimés du code et de /admin.
+- Titre : espace insécable avant « ? » rétablie ; barre de progression sur 2 étapes.
 
 ## Reste à faire
 - Application : compiler et tester sur de vrais téléphones (Xcode, Android Studio).
 - Compléter les passages [...] des mentions légales et de la confidentialité, retirer le noindex.
 - Remplacer VOTRE-COMPTE-GITHUB/flemme dans admin/config.yml et configurer GitHub OAuth + Netlify (voir README).
-- Activer les notifications e-mail Netlify pour les formulaires « mission » et « facilitateur ».
+- Activer les notifications e-mail Netlify pour les formulaires « beta-besoins » et « facilitateur ».
 - CGV et médiateur de la consommation avant la première facturation ; statut des Facilitateurs à faire valider.

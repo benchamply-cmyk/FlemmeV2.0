@@ -1,17 +1,22 @@
-# FLEMME — site web BÊTA (copie de la V2.2)
+# FLEMME — V2.3 bêta publique
 
-Version de travail : les changements se font ici, la V2.2 (`flemme-web-V2.2/`) reste intacte. Retirer la balise `noindex` de index.html avant une mise en ligne définitive.
+Version de test pour comprendre les besoins du quotidien et recruter les premiers utilisateurs-ambassadeurs.
 
-Site statique. Les demandes sont envoyées via **Netlify Forms** (formulaire `mission`).
+## Parcours
+Grand champ libre → contact, échéance et précisions facultatives → choix facultatif ambassadeur → confirmation après envoi réussi. Les exemples remplissent le champ sans imposer de catégorie.
 
-## Publier
-1. Glisser ce dossier sur https://app.netlify.com/drop
-2. Domain management → ajouter `flemme.org`, définir `www.flemme.org` comme domaine principal, configurer le DNS.
-3. Forms → pour **chacun** des deux formulaires (`mission` et `facilitateur`) : Settings & notifications → Form notifications → Add notification → Email notification → ben.champly@gmail.com.
-4. Compléter les passages `[…]` de `mentions.html` et `confidentialite.html`, puis retirer `<meta name="robots" content="noindex">` de ces deux pages si vous le souhaitez.
+Le service est gratuit pendant la bêta. Chaque demande est étudiée avant acceptation ; aucun résultat ni délai n’est garanti. Les candidatures Facilitateur restent accessibles pour préparer les futurs essais.
 
-## Test local
-`python3 -m http.server 8080` : l'envoi du formulaire échoue en local (normal), il ne fonctionne que sur Netlify.
+## Mise en ligne sur Netlify
+Déployer ce dossier sur le site existant. Activer la détection Netlify Forms et les notifications pour `beta-besoins` et `facilitateur`. Faire un envoi de contrôle après déploiement et vérifier la réception dans Netlify Forms. Les contributions bêta sont séparées des anciennes demandes `mission`.
+
+Avant publication, compléter les champs surlignés des mentions légales et de la politique de confidentialité, notamment l’identité du responsable et la durée de conservation.
+
+## Local
+`python3 -m http.server 8080` dans ce dossier. Les formulaires ne peuvent être reçus qu’après déploiement sur Netlify ; une erreur est affichée en local et hors connexion. Ne pas utiliser un hébergement statique qui renvoie HTTP 200 aux POST sans les traiter.
+
+
+Pour étudier les retours, exporter `beta-besoins` depuis Netlify Forms : regrouper par catégorie et fréquence, puis comparer les aides attendues. Filtrer `ambassadeur=oui` pour préparer les invitations aux tests.
 
 ## Modifier le contenu depuis le navigateur (Decap CMS)
 Les textes modifiables sont dans `content/` (accueil.json, categories.json, contact.json) ; l'interface se trouve sur `/admin`.
@@ -27,5 +32,5 @@ Mise en place (une seule fois) :
 5. Dans `admin/config.yml`, remplacer `VOTRE-COMPTE-GITHUB/flemme` par votre dépôt réel, puis envoyer la modification.
 6. Ouvrir https://www.flemme.org/admin et se connecter avec GitHub. Chaque enregistrement republie le site en 1 à 2 minutes.
 
-Non modifiable depuis /admin : le titre principal, les pages légales et les écrans du parcours (à changer dans index.html).
+Modifiables depuis /admin : le badge et le texte grisé de l'accueil, les catégories (utilisées pour classer les demandes reçues) et les coordonnées. Le reste de l'accueil, les pages légales et les écrans du parcours se changent dans index.html.
 L'application mobile ne se met à jour qu'après regénération et republication de l'app.

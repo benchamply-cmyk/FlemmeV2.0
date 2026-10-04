@@ -1,26 +1,4 @@
 {
-  "badge": "L'assistant des trucs que tu repousses.",
-  "placeholder": "Raconte-nous tout",
-  "phrases": [
-    "T’as la flemme ? **Pas nous !**",
-    "Rien de mieux que de **déléguer** ce que je n’ai pas envie de faire.",
-    "**Finies les fausses promesses** du « je le ferai demain ».",
-    "Décris ta corvée. **On trouve le moyen le plus simple de s’en occuper.**",
-    "On est là pour toi : débarrasse-toi-en si tu n’en as pas envie, et **n’y pense plus.**",
-    "Ne remets pas à demain ce que tu peux faire **aujourd’hui.**"
-  ],
-  "blocs": [
-    {
-      "titre": "TOI",
-      "texte": "Une phrase pour nous expliquer"
-    },
-    {
-      "titre": "NOUS",
-      "texte": "Laisse-nous analyser le boulot"
-    },
-    {
-      "titre": "GO",
-      "texte": "On débriefe et tu as le dernier mot pour valider"
-    }
-  ]
+  "badge": "Bêta gratuite · Sans engagement",
+  "placeholder": "Explique-nous ce que t’as la flemme de faire…"
 }

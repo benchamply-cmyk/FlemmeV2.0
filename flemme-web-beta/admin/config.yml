@@ -17,19 +17,6 @@ collections:
         fields:
           - { label: Badge, name: badge, widget: string }
           - { label: Texte grisé du champ de saisie, name: placeholder, widget: string }
-          - label: Phrases d'accroche
-            name: phrases
-            widget: list
-            hint: "Mets deux astérisques de chaque côté d'un mot pour le mettre en gras : **comme ça**."
-            field: { label: Phrase, name: phrase, widget: string }
-          - label: Les trois blocs
-            name: blocs
-            widget: list
-            min: 3
-            max: 3
-            fields:
-              - { label: Titre, name: titre, widget: string }
-              - { label: Texte, name: texte, widget: string }
       - name: categories
         label: Catégories et sous-catégories
         file: content/categories.json

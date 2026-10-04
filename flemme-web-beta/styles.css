@@ -52,48 +52,12 @@ h1 { font-size: clamp(58px, 10vw, 118px); font-weight: 500; line-height: 1.1; le
 h1 .fl { font-weight: 950; }
 h1 em { font-style: normal; font-weight: 500; background: var(--acid); padding: 0 .08em; border-radius: 16px; }
 
-/* Phrases d'accroche : toutes empilées au même endroit, une seule visible */
-.rot { margin: 0 auto; }
-.rotlist { display: grid; }
-.rotlist p { grid-area: 1 / 1; margin: 0; opacity: 0; transform: translateY(10px); visibility: hidden; transition: opacity .5s, transform .5s, visibility 0s .5s; }
-.rotlist p.on { opacity: 1; transform: none; visibility: visible; transition-delay: 0s; }
 .lead { font-size: clamp(18px, 2.5vw, 25px); line-height: 1.45; max-width: 720px; margin: 0 auto; color: #42443d; }
-.rotctl { display: flex; justify-content: center; gap: 6px; margin-top: 6px; }
-.rotctl button { min-width: 44px; min-height: 44px; border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 16px; cursor: pointer; border-radius: 999px; }
-.rotctl button:hover { background: rgba(0, 0, 0, .06); }
 
 /* Grand champ « Raconte-nous tout » */
 .ask { background: #fff; border: 2px solid var(--ink); border-radius: 24px; padding: 8px; box-shadow: 8px 8px 0 var(--ink); text-align: left; }
 .ask textarea { width: 100%; min-height: 110px; resize: none; border: 0; outline: 0; padding: 18px; font: inherit; font-size: 20px; background: transparent; }
 .ask-bottom { display: flex; align-items: center; justify-content: space-between; padding: 5px 6px 6px 16px; color: var(--muted); font-size: 12px; }
-.cattag { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; font-weight: 700; font-size: 13px; }
-.cattag button { border: 0; background: var(--acid); border-radius: 999px; min-width: 28px; height: 28px; cursor: pointer; font-size: 16px; }
-
-/* Catégories > sous-catégories > tâches */
-.cats { max-width: 760px; margin: 36px auto 0; }
-.cats h2 { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; text-align: center; }
-.cgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-.cat, .sub { min-height: 48px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 14px; background: #fff; font: inherit; font-weight: 700; font-size: 14px; color: var(--ink); cursor: pointer; text-align: left; }
-.cat { display: flex; align-items: center; gap: 8px; }
-.cat[aria-pressed=true], .sub[aria-pressed=true] { background: var(--ink); color: #fff; border-color: var(--ink); }
-.subs, .ctasks { margin-top: 12px; padding: 14px; border: 1px solid var(--line); border-radius: 16px; background: #fff; }
-.subs p, .ctasks p { margin: 0 0 10px; font-size: 13px; color: var(--muted); }
-.sublist { max-height: 170px; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 6px; padding-right: 4px; }
-.sub { flex: none; min-height: 44px; padding: 10px 14px; border-radius: 12px; background: var(--paper); }
-.ctasks { display: flex; flex-wrap: wrap; gap: 8px; }
-.ctasks p { width: 100%; margin: 0; }
-.chip { min-height: 44px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); font: inherit; font-size: 14px; color: var(--ink); cursor: pointer; }
-
-/* TOI / NOUS / GO */
-.promise { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 50px; }
-.promise div { border-top: 1px solid var(--line); padding: 18px; }
-.promise b, .promise span { display: block; }
-.promise b { font-size: clamp(14px, 4.2vw, 25px); letter-spacing: .04em; overflow-wrap: anywhere; }
-.promise span { font-size: 13px; color: var(--muted); margin-top: 4px; }
-
-/* Bandeau « Devenir Facilitateur » */
-.bandfac { max-width: 760px; margin: 28px auto 0; padding: 18px; border: 1px solid var(--line); border-radius: 18px; background: #fff; display: flex; gap: 14px; align-items: center; justify-content: space-between; flex-wrap: wrap; text-align: left; }
-.bandfac span { display: block; color: var(--muted); font-size: 14px; }
 
 /* ---------- 5. Boutons ---------- */
 .primary, .secondary { border: 0; border-radius: 14px; padding: 16px 20px; font-weight: 900; font-size: 15px; cursor: pointer; }
@@ -104,7 +68,7 @@ h1 em { font-style: normal; font-weight: 500; background: var(--acid); padding: 
 .back { border: 0; background: transparent; font-weight: 750; cursor: pointer; padding: 10px 0; margin-bottom: 12px; }
 #shareBtn { margin-bottom: 10px; }
 
-/* ---------- 6. Écrans en carte (précisions, proposition, suivi, facilitateur) ---------- */
+/* ---------- 6. Écrans en carte (demande, confirmation, facilitateur) ---------- */
 .card-screen { max-width: 700px; margin: 4vh auto; padding: 24px; }
 .card { background: #fff; border: 1px solid var(--line); border-radius: 28px; padding: clamp(25px, 5vw, 50px); }
 .card > p { color: var(--muted); line-height: 1.5; }
@@ -123,21 +87,12 @@ legend { margin: 0 0 9px; padding: 0; }
 .card .check { display: flex; gap: 10px; align-items: flex-start; margin: 28px 0 9px; font-weight: 500; font-size: 13px; line-height: 1.45; color: var(--muted); }
 .check input { margin-top: 3px; width: 18px; height: 18px; flex: none; }
 .err { background: #fde8e6; color: #8a1c12; border-radius: 10px; padding: 12px; font-size: 14px; margin: 14px 0 0; }
-.choices { display: grid; gap: 8px; }
-.choice { padding: 15px; text-align: left; border: 1px solid var(--line); background: #fff; border-radius: 12px; font: inherit; font-weight: 750; cursor: pointer; }
-.choice.selected { border: 2px solid var(--ink); background: #f5f6ee; }
 
 /* Proposition */
 .status-dot { display: inline-block; background: #eaf8de; color: #31551c; border-radius: 99px; padding: 8px 11px; font-weight: 850; font-size: 12px; }
-.route { display: flex; gap: 7px; flex-wrap: wrap; align-items: center; margin: 24px 0; }
-.route span { background: #f0f1e9; border-radius: 99px; padding: 10px 12px; font-weight: 800; font-size: 13px; }
-.offer-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.offer-grid div { background: #f6f6f0; border-radius: 15px; padding: 15px; }
-.offer-grid span, .summary span { display: block; color: var(--muted); font-size: 11px; text-transform: uppercase; font-weight: 850; }
-.offer-grid b { display: block; margin-top: 6px; }
+.summary span { display: block; color: var(--muted); font-size: 11px; text-transform: uppercase; font-weight: 850; }
 .summary { border-top: 1px solid var(--line); margin-top: 22px; padding-top: 22px; }
 .summary p { line-height: 1.45; overflow-wrap: anywhere; }
-.saved { background: var(--acid); padding: 15px; border-radius: 12px; margin-top: 20px; }
 .offer small { display: block; text-align: center; color: var(--muted); margin-top: 10px; }
 
 /* Confirmation */
@@ -157,12 +112,7 @@ legend { margin: 0 0 9px; padding: 0; }
 .legal mark { background: var(--acid); padding: 0 4px; border-radius: 4px; }
 .nojs { max-width: 720px; margin: 16px auto; padding: 14px 18px; background: #fff; border: 1px solid var(--line); border-radius: 14px; text-align: center; }
 
-/* ---------- 8. Grands écrans ---------- */
-@media (min-width: 700px) {
-  .cgrid { grid-template-columns: repeat(3, 1fr); }
-}
-
-/* ---------- 9. Téléphones ---------- */
+/* ---------- 8. Téléphones ---------- */
 @media (max-width: 600px) {
   header { height: 64px; padding: 0 16px; }
   .hero { margin-top: 2vh; padding: 16px; }
@@ -171,16 +121,44 @@ legend { margin: 0 0 9px; padding: 0; }
   .lead { font-size: 18px; }
   .ask-bottom { align-items: flex-end; gap: 8px; }
   .ask-bottom .primary { padding: 14px 12px; }
-  .promise { margin-top: 35px; }
-  .promise div { padding: 12px 5px; }
   .card-screen { padding: 16px; }
   .card { border-radius: 22px; padding: 25px 20px; }
-  .offer-grid { grid-template-columns: 1fr; }
   footer { margin-top: 40px; flex-direction: column; }
 }
 
-/* ---------- 10. Moins d'animations si l'utilisateur le demande ---------- */
+/* ---------- 9. Moins d'animations si l'utilisateur le demande ---------- */
 @media (prefers-reduced-motion: reduce) {
   * { scroll-behavior: auto !important; }
-  .rotlist p { transition: none; }
 }
+
+/* Bêta publique */
+.beta-tag { font-size: 11px; font-weight: 850; letter-spacing: 1px; padding: 8px 12px; border-radius: 99px; background: var(--acid); }
+.beta-intro { max-width: 660px; margin: 20px auto 28px; color: var(--muted); line-height: 1.6; }
+.beta-note { margin: 24px auto 0; max-width: 760px; padding: 22px; background: var(--soft); border-radius: 18px; text-align: left; }
+.beta-note p, .ambassador p { font-size: 14px; line-height: 1.6; color: var(--muted); margin-bottom: 0; }
+.ambassador { background: var(--soft); border-radius: 16px; padding: 20px; margin-top: 28px; }
+.ambassador legend { float: left; width: 100%; line-height: 1.5; }
+.ambassador p { clear: both; }
+.ask textarea:focus-visible { outline: 2px solid var(--ink); outline-offset: -4px; border-radius: 16px; }
+
+.hero h1 { font-size: clamp(40px, 6.8vw, 76px); line-height: 1.12; }
+.hero h1 em { box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.micro { font-size: 13px; color: var(--muted); line-height: 1.5; }
+.examples { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; margin: 24px 0 60px; font-size: 13px; color: var(--muted); }
+.examples button { font: inherit; padding: 10px 14px; border: 1px solid var(--line); border-radius: 99px; background: transparent; color: var(--ink); cursor: pointer; }
+.editorial { margin: 70px 0; text-align: left; }
+.editorial h2 { font-size: clamp(30px, 4.8vw, 46px); line-height: 1.15; letter-spacing: -1.5px; }
+.editorial p { max-width: 700px; font-size: 17px; color: var(--muted); line-height: 1.7; }
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 30px; }
+.steps article { border-top: 1px solid var(--line); padding-top: 20px; }
+.steps b { font-size: 14px; color: #198048; }
+.steps h3 { font-size: 21px; line-height: 1.3; }
+.steps p { font-size: 15px; }
+.capabilities { padding: 32px; border-radius: 24px; background: var(--soft); }
+.ambassador-panel { background: var(--acid); padding: 32px; border-radius: 24px; }
+.ambassador-panel p { color: var(--ink); }
+.last-call { text-align: center; }
+.last-call p { margin-left: auto; margin-right: auto; }
+.optional-details { margin-top: 24px; }
+.optional-details summary { cursor: pointer; font-size: 14px; font-weight: 750; }
+@media(max-width:600px) { .steps { grid-template-columns: 1fr; gap: 12px; } .editorial { margin: 48px 0; } .capabilities,.ambassador-panel { padding: 24px 20px; } .hero h1 { font-size: 42px; } }
