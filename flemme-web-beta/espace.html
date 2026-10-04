@@ -1,0 +1,24 @@
+<!doctype html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#57d68d"><meta name="robots" content="noindex"><title>Mon espace — Flemme</title><link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" type="image/png" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="espace.css"></head><body>
+<header><a class="logo" href="./">FLEMME<span>.</span></a><span class="beta-tag">BÊTA FONCTIONNELLE</span></header>
+<noscript><p class="nojs">Ton espace a besoin de JavaScript. Tu peux aussi nous écrire à <a href="mailto:ben.champly@gmail.com">ben.champly@gmail.com</a>.</p></noscript>
+<main class="card-screen espace">
+
+<section id="off" hidden><div class="card"><div class="eyebrow">Mon espace</div><h2>Bientôt disponible.</h2><p>Le suivi des demandes n’est pas encore ouvert. En attendant, nous te recontactons directement par e-mail ou téléphone.</p><a class="secondary full btn-link" href="./">Retour à l’accueil</a></div></section>
+
+<section id="login" hidden><div class="card">
+<div class="eyebrow">Mon espace</div><h2>Suis tes demandes.</h2>
+<p>Inscris-toi ou connecte-toi avec ton e-mail : on t’envoie un lien de connexion, sans mot de passe. Tu retrouves ensuite toutes les demandes faites avec cette adresse.</p>
+<form id="mailForm"><label for="email">Ton e-mail</label><input id="email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="120" required placeholder="toi@exemple.fr"><p class="err" id="mailErr" role="alert" hidden></p><button type="submit" class="primary full">Recevoir mon lien de connexion →</button></form>
+<form id="codeForm" hidden><div class="status-dot">E-mail envoyé</div><p class="sent">Ouvre l’e-mail envoyé à <b id="sentTo"></b> et clique sur le lien. Pense à regarder dans les indésirables.</p><label for="code">Ou saisis le code reçu</label><input id="code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6,10}" maxlength="10" placeholder="123456"><p class="err" id="codeErr" role="alert" hidden></p><button type="submit" class="primary full">Valider le code →</button><button type="button" class="back" id="otherMail">← Changer d’adresse ou renvoyer</button></form>
+<small class="fine">En te connectant, tu acceptes que Flemme conserve ton e-mail pour te donner accès à ton espace. <a href="confidentialite.html">En savoir plus</a></small>
+</div></section>
+
+<section id="space" hidden>
+<div class="space-head"><div><div class="eyebrow">Mon espace</div><h2>Tes demandes</h2><p class="who">Connecté avec <b id="who"></b></p></div><div class="space-actions"><a class="primary btn-link" href="./">+ Nouvelle demande</a><button type="button" class="secondary" id="logout">Se déconnecter</button></div></div>
+<p class="err" id="listErr" role="alert" hidden></p>
+<p class="loading" id="loading">Chargement…</p>
+<div id="empty" class="card" hidden><h3>Aucune demande pour l’instant.</h3><p>Les demandes envoyées avec l’adresse <b class="me"></b> apparaîtront ici, y compris celles faites avant ton inscription.</p><a class="primary btn-link" href="./">Confier ma première flemme →</a></div>
+<ol id="list" class="demandes"></ol>
+</section>
+
+</main><footer><b>FLEMME.</b><span>Les besoins du quotidien. La suite, avec toi.</span><nav><a href="./">Accueil</a><a href="mentions.html">Mentions légales</a><a href="confidentialite.html">Confidentialité</a><a href="mailto:ben.champly@gmail.com">Contact</a></nav></footer><script src="content.js" defer></script><script src="sb.js" defer></script><script src="espace.js" defer></script></body></html>

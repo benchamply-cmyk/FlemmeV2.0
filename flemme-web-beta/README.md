@@ -34,3 +34,20 @@ Mise en place (une seule fois) :
 
 Modifiables depuis /admin : le badge et les textes grisés (qui défilent) du champ de l'accueil, les catégories (utilisées pour classer les demandes reçues) et les coordonnées. Le reste de l'accueil, les pages légales et les écrans du parcours se changent dans index.html.
 L'application mobile ne se met à jour qu'après regénération et republication de l'app.
+
+## Espace personnel (suivi des demandes)
+Les utilisateurs s'inscrivent avec leur e-mail sur `/espace.html` (lien « Mon espace » en haut de l'accueil) : pas de mot de passe, Supabase envoie un lien de connexion (et un code à 6 chiffres). Ils y voient leurs demandes, leur avancement et le mot de l'équipe.
+Chaque demande envoyée depuis l'accueil part toujours dans Netlify Forms (notifications inchangées) et, en plus, est copiée dans la table Supabase `demandes`. Une demande faite avec un e-mail apparaît dans l'espace de cette adresse, même si le compte est créé après.
+Tant que Supabase n'est pas configuré, le lien « Mon espace » reste masqué et le site fonctionne comme avant.
+
+Mise en place (une seule fois) :
+1. Créer un projet gratuit sur https://supabase.com (région Europe, ex. Paris ou Francfort).
+2. Supabase > SQL Editor > New query : coller le contenu de `supabase/espace.sql` (à la racine du dépôt), puis Run.
+3. Supabase > Authentication > URL Configuration : Site URL `https://www.flemme.org`, et dans Redirect URLs ajouter `https://www.flemme.org/espace.html` et `https://*--NOM-DU-SITE.netlify.app/espace.html` (aperçus Netlify ; remplacer NOM-DU-SITE).
+4. (Conseillé) Supabase > Authentication > Emails > Magic Link : ajouter le code dans le modèle, par ex. `<p>Ou saisis ce code : {{ .Token }}</p>`. Utile quand le lien s'ouvre dans un autre navigateur que celui de la demande (application mobile, webmail).
+5. Supabase > Project Settings > API : copier la Project URL et la clé publique (`anon` ou `publishable`, jamais la clé `service_role` / `secret`).
+6. Netlify > Site configuration > Environment variables : ajouter `SUPABASE_URL` et `SUPABASE_ANON_KEY` avec ces deux valeurs, puis redéployer.
+7. Pour un vrai volume d'e-mails, brancher un SMTP (Authentication > Emails > SMTP Settings, ex. Brevo ou Resend) : l'envoi intégré de Supabase est limité à quelques e-mails par heure.
+
+Faire avancer une demande : Supabase > Table Editor > `demandes`, changer `statut` (`recue`, `en_etude`, `acceptee`, `en_cours`, `terminee` ou `refusee`) et écrire si besoin un `message` pour l'utilisateur. L'espace l'affiche au prochain chargement.
+Les demandes avec un téléphone comme seul contact ne sont rattachées à aucun espace (sauf si la personne était connectée en l'envoyant).

@@ -1,0 +1,151 @@
+'use strict';
+/* =========================================================================
+   FLEMME — espace personnel (espace.html)
+   1. Connexion par e-mail (lien ou code), via sb.js.
+   2. Liste des demandes de la personne, avec leur avancement et le mot
+      de l'équipe. Le statut se change dans Supabase (voir README).
+   ========================================================================= */
+
+const $ = s => document.querySelector(s);
+const show = id => ['off', 'login', 'space'].forEach(v => { $('#' + v).hidden = v !== id; });
+const showError = (box, msg) => { box.textContent = msg; box.hidden = false; };
+const NET = 'Connexion impossible. Vérifie ta connexion internet et réessaie.';
+const msgOf = e => (e instanceof TypeError ? NET : e.message);
+
+/* ---------- 1. Avancement d'une demande ---------- */
+
+// Étapes affichées dans l'ordre ; « refusee » remplace la suite du parcours.
+const STEPS = [
+  { id: 'recue', nom: 'Demande reçue', txt: 'Merci ! Ta demande est bien arrivée.' },
+  { id: 'en_etude', nom: 'À l’étude', txt: 'On regarde si on peut vraiment t’aider.' },
+  { id: 'acceptee', nom: 'Acceptée', txt: 'On prend ta mission.' },
+  { id: 'en_cours', nom: 'En cours', txt: 'On s’en occupe.' },
+  { id: 'terminee', nom: 'Terminée', txt: 'Ta demande est traitée. Ton avis nous intéresse !' },
+];
+const REFUSED = { id: 'refusee', nom: 'Pas possible pour l’instant', txt: 'On ne sait pas encore bien faire ça. On t’explique pourquoi ci-dessous.' };
+const LABEL = Object.fromEntries([...STEPS, REFUSED].map(s => [s.id, s.nom]));
+
+const date = iso => new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+
+function renderDemande(d) {
+  const li = el('li', 'card demande');
+  const top = el('div', 'demande-top');
+  top.append(el('span', 'ref', d.ref + ' · ' + date(d.created_at)), el('span', 'pill pill-' + d.statut, LABEL[d.statut] || d.statut));
+  li.append(top, el('p', 'besoin', d.besoin));
+  if (d.categorie || d.echeance) li.append(el('p', 'meta', [d.categorie, d.echeance].filter(Boolean).join(' · ')));
+
+  if (d.message) {
+    const m = el('div', 'team-msg');
+    m.append(el('b', null, 'Le mot de l’équipe'), el('p', null, d.message));
+    li.append(m);
+  }
+
+  // Frise : étapes passées pleines, étape actuelle en gras, suivantes grisées.
+  const refused = d.statut === 'refusee';
+  const steps = refused ? [STEPS[0], STEPS[1], REFUSED] : STEPS;
+  const at = steps.findIndex(s => s.id === d.statut);
+  const tl = el('div', 'timeline');
+  steps.forEach((s, i) => {
+    const row = el('div', i < at ? 'complete' : i === at ? 'active-step' + (refused ? ' refused' : '') : '');
+    row.append(el('b', null, s.nom));
+    if (i === at) row.append(el('span', null, s.txt));
+    tl.append(row);
+  });
+  li.append(tl);
+  if (d.updated_at && d.updated_at.slice(0, 10) !== d.created_at.slice(0, 10)) li.append(el('p', 'meta', 'Mise à jour le ' + date(d.updated_at)));
+  return li;
+}
+
+async function loadList() {
+  const err = $('#listErr');
+  err.hidden = true;
+  $('#loading').hidden = false;
+  try {
+    const rows = await SB.demandes();
+    $('#list').replaceChildren(...rows.map(renderDemande));
+    $('#empty').hidden = rows.length > 0;
+  } catch (e) {
+    if (e.status === 401) return start(); // session expirée : retour à la connexion
+    showError(err, msgOf(e));
+  } finally {
+    $('#loading').hidden = true;
+  }
+}
+
+function openSpace(s) {
+  $('#who').textContent = s.email || '';
+  document.querySelectorAll('.me').forEach(n => { n.textContent = s.email || ''; });
+  show('space');
+  loadList();
+}
+
+/* ---------- 2. Connexion ---------- */
+
+let email = '';
+
+$('#mailForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = e.target, err = $('#mailErr'), btn = f.querySelector('button');
+  email = f.elements.email.value.trim().toLowerCase();
+  err.hidden = true;
+  btn.disabled = true;
+  try {
+    await SB.sendLink(email);
+    $('#sentTo').textContent = email;
+    f.hidden = true;
+    $('#codeForm').hidden = false;
+    $('#code').focus();
+  } catch (x) {
+    showError(err, msgOf(x));
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+$('#codeForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = e.target, err = $('#codeErr'), btn = f.querySelector('button[type=submit]');
+  const code = f.elements.code.value.replace(/\s/g, '');
+  err.hidden = true;
+  if (!/^\d{6,10}$/.test(code)) return showError(err, 'Le code contient 6 chiffres.');
+  btn.disabled = true;
+  try {
+    openSpace(await SB.verify(email, code));
+  } catch (x) {
+    showError(err, x.status === 403 || x.code === 'otp_expired' ? 'Code incorrect ou expiré. Vérifie-le ou demande un nouveau lien.' : msgOf(x));
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+$('#otherMail').addEventListener('click', () => {
+  $('#codeForm').hidden = true;
+  $('#codeForm').reset();
+  $('#mailForm').hidden = false;
+  $('#email').focus();
+});
+
+$('#logout').addEventListener('click', async () => {
+  await SB.logout();
+  $('#list').replaceChildren();
+  start();
+});
+
+/* ---------- 3. Démarrage ---------- */
+
+async function start() {
+  if (!SB.ready) return show('off');
+  let s = null;
+  try {
+    s = (await SB.fromLink()) || (await SB.session());
+  } catch (e) {
+    show('login');
+    return showError($('#mailErr'), msgOf(e));
+  }
+  if (s) return openSpace(s);
+  show('login');
+  const prefill = new URLSearchParams(location.search).get('email');
+  if (prefill && !$('#email').value) $('#email').value = prefill;
+}
+start();
