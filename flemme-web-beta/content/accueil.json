@@ -1,4 +1,8 @@
 {
   "badge": "Version Bêta mais FONCTIONNELLE. AMÉLIORATION continue de nos services.",
-  "placeholder": "Explique-nous ce que t’as la flemme de faire…"
+  "placeholders": [
+    "Explique-nous ce que t’as la flemme de faire…",
+    "Plains-toi, on t’écoute…",
+    "Vide ton sac, c’est le moment…"
+  ]
 }

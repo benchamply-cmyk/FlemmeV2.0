@@ -16,7 +16,10 @@ collections:
         format: json
         fields:
           - { label: Badge, name: badge, widget: string }
-          - { label: Texte grisé du champ de saisie, name: placeholder, widget: string }
+          - label: Textes grisés du champ de saisie (ils défilent toutes les 3 s)
+            name: placeholders
+            widget: list
+            field: { label: Texte, name: texte, widget: string }
       - name: categories
         label: Catégories et sous-catégories
         file: content/categories.json

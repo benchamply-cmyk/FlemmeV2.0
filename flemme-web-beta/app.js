@@ -229,7 +229,18 @@ function resetApp() {
 (() => {
   const A = FL.accueil || {};
   if (A.badge) $('.badge').textContent = A.badge;
-  if (A.placeholder) taskInput.placeholder = A.placeholder;
+  // Textes grisés du champ : le premier s'affiche, puis ils défilent toutes les 3 s
+  // tant que le champ est vide (sauf si l'utilisateur a demandé moins d'animations).
+  const hints = (A.placeholders || []).filter(Boolean);
+  if (hints.length) taskInput.placeholder = hints[0];
+  if (hints.length > 1 && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let i = 0;
+    setInterval(() => {
+      if (document.hidden || taskInput.value) return;
+      i = (i + 1) % hints.length;
+      taskInput.placeholder = hints[i];
+    }, 3000);
+  }
   const mail = $('footer a[href^="mailto:"]');
   if (mail && CT.email) mail.href = 'mailto:' + CT.email;
 })();

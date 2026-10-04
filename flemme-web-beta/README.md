@@ -32,5 +32,5 @@ Mise en place (une seule fois) :
 5. Dans `admin/config.yml`, remplacer `VOTRE-COMPTE-GITHUB/flemme` par votre dépôt réel, puis envoyer la modification.
 6. Ouvrir https://www.flemme.org/admin et se connecter avec GitHub. Chaque enregistrement republie le site en 1 à 2 minutes.
 
-Modifiables depuis /admin : le badge et le texte grisé de l'accueil, les catégories (utilisées pour classer les demandes reçues) et les coordonnées. Le reste de l'accueil, les pages légales et les écrans du parcours se changent dans index.html.
+Modifiables depuis /admin : le badge et les textes grisés (qui défilent) du champ de l'accueil, les catégories (utilisées pour classer les demandes reçues) et les coordonnées. Le reste de l'accueil, les pages légales et les écrans du parcours se changent dans index.html.
 L'application mobile ne se met à jour qu'après regénération et republication de l'app.
