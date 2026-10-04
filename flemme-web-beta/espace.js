@@ -141,11 +141,19 @@ async function loadList() {
   }
 }
 
+// En haut de l'espace : le pseudo s'il y en a un, sinon l'e-mail.
+function showWho(email, pseudo) {
+  $('#whoLabel').textContent = pseudo ? 'Connecté en tant que' : 'Connecté avec';
+  $('#who').textContent = pseudo || email || '';
+  $('#newPseudo').value = pseudo;
+}
+
 function openSpace(s) {
-  $('#who').textContent = s.email || '';
+  showWho('', '');
   document.querySelectorAll('.me').forEach(n => { n.textContent = s.email || ''; });
   show('space');
   loadList();
+  SB.pseudo().then(p => showWho(s.email, p));
 }
 
 /* ---------- 3. Connexion ---------- */
@@ -154,8 +162,8 @@ let email = '';
 
 // Deux onglets : « Se connecter » (compte existant) et « Créer mon compte ».
 const MODES = {
-  login: { titre: 'Content de te revoir.', intro: 'Connecte-toi pour suivre tes demandes.', bouton: 'C’est parti →', auto: 'current-password' },
-  signup: { titre: 'Crée ton espace.', intro: 'Inscris-toi avec ton e-mail et un mot de passe. Tu retrouveras toutes les demandes faites avec cette adresse, même celles envoyées avant ton inscription.', bouton: 'Créer mon compte →', auto: 'new-password' },
+  login: { titre: 'Content de te revoir.', intro: 'Connecte-toi pour suivre tes demandes.', bouton: 'C’est parti →', auto: 'current-password', id: 'Ton e-mail ou ton pseudo', type: 'text', idAuto: 'username' },
+  signup: { titre: 'Crée ton espace.', intro: 'Inscris-toi avec ton e-mail et un mot de passe. Tu retrouveras toutes les demandes faites avec cette adresse, même celles envoyées avant ton inscription.', bouton: 'Créer mon compte →', auto: 'new-password', id: 'Ton e-mail', type: 'email', idAuto: 'email' },
 };
 let mode = 'login';
 function setMode(m) {
@@ -165,7 +173,12 @@ function setMode(m) {
   $('#loginIntro').textContent = MODES[m].intro;
   $('#mailBtn').textContent = MODES[m].bouton;
   $('#password').autocomplete = MODES[m].auto;
+  $('#emailLabel').textContent = MODES[m].id;
+  $('#email').type = MODES[m].type;
+  $('#email').autocomplete = MODES[m].idAuto;
   $('#pwdHint').hidden = m !== 'signup';
+  $('#pseudoField').hidden = m !== 'signup';
+  $('#pseudo').disabled = m !== 'signup'; // champ caché : ni envoyé ni contrôlé
   $('#forgot').hidden = m !== 'login';
   $('#mailErr').hidden = true;
   $('#codeForm').hidden = true;
@@ -185,13 +198,15 @@ function mailSent(why) {
 $('#mailForm').addEventListener('submit', async e => {
   e.preventDefault();
   const f = e.target, err = $('#mailErr'), btn = $('#mailBtn');
-  email = f.elements.email.value.trim().toLowerCase();
+  const id = f.elements.email.value.trim();
   const password = f.elements.password.value;
   err.hidden = true;
   btn.disabled = true;
   try {
-    if (mode === 'login') return openSpace(await SB.login(email, password));
-    const s = await SB.signup(email, password);
+    // Connexion avec l'e-mail ou le pseudo (un pseudo ne contient jamais « @ »).
+    if (mode === 'login') return openSpace(id.includes('@') ? await SB.login(id.toLowerCase(), password) : await SB.loginPseudo(id, password));
+    email = id.toLowerCase();
+    const s = await SB.signup(email, password, f.elements.pseudo.value.trim());
     if (s) return openSpace(s);
     mailSent('Dernière étape : confirme ton adresse. Ouvre l’e-mail');
   } catch (x) {
@@ -207,7 +222,7 @@ let recovering = false; // le code attendu vient d'un e-mail « mot de passe oub
 $('#forgot').addEventListener('click', async () => {
   const err = $('#mailErr'), input = $('#email');
   err.hidden = true;
-  if (!input.checkValidity()) return showError(err, 'Saisis d’abord ton e-mail ci-dessus.');
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(input.value.trim())) return showError(err, 'Saisis d’abord ton e-mail ci-dessus (pas ton pseudo).');
   email = input.value.trim().toLowerCase();
   $('#forgot').disabled = true;
   try {
@@ -265,6 +280,26 @@ $('#pwdForm').addEventListener('submit', async e => {
   }
 });
 $('#pwdSkip').addEventListener('click', () => openSpace(after));
+$('#pseudoForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const err = $('#pseudoErr'), ok = $('#pseudoOk'), btn = e.target.querySelector('button');
+  const pseudo = $('#newPseudo').value.trim();
+  err.hidden = true; ok.hidden = true;
+  btn.disabled = true;
+  try {
+    await SB.setPseudo(pseudo);
+    const s = SB.current();
+    showWho(s && s.email, pseudo);
+    ok.textContent = pseudo ? 'Pseudo enregistré.' : 'Pseudo retiré.';
+    ok.hidden = false;
+  } catch (x) {
+    if (x.status === 401) return start();
+    showError(err, msgOf(x));
+  } finally {
+    btn.disabled = false;
+  }
+});
+
 $('#changePwd').addEventListener('click', async () => { const s = await SB.session(); s ? askPassword(s) : start(); });
 
 $('#otherMail').addEventListener('click', () => {

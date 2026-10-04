@@ -121,3 +121,84 @@ drop policy if exists "ecrire ses messages" on public.messages;
 create policy "ecrire ses messages" on public.messages
   for insert to authenticated
   with check (auteur = 'client' and exists (select 1 from public.demandes d where d.id = demande_id));
+
+-- ---------- Pseudo ----------
+-- Facultatif : affiché dans l'espace à la place de l'e-mail, et utilisable
+-- avec le mot de passe pour se connecter. L'e-mail reste le seul moyen de
+-- contact et n'est jamais montré à partir d'un pseudo.
+create table if not exists public.profils (
+  user_id     uuid primary key references auth.users (id) on delete cascade,
+  pseudo      text not null check (pseudo ~ '^[A-Za-z0-9_.-]{3,30}$'),
+  created_at  timestamptz not null default now()
+);
+create unique index if not exists profils_pseudo_idx on public.profils (lower(pseudo));
+
+alter table public.profils enable row level security;
+revoke all on public.profils from anon, authenticated;
+grant select, delete on public.profils to authenticated;
+grant insert (user_id, pseudo), update (user_id, pseudo) on public.profils to authenticated; -- upsert du site : la règle ci-dessous empêche de viser un autre compte
+
+drop policy if exists "son profil" on public.profils;
+create policy "son profil" on public.profils
+  for all to authenticated
+  using (user_id = auth.uid()) with check (user_id = auth.uid());
+
+-- Pseudo choisi à l'inscription (transmis avec le formulaire, avant même la
+-- confirmation de l'adresse) : enregistré à la création du compte.
+create or replace function public.profil_a_l_inscription() returns trigger
+language plpgsql security definer set search_path = '' as $$
+declare
+  p text := new.raw_user_meta_data ->> 'pseudo';
+begin
+  if p ~ '^[A-Za-z0-9_.-]{3,30}$' then
+    insert into public.profils (user_id, pseudo) values (new.id, p) on conflict do nothing;
+  end if;
+  return new;
+end $$;
+
+drop trigger if exists profil_a_l_inscription on auth.users;
+create trigger profil_a_l_inscription after insert on auth.users
+  for each row execute function public.profil_a_l_inscription();
+
+-- Le pseudo est-il encore libre ? (vérifié avant l'inscription)
+create or replace function public.pseudo_libre(p text) returns boolean
+language sql stable security definer set search_path = '' as $$
+  select not exists (select 1 from public.profils where lower(pseudo) = lower(p));
+$$;
+revoke all on function public.pseudo_libre(text) from public;
+grant execute on function public.pseudo_libre(text) to anon, authenticated;
+
+-- Connexion avec un pseudo : renvoie l'e-mail du compte uniquement si le mot
+-- de passe est le bon (le site se connecte ensuite normalement avec), sinon
+-- rien. Au-delà de 5 échecs en 15 minutes sur un pseudo, refus temporaire.
+create table if not exists public.tentatives_pseudo (
+  pseudo  text not null,
+  at      timestamptz not null default now()
+);
+create index if not exists tentatives_pseudo_idx on public.tentatives_pseudo (lower(pseudo), at);
+alter table public.tentatives_pseudo enable row level security;
+revoke all on public.tentatives_pseudo from anon, authenticated;
+
+create or replace function public.connexion_pseudo(p text, mdp text) returns text
+language plpgsql security definer set search_path = '' as $$
+declare
+  mail text;
+  hash text;
+begin
+  if (select count(*) from public.tentatives_pseudo
+      where lower(pseudo) = lower(p) and at > now() - interval '15 minutes') >= 5 then
+    raise sqlstate 'PT429' using message = 'Trop de tentatives';
+  end if;
+  select u.email, u.encrypted_password into mail, hash
+    from public.profils pr join auth.users u on u.id = pr.user_id
+    where lower(pr.pseudo) = lower(p);
+  if hash like '$2%' and hash = extensions.crypt(mdp, hash) then
+    delete from public.tentatives_pseudo where lower(pseudo) = lower(p);
+    return mail;
+  end if;
+  insert into public.tentatives_pseudo (pseudo) values (left(p, 60));
+  delete from public.tentatives_pseudo where at < now() - interval '1 day';
+  return null;
+end $$;
+revoke all on function public.connexion_pseudo(text, text) from public;
+grant execute on function public.connexion_pseudo(text, text) to anon, authenticated;

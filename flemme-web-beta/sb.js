@@ -42,11 +42,12 @@
     flow_state_not_found: 'Ce lien a été ouvert dans un autre navigateur que celui de la demande. Saisis plutôt le code reçu dans l’e-mail, ou redemande un lien ici.',
     flow_state_expired: 'Ce lien a expiré. Demande-en un nouveau.',
     access_denied: 'Connexion annulée.',
-    invalid_credentials: 'E-mail ou mot de passe incorrect.',
+    invalid_credentials: 'Identifiant ou mot de passe incorrect.',
     email_not_confirmed: 'Confirme d’abord ton adresse avec le lien reçu par e-mail.',
     weak_password: 'Mot de passe trop faible : au moins 8 caractères, avec lettres et chiffres.',
     same_password: 'C’est déjà ton mot de passe actuel.',
     user_already_exists: 'Un compte existe déjà avec cette adresse. Utilise l’onglet « Se connecter ».',
+    pseudo_pris: 'Ce pseudo est déjà pris. Choisis-en un autre.',
     otp_disabled: 'Aucun compte n’existe avec cette adresse. Utilise l’onglet « Créer mon compte ».',
   };
   const fail = (status, code, msg) => {
@@ -109,11 +110,42 @@
     // Connexion directe avec e-mail et mot de passe.
     login: async (email, password) => keep(await call('/auth/v1/token?grant_type=password', { method: 'POST', body: { email, password } })),
 
-    // Inscription avec mot de passe. Renvoie la session si Supabase n'exige pas
+    // Connexion avec un pseudo : la base ne renvoie l'e-mail du compte que si
+    // le mot de passe est le bon (voir supabase/espace.sql).
+    async loginPseudo(pseudo, password) {
+      const email = await call('/rest/v1/rpc/connexion_pseudo', { method: 'POST', body: { p: pseudo, mdp: password } });
+      if (!email) throw fail(400, 'invalid_credentials');
+      return keep(await call('/auth/v1/token?grant_type=password', { method: 'POST', body: { email, password } }));
+    },
+
+    // Pseudo de la personne connectée ('' si aucun).
+    async pseudo() {
+      const s = await session();
+      if (!s) return '';
+      try { const r = await call('/rest/v1/profils?select=pseudo', { token: s.access_token }); return (r[0] && r[0].pseudo) || ''; } catch (e) { return ''; }
+    },
+    // Choisir, changer (pseudo) ou retirer ('') son pseudo.
+    async setPseudo(pseudo) {
+      const s = await session();
+      if (!s) throw fail(401, 'no_session', 'Session expirée. Reconnecte-toi.');
+      if (!pseudo) return call('/rest/v1/profils?user_id=eq.' + s.id, { method: 'DELETE', token: s.access_token });
+      try {
+        await call('/rest/v1/profils?on_conflict=user_id', {
+          method: 'POST', token: s.access_token,
+          headers: { Prefer: 'resolution=merge-duplicates,return=minimal' },
+          body: { user_id: s.id, pseudo },
+        });
+      } catch (e) {
+        throw e.code === '23505' ? fail(409, 'pseudo_pris') : e; // pseudo déjà utilisé par un autre compte
+      }
+    },
+
+    // Inscription avec mot de passe. Pseudo facultatif. Renvoie la session si Supabase n'exige pas
     // de confirmer l'adresse, sinon null : un e-mail de confirmation est parti.
-    async signup(email, password) {
+    async signup(email, password, pseudo) {
+      if (pseudo && !(await call('/rest/v1/rpc/pseudo_libre', { method: 'POST', body: { p: pseudo } }))) throw fail(409, 'pseudo_pris');
       const d = await call('/auth/v1/signup?redirect_to=' + encodeURIComponent(RETURN_URL), {
-        method: 'POST', body: Object.assign({ email, password }, await challenge()),
+        method: 'POST', body: Object.assign({ email, password, data: pseudo ? { pseudo } : {} }, await challenge()),
       });
       return d && d.access_token ? keep(d) : null;
     },
