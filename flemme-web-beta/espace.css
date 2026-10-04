@@ -16,7 +16,7 @@ a.full { display: block; }
 .espace .sent { color: var(--muted); line-height: 1.5; }
 .espace .fine { display: block; margin-top: 22px; font-size: 12px; line-height: 1.5; color: var(--muted); }
 .espace .fine a { color: inherit; }
-#codeForm .back { margin: 14px 0 0; }
+#codeForm .back, #mailForm .back, #pwdForm .back { margin: 14px 0 0; }
 #code { letter-spacing: 6px; font-size: 22px; }
 
 /* Liste des demandes */
@@ -89,3 +89,10 @@ a.full { display: block; }
 .chat-form { display: flex; gap: 8px; align-items: flex-end; margin-top: 12px; }
 .chat-form textarea { flex: 1; min-height: 52px !important; resize: vertical; padding: 12px; border: 1px solid var(--line); border-radius: 12px; font: inherit; font-size: 16px; }
 .chat-form .primary { padding: 14px 18px; }
+
+/* Onglets « Se connecter » / « Créer mon compte » */
+.tabs { display: flex; gap: 4px; margin: 14px 0 4px; padding: 4px; border-radius: 14px; background: var(--soft); }
+.tabs button { flex: 1; min-height: 44px; border: 0; border-radius: 10px; background: transparent; font: inherit; font-size: 15px; font-weight: 800; color: var(--muted); cursor: pointer; }
+.tabs button[aria-selected="true"] { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.hint { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
+.card input[type=password] { width: 100%; padding: 15px; border: 1px solid var(--line); border-radius: 12px; background: #fff; font: inherit; font-size: 16px; }

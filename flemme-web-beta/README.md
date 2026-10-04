@@ -36,7 +36,7 @@ Modifiables depuis /admin : le badge et les textes grisés (qui défilent) du ch
 L'application mobile ne se met à jour qu'après regénération et republication de l'app.
 
 ## Espace personnel (suivi des demandes)
-Les utilisateurs s'inscrivent sur `/espace.html` (lien « Mon espace » en haut de l'accueil), sans mot de passe : avec leur compte Google ou Apple, ou avec leur e-mail (Supabase envoie un lien de connexion et un code à 6 chiffres). Ils y voient leurs demandes, leur avancement et le mot de l'équipe.
+Les utilisateurs s'inscrivent sur `/espace.html` (lien « Mon espace » en haut de l'accueil), avec leur e-mail et un mot de passe (bouton « C'est parti »), ou avec leur compte Google ou Apple. Supabase envoie un e-mail de confirmation à l'inscription, et un lien avec un code à 6 chiffres en cas de mot de passe oublié (c'est aussi ainsi qu'un compte créé avant les mots de passe en choisit un). Ils y voient leurs demandes, leur avancement et le mot de l'équipe.
 Chaque demande envoyée depuis l'accueil part toujours dans Netlify Forms (notifications inchangées) et, en plus, est copiée dans la table Supabase `demandes`. Une demande faite avec un e-mail apparaît dans l'espace de cette adresse, même si le compte est créé après.
 Tant que Supabase n'est pas configuré, le lien « Mon espace » reste masqué et le site fonctionne comme avant.
 
@@ -44,7 +44,7 @@ Mise en place (une seule fois) :
 1. Créer un projet gratuit sur https://supabase.com (région Europe, ex. Paris ou Francfort).
 2. Supabase > SQL Editor > New query : coller le contenu de `supabase/espace.sql` (à la racine du dépôt), puis Run.
 3. Supabase > Authentication > URL Configuration : Site URL `https://www.flemme.org`, et dans Redirect URLs ajouter `https://www.flemme.org/espace.html` et `https://*--flemmeorg.netlify.app/espace.html` (aperçus Netlify).
-4. (Conseillé) Supabase > Authentication > Emails > Magic Link : ajouter le code dans le modèle, par ex. `<p>Ou saisis ce code : {{ .Token }}</p>`. Utile quand le lien s'ouvre dans un autre navigateur que celui de la demande (application mobile, webmail).
+4. Supabase > Authentication > Sign In / Providers > Email : laisser « Enable Email provider » et « Confirm email » activés, et régler « Minimum password length » sur 8 (« Password requirements » : lettres et chiffres). (Conseillé) Authentication > Emails, modèles « Confirm signup » et « Reset Password » : ajouter le code, par ex. `<p>Ou saisis ce code : {{ .Token }}</p>`. Utile quand le lien s'ouvre dans un autre navigateur que celui de la demande (application mobile, webmail).
 5. Supabase > Project Settings > API : copier la Project URL et la clé publique (`anon` ou `publishable`, jamais la clé `service_role` / `secret`).
 6. Netlify > Site configuration > Environment variables : ajouter `SUPABASE_URL` et `SUPABASE_ANON_KEY` avec ces deux valeurs, puis redéployer.
 7. (Facultatif) Connexion Google et Apple : voir ci-dessous. Les boutons apparaissent d'eux-mêmes dès qu'un fournisseur est activé dans Supabase.
@@ -71,7 +71,7 @@ Avec « Masquer mon adresse e-mail », Apple transmet une adresse relais (`…@p
 
 ### Sécurité
 - Règles d'accès dans la base (Row Level Security, `supabase/espace.sql`) : un visiteur peut seulement déposer une demande, sans pouvoir rien relire ; une personne connectée ne voit que ses demandes ; le statut et le message ne se changent que depuis le tableau de bord Supabase. La clé publique du site ne permet rien d'autre.
-- Aucun mot de passe stocké ni à faire fuiter : lien ou code à usage unique, ou compte Google / Apple.
+- Mots de passe gérés par Supabase (hachés avec bcrypt, jamais visibles par l'équipe ni par le site) ; adresse confirmée par e-mail avant le premier accès ; liens et codes de récupération à usage unique. Activer « Leaked password protection » (Authentication > Attack Protection, offre payante) pour refuser les mots de passe déjà divulgués.
 - Flux PKCE pour les liens e-mail et Google / Apple : l'adresse de retour ne contient qu'un code à usage unique, inutilisable sans le secret gardé dans le navigateur d'origine. Aucun jeton de session ne passe dans l'URL.
 - Politique de sécurité du contenu stricte (`_headers`) : seuls les scripts du site s'exécutent, et le navigateur ne parle qu'au site et à Supabase. Cela protège la session gardée dans le navigateur contre l'injection de scripts.
 - Sessions courtes (1 h, renouvelées automatiquement), bouton « Me déconnecter de tous mes appareils », et suppression du compte et des demandes par l'utilisateur (droit à l'effacement).
