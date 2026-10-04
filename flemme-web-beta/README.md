@@ -59,6 +59,13 @@ insert into public.equipe (user_id) select id from auth.users where email = 'ben
 ```
 Un membre de l'équipe garde un espace personnel normal : il n'y voit que ses propres demandes.
 
+### Alerte e-mail à chaque nouvelle demande ou nouveau message client
+La fonction Netlify `netlify/functions/alerte.mjs` (adresse `/api/alerte`) envoie un e-mail à l'équipe via Resend quand Supabase lui signale une nouvelle demande ou un nouveau message d'un client (les réponses de l'équipe ne déclenchent rien). Mise en place, une seule fois :
+1. Resend > API Keys > Create API Key : nom `alertes`, permission « Sending access », domaine `flemme.org`.
+2. Netlify > Site configuration > Environment variables : `RESEND_API_KEY` = cette clé ; `ALERTE_SECRET` = un long mot de passe aléatoire (32 caractères ou plus, généré par un gestionnaire de mots de passe) ; facultatif : `ALERTE_EMAIL` = adresse(s) à prévenir, séparées par des virgules (par défaut ben.champly@gmail.com). Puis redéployer le site.
+3. Supabase > Database > Webhooks > Create a new hook, deux fois (une pour `demandes`, une pour `messages`) : Events « Insert », type « HTTP Request », méthode POST, URL `https://www.flemme.org/api/alerte`, HTTP Headers : `x-alerte-secret` = la valeur de `ALERTE_SECRET`.
+Sans le bon secret, la fonction refuse l'appel : personne d'autre ne peut envoyer d'e-mails par elle.
+
 Sans la page équipe, tout reste possible depuis Supabase : faire avancer une demande : Supabase > Table Editor > `demandes`, changer `statut` (`recue`, `en_etude`, `acceptee`, `en_cours`, `terminee` ou `refusee`) et écrire si besoin un `message` pour l'utilisateur. L'espace l'affiche au prochain chargement.
 Discussion : chaque demande a un fil « Discuter avec l'équipe » dans l'espace. Tout l'historique est dans Supabase > Table Editor > `messages` (filtrer par `demande_id`, l'`id` de la demande). Pour répondre : Insert row avec `demande_id`, `auteur` = `equipe` et `texte`. L'utilisateur voit la réponse en moins de 20 secondes s'il a le fil ouvert, sinon au prochain chargement. Pour être prévenu quand un utilisateur écrit, ajouter un Database Webhook sur l'insertion dans `messages` (Supabase > Database > Webhooks) vers un service d'e-mail.
 Les demandes avec un téléphone comme seul contact ne sont rattachées à aucun espace (sauf si la personne était connectée en l'envoyant).
