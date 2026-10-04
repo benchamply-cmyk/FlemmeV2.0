@@ -35,7 +35,7 @@
   // Messages d'erreur Supabase traduits pour l'utilisateur.
   const FR = {
     otp_expired: 'Ce lien ou ce code a expiré ou a déjà servi. Demande-en un nouveau.',
-    over_email_send_rate_limit: 'Trop d’e-mails envoyés. Patiente une minute avant de réessayer.',
+    over_email_send_rate_limit: 'Trop d’e-mails de connexion envoyés pour l’instant. Réessaie un peu plus tard, ou utilise le dernier e-mail reçu.',
     over_request_rate_limit: 'Trop de tentatives. Patiente une minute avant de réessayer.',
     email_address_invalid: 'Cette adresse e-mail n’est pas valide.',
     flow_state_not_found: 'Ce lien a été ouvert dans un autre navigateur que celui de la demande. Saisis plutôt le code reçu dans l’e-mail, ou redemande un lien ici.',
