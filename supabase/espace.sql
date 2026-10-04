@@ -202,3 +202,46 @@ begin
 end $$;
 revoke all on function public.connexion_pseudo(text, text) from public;
 grant execute on function public.connexion_pseudo(text, text) to anon, authenticated;
+
+-- ---------- Équipe Flemme (page equipe.html) ----------
+-- Les comptes listés ici voient toutes les demandes, changent leur statut et
+-- leur mot, et répondent dans les discussions depuis flemme.org/equipe.html.
+-- Ajouter un membre (une fois son compte créé sur l'espace) :
+--   insert into public.equipe (user_id)
+--   select id from auth.users where email = 'ben.champly@gmail.com'
+--   on conflict do nothing;
+create table if not exists public.equipe (
+  user_id  uuid primary key references auth.users (id) on delete cascade
+);
+alter table public.equipe enable row level security;
+revoke all on public.equipe from anon, authenticated;
+
+create or replace function public.est_equipe() returns boolean
+language sql stable security definer set search_path = '' as $$
+  select exists (select 1 from public.equipe where user_id = auth.uid());
+$$;
+revoke all on function public.est_equipe() from public;
+grant execute on function public.est_equipe() to authenticated;
+
+-- L'équipe ne peut modifier que le statut et le mot d'une demande.
+grant update (statut, message) on public.demandes to authenticated;
+
+drop policy if exists "equipe voit les demandes" on public.demandes;
+create policy "equipe voit les demandes" on public.demandes
+  for select to authenticated using (public.est_equipe());
+
+drop policy if exists "equipe suit les demandes" on public.demandes;
+create policy "equipe suit les demandes" on public.demandes
+  for update to authenticated using (public.est_equipe()) with check (public.est_equipe());
+
+-- Réponses de l'équipe : auteur 'equipe', réservé aux membres. Un client ne
+-- peut toujours écrire qu'en 'client' (règle « ecrire ses messages »).
+grant insert (auteur) on public.messages to authenticated;
+
+drop policy if exists "equipe lit les messages" on public.messages;
+create policy "equipe lit les messages" on public.messages
+  for select to authenticated using (public.est_equipe());
+
+drop policy if exists "equipe repond" on public.messages;
+create policy "equipe repond" on public.messages
+  for insert to authenticated with check (auteur = 'equipe' and public.est_equipe());

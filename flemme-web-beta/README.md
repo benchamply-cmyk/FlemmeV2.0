@@ -51,7 +51,15 @@ Mise en place (une seule fois) :
 7. (Facultatif) Connexion Google et Apple : voir ci-dessous. Les boutons apparaissent d'eux-mêmes dès qu'un fournisseur est activé dans Supabase.
 8. Pour un vrai volume d'e-mails, brancher un SMTP (Authentication > Emails > SMTP Settings, ex. Brevo ou Resend) : l'envoi intégré de Supabase est limité à quelques e-mails par heure.
 
-Faire avancer une demande : Supabase > Table Editor > `demandes`, changer `statut` (`recue`, `en_etude`, `acceptee`, `en_cours`, `terminee` ou `refusee`) et écrire si besoin un `message` pour l'utilisateur. L'espace l'affiche au prochain chargement.
+### Page équipe : suivre les demandes et répondre
+`https://www.flemme.org/equipe.html` (non liée depuis le site, non indexée) liste toutes les demandes : filtre par statut, recherche, compteur « À répondre » (discussions dont le dernier message vient du client, affichées en premier). Pour chaque demande : coordonnées et réponses du formulaire, choix du statut et du mot de l'équipe (visibles dans l'espace du client), et discussion pour répondre.
+Accès réservé aux comptes de la table `equipe`, vérifié par la base (pas seulement par la page). Ajouter un membre, une fois son compte créé sur l'espace : Supabase > SQL Editor :
+```sql
+insert into public.equipe (user_id) select id from auth.users where email = 'ben.champly@gmail.com' on conflict do nothing;
+```
+Un membre de l'équipe garde un espace personnel normal : il n'y voit que ses propres demandes.
+
+Sans la page équipe, tout reste possible depuis Supabase : faire avancer une demande : Supabase > Table Editor > `demandes`, changer `statut` (`recue`, `en_etude`, `acceptee`, `en_cours`, `terminee` ou `refusee`) et écrire si besoin un `message` pour l'utilisateur. L'espace l'affiche au prochain chargement.
 Discussion : chaque demande a un fil « Discuter avec l'équipe » dans l'espace. Tout l'historique est dans Supabase > Table Editor > `messages` (filtrer par `demande_id`, l'`id` de la demande). Pour répondre : Insert row avec `demande_id`, `auteur` = `equipe` et `texte`. L'utilisateur voit la réponse en moins de 20 secondes s'il a le fil ouvert, sinon au prochain chargement. Pour être prévenu quand un utilisateur écrit, ajouter un Database Webhook sur l'insertion dans `messages` (Supabase > Database > Webhooks) vers un service d'e-mail.
 Les demandes avec un téléphone comme seul contact ne sont rattachées à aucun espace (sauf si la personne était connectée en l'envoyant).
 

@@ -15,6 +15,10 @@
   Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'; connect-src 'self' https://*.supabase.co; form-action 'self'; base-uri 'self'; frame-ancestors 'none'
 /espace.html
   Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'; connect-src 'self' https://*.supabase.co; form-action 'self'; base-uri 'self'; frame-ancestors 'none'
+/equipe.html
+  Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'; connect-src 'self' https://*.supabase.co; form-action 'self'; base-uri 'self'; frame-ancestors 'none'
+/equipe
+  Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'; connect-src 'self' https://*.supabase.co; form-action 'self'; base-uri 'self'; frame-ancestors 'none'
 /espace
   Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'; connect-src 'self' https://*.supabase.co; form-action 'self'; base-uri 'self'; frame-ancestors 'none'
 /sw.js

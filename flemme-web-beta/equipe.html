@@ -1,0 +1,22 @@
+<!doctype html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#57d68d"><meta name="robots" content="noindex,nofollow"><title>Équipe — Flemme</title><link rel="icon" href="favicon.ico" sizes="any"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="espace.css"><link rel="stylesheet" href="equipe.css"></head><body>
+<header><a class="logo" href="./">FLEMME<span>.</span></a><span class="beta-tag">ÉQUIPE</span></header>
+<noscript><p class="nojs">Cette page a besoin de JavaScript.</p></noscript>
+<main class="card-screen espace equipe">
+
+<section id="off" hidden><div class="card"><div class="eyebrow">Équipe</div><h2>Supabase n’est pas configuré.</h2><p>Voir le README du site.</p></div></section>
+
+<section id="guest" hidden><div class="card"><div class="eyebrow">Équipe</div><h2>Connecte-toi d’abord.</h2><p>Connecte-toi dans ton espace avec ton compte d’équipe, puis reviens sur cette page.</p><a class="primary full btn-link" href="espace.html">Aller à mon espace →</a></div></section>
+
+<section id="denied" hidden><div class="card"><div class="eyebrow">Équipe</div><h2>Accès réservé à l’équipe.</h2><p>Ce compte (<b id="deniedWho"></b>) ne fait pas partie de l’équipe Flemme. Pour l’ajouter, voir « Équipe » dans le README.</p><a class="secondary full btn-link" href="espace.html">Retour à mon espace</a></div></section>
+
+<section id="board" hidden>
+<div class="space-head"><div><div class="eyebrow">Équipe</div><h2>Demandes clients</h2><p class="who">Connecté avec <b id="who"></b></p></div><div class="space-actions"><button type="button" class="secondary" id="refresh">Actualiser</button><a class="secondary btn-link" href="espace.html">Mon espace</a></div></div>
+<div class="stats" id="stats"></div>
+<div class="filters"><label class="sr" for="filter">Filtrer</label><select id="filter"><option value="">Toutes les demandes</option><option value="repondre">À répondre</option><option value="recue">Reçues</option><option value="en_etude">À l’étude</option><option value="acceptee">Acceptées</option><option value="en_cours">En cours</option><option value="terminee">Terminées</option><option value="refusee">Refusées</option></select><label class="sr" for="search">Rechercher</label><input id="search" type="search" placeholder="Rechercher : référence, e-mail, texte…"></div>
+<p class="err" id="listErr" role="alert" hidden></p>
+<p class="loading" id="loading">Chargement…</p>
+<p class="loading" id="none" hidden>Aucune demande ne correspond.</p>
+<ol id="list" class="demandes"></ol>
+</section>
+
+</main><script src="content.js" defer></script><script src="sb.js" defer></script><script src="equipe.js" defer></script></body></html>
