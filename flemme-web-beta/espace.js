@@ -151,6 +151,24 @@ function openSpace(s) {
 
 let email = '';
 
+// Deux onglets : « Se connecter » (compte existant) et « Créer mon compte ».
+const MODES = {
+  login: { titre: 'Content de te revoir.', intro: 'Connecte-toi sans mot de passe pour suivre tes demandes.', bouton: 'Recevoir mon lien de connexion →' },
+  signup: { titre: 'Crée ton espace.', intro: 'Inscris-toi avec ton e-mail, sans mot de passe. Tu retrouveras toutes les demandes faites avec cette adresse, même celles envoyées avant ton inscription.', bouton: 'Créer mon compte →' },
+};
+let mode = 'login';
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('[data-mode]').forEach(t => t.setAttribute('aria-selected', String(t.dataset.mode === m)));
+  $('#loginTitle').textContent = MODES[m].titre;
+  $('#loginIntro').textContent = MODES[m].intro;
+  $('#mailBtn').textContent = MODES[m].bouton;
+  $('#mailErr').hidden = true;
+  $('#codeForm').hidden = true;
+  $('#mailForm').hidden = false;
+}
+document.querySelectorAll('[data-mode]').forEach(t => t.addEventListener('click', () => setMode(t.dataset.mode)));
+
 $('#mailForm').addEventListener('submit', async e => {
   e.preventDefault();
   const f = e.target, err = $('#mailErr'), btn = f.querySelector('button');
@@ -158,7 +176,7 @@ $('#mailForm').addEventListener('submit', async e => {
   err.hidden = true;
   btn.disabled = true;
   try {
-    await SB.sendLink(email);
+    await SB.sendLink(email, mode === 'signup');
     $('#sentTo').textContent = email;
     f.hidden = true;
     $('#codeForm').hidden = false;
@@ -246,6 +264,6 @@ async function start() {
   show('login');
   showProviders();
   const prefill = new URLSearchParams(location.search).get('email');
-  if (prefill && !$('#email').value) $('#email').value = prefill;
+  if (prefill && !$('#email').value) { setMode('signup'); $('#email').value = prefill; } // arrivée depuis « Suivre ma demande »
 }
 start();

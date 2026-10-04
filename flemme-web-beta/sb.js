@@ -41,6 +41,7 @@
     flow_state_not_found: 'Ce lien a été ouvert dans un autre navigateur que celui de la demande. Saisis plutôt le code reçu dans l’e-mail, ou redemande un lien ici.',
     flow_state_expired: 'Ce lien a expiré. Demande-en un nouveau.',
     access_denied: 'Connexion annulée.',
+    otp_disabled: 'Aucun compte n’existe avec cette adresse. Utilise l’onglet « Créer mon compte ».',
   };
   const fail = (status, code, msg) => {
     const e = new Error(FR[code] || (status === 429 ? FR.over_request_rate_limit : msg || 'Erreur ' + status));
@@ -93,9 +94,10 @@
     session,
     current: load,
 
-    // Inscription ou connexion : Supabase crée le compte au premier envoi.
-    sendLink: async email => call('/auth/v1/otp?redirect_to=' + encodeURIComponent(RETURN_URL), {
-      method: 'POST', body: Object.assign({ email, create_user: true }, await challenge()),
+    // create = true : inscription (Supabase crée le compte s'il n'existe pas) ;
+    // false : connexion seulement, refusée si aucun compte n'a cette adresse.
+    sendLink: async (email, create) => call('/auth/v1/otp?redirect_to=' + encodeURIComponent(RETURN_URL), {
+      method: 'POST', body: Object.assign({ email, create_user: !!create }, await challenge()),
     }),
 
     // Code à 6 chiffres reçu dans le même e-mail (pratique si le lien s'ouvre ailleurs).
