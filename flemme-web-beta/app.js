@@ -155,7 +155,8 @@ function buildOffer() {
 const genRef = () => 'FL-' + Array.from(crypto.getRandomValues(new Uint8Array(5)), n => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[n % 32]).join('');
 
 // Accepte un e-mail ou un numéro de téléphone (au moins 8 chiffres).
-const isContact = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || v.replace(/\D/g, '').length >= 8;
+const isEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+const isContact = v => isEmail(v) || v.replace(/\D/g, '').length >= 8;
 
 // Envoie un formulaire comme le ferait le navigateur, mais sans quitter la page.
 // Pendant l'envoi, le bouton est désactivé pour éviter les doubles clics.
@@ -191,13 +192,22 @@ $('#missionForm').addEventListener('submit', e => {
     f.elements.contact.focus();
     return;
   }
+  const contact = f.elements.contact.value.trim();
   const n = genRef();
   // On recopie le parcours dans les champs cachés pour le recevoir avec la demande.
   f.elements.task.value = task;
   f.elements.ref.value = n;
   f.elements.category.value = offer.cat ? offer.cat.n : '';
+  // Copie pour l'espace personnel (sb.js), lue avant f.reset().
+  const copy = {
+    ref: n, besoin: task, email: isEmail(contact) ? contact.toLowerCase() : null,
+    categorie: f.elements.category.value || null, echeance: f.elements.echeance.value || null,
+    aide_attendue: f.elements.aide_attendue.value.trim() || null, frequence: f.elements.frequence.value || null,
+    ambassadeur: f.elements.ambassadeur.checked,
+  };
   sendForm(f, err, () => {
     ref = n;
+    trackRequest(copy);
     f.reset();
     safe(() => SS.removeItem('flemmeDraft'));
     $('#missionRef').textContent = 'Demande ' + ref + ' · Nous te recontacterons pour te dire si nous pouvons t’aider.';
@@ -215,6 +225,36 @@ $('#facForm').addEventListener('submit', e => {
   sendForm(f, err, () => { f.reset(); f.hidden = true; $('#facOk').hidden = false; });
 });
 
+/* ---------- 8. Espace personnel (Supabase, voir sb.js) ---------- */
+
+// Enregistre la demande pour qu'elle apparaisse dans l'espace, puis propose de la suivre.
+// Netlify Forms reste la source principale : un échec ici n'empêche rien.
+function trackRequest(copy) {
+  const box = $('#trackBox');
+  box.hidden = true;
+  if (!window.SB || !SB.ready) return;
+  const s = SB.current();
+  if (!s && !copy.email) return; // contact par téléphone : rien à rattacher à un compte
+  SB.deposer(copy).then(() => {
+    const link = $('#trackLink');
+    if (s) {
+      $('#trackTxt').textContent = 'Retrouve cette demande et son avancement dans ton espace.';
+      link.href = 'espace.html';
+    } else {
+      $('#trackTxt').textContent = 'Crée ton espace avec ' + copy.email + ' pour suivre l’avancement de ta demande. Pas de mot de passe : on t’envoie un lien.';
+      link.href = 'espace.html?email=' + encodeURIComponent(copy.email);
+    }
+    box.hidden = false;
+  }).catch(e => console.warn('Espace personnel : demande non enregistrée', e));
+}
+
+if (window.SB && SB.ready) {
+  $('#spaceLink').hidden = false;
+  // Connecté : on propose son e-mail comme contact.
+  const s = SB.current();
+  if (s && s.email) $('#contact').defaultValue = s.email; // reste après chaque envoi (reset)
+}
+
 // Remet tout à zéro pour une nouvelle demande.
 function resetApp() {
   task = ''; ref = ''; offer = null;
@@ -224,7 +264,7 @@ function resetApp() {
   show('home');
 }
 
-/* ---------- 8. Textes modifiables depuis /admin ---------- */
+/* ---------- 9. Textes modifiables depuis /admin ---------- */
 
 (() => {
   const A = FL.accueil || {};
@@ -245,7 +285,7 @@ function resetApp() {
   if (mail && CT.email) mail.href = 'mailto:' + CT.email;
 })();
 
-/* ---------- 9. Démarrage ---------- */
+/* ---------- 10. Démarrage ---------- */
 
 const draft = safe(() => SS.getItem('flemmeDraft'));
 if (draft) { taskInput.value = draft; setCounter(); }
