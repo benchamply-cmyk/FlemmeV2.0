@@ -1,9 +1,9 @@
 backend:
   name: github
-  repo: VOTRE-COMPTE-GITHUB/flemme
+  repo: benchamply-cmyk/FlemmeV2.0
   branch: main
 locale: fr
-media_folder: uploads
+media_folder: flemme-web-beta/uploads
 public_folder: /uploads
 publish_mode: simple
 collections:
@@ -12,7 +12,7 @@ collections:
     files:
       - name: accueil
         label: Accueil (textes)
-        file: content/accueil.json
+        file: flemme-web-beta/content/accueil.json
         format: json
         fields:
           - { label: Badge, name: badge, widget: string }
@@ -22,7 +22,7 @@ collections:
             field: { label: Texte, name: texte, widget: string }
       - name: categories
         label: Catégories et sous-catégories
-        file: content/categories.json
+        file: flemme-web-beta/content/categories.json
         format: json
         fields:
           - label: Grandes catégories
@@ -60,7 +60,7 @@ collections:
                     field: { label: Mot-clé, name: mot, widget: string }
       - name: contact
         label: Coordonnées de contact
-        file: content/contact.json
+        file: flemme-web-beta/content/contact.json
         format: json
         fields:
           - { label: E-mail, name: email, widget: string }

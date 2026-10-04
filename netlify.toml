@@ -1,0 +1,8 @@
+# Netlify publie le site bêta (dossier flemme-web-beta) depuis ce dépôt.
+# « base » : dossier du site ; « publish » et « command » sont relatifs à ce dossier.
+# Même contenu que flemme-web-beta/netlify.toml, pour que la configuration
+# fonctionne que Netlify lise ce fichier-ci ou celui du dossier.
+[build]
+  base = "flemme-web-beta"
+  command = "node build.js"
+  publish = "."
