@@ -37,6 +37,7 @@ L'application mobile ne se met à jour qu'après regénération et republication
 
 ## Espace personnel (suivi des demandes)
 Les utilisateurs s'inscrivent sur `/espace.html` (lien « Mon espace » en haut de l'accueil), avec leur e-mail et un mot de passe (bouton « C'est parti »), ou avec leur compte Google ou Apple. Supabase envoie un e-mail de confirmation à l'inscription, et un lien avec un code à 6 chiffres en cas de mot de passe oublié (c'est aussi ainsi qu'un compte créé avant les mots de passe en choisit un). Ils y voient leurs demandes, leur avancement et le mot de l'équipe.
+Pseudo facultatif (à l'inscription ou dans « Sécurité et données du compte ») : affiché à la place de l'e-mail en haut de l'espace et utilisable avec le mot de passe pour se connecter. Il est stocké dans la table `profils` ; l'e-mail correspondant n'est jamais révélé à partir d'un pseudo (la base ne le renvoie que si le mot de passe est juste, avec un blocage de 15 minutes après 5 échecs).
 Chaque demande envoyée depuis l'accueil part toujours dans Netlify Forms (notifications inchangées) et, en plus, est copiée dans la table Supabase `demandes`. Une demande faite avec un e-mail apparaît dans l'espace de cette adresse, même si le compte est créé après.
 Tant que Supabase n'est pas configuré, le lien « Mon espace » reste masqué et le site fonctionne comme avant.
 
@@ -44,7 +45,7 @@ Mise en place (une seule fois) :
 1. Créer un projet gratuit sur https://supabase.com (région Europe, ex. Paris ou Francfort).
 2. Supabase > SQL Editor > New query : coller le contenu de `supabase/espace.sql` (à la racine du dépôt), puis Run.
 3. Supabase > Authentication > URL Configuration : Site URL `https://www.flemme.org`, et dans Redirect URLs ajouter `https://www.flemme.org/espace.html` et `https://*--flemmeorg.netlify.app/espace.html` (aperçus Netlify).
-4. Supabase > Authentication > Sign In / Providers > Email : laisser « Enable Email provider » et « Confirm email » activés, et régler « Minimum password length » sur 8 (« Password requirements » : lettres et chiffres). (Conseillé) Authentication > Emails, modèles « Confirm signup » et « Reset Password » : ajouter le code, par ex. `<p>Ou saisis ce code : {{ .Token }}</p>`. Utile quand le lien s'ouvre dans un autre navigateur que celui de la demande (application mobile, webmail).
+4. Supabase > Authentication > Sign In / Providers > Email : laisser « Enable Email provider » et « Confirm email » activés, et régler « Minimum password length » sur 8 (« Password requirements » : lettres et chiffres). Authentication > Emails > Templates : coller les modèles en français de `supabase/emails/` (voir le README de ce dossier), qui contiennent le lien et le code à 6 chiffres. Utile quand le lien s'ouvre dans un autre navigateur que celui de la demande (application mobile, webmail).
 5. Supabase > Project Settings > API : copier la Project URL et la clé publique (`anon` ou `publishable`, jamais la clé `service_role` / `secret`).
 6. Netlify > Site configuration > Environment variables : ajouter `SUPABASE_URL` et `SUPABASE_ANON_KEY` avec ces deux valeurs, puis redéployer.
 7. (Facultatif) Connexion Google et Apple : voir ci-dessous. Les boutons apparaissent d'eux-mêmes dès qu'un fournisseur est activé dans Supabase.

@@ -96,3 +96,10 @@ a.full { display: block; }
 .tabs button[aria-selected="true"] { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
 .hint { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
 .card input[type=password] { width: 100%; padding: 15px; border: 1px solid var(--line); border-radius: 12px; background: #fff; font: inherit; font-size: 16px; }
+.opt { font-weight: 500; color: var(--muted); }
+.pseudo-form { margin: 0 0 18px; }
+.pseudo-form .row { display: flex; gap: 8px; margin-top: 8px; }
+.pseudo-form .row input { flex: 1; min-width: 0; }
+.ok { margin: 8px 0 0; font-size: 14px; font-weight: 700; color: #1f7a47; }
+.account .pseudo-form .row button { width: auto; flex: 0 0 auto; margin: 0; padding-left: 18px; padding-right: 18px; }
+.pseudo-form label { margin-top: 18px; }
