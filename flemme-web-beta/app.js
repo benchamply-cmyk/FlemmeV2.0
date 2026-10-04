@@ -241,7 +241,7 @@ function trackRequest(copy) {
       $('#trackTxt').textContent = 'Retrouve cette demande et son avancement dans ton espace.';
       link.href = 'espace.html';
     } else {
-      $('#trackTxt').textContent = 'Crée ton espace avec ' + copy.email + ' pour suivre l’avancement de ta demande. Pas de mot de passe : on t’envoie un lien.';
+      $('#trackTxt').textContent = 'Crée ton espace avec ' + copy.email + ' pour suivre l’avancement de ta demande. Ça prend une minute.';
       link.href = 'espace.html?email=' + encodeURIComponent(copy.email);
     }
     box.hidden = false;

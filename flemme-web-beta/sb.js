@@ -2,8 +2,8 @@
 /* =========================================================================
    FLEMME — connexion à Supabase pour l'espace personnel
    Pas de bibliothèque : de simples appels HTTP à l'API Supabase.
-   - Connexion sans mot de passe : un lien (et un code) envoyés par e-mail,
-     ou un compte Google / Apple.
+   - Connexion par e-mail et mot de passe, par un lien (et un code) envoyés
+     par e-mail, ou avec un compte Google / Apple.
    - Liens et comptes Google / Apple passent par le flux PKCE : l'adresse de
      retour ne contient qu'un code à usage unique, inutilisable sans le secret
      gardé dans ce navigateur (aucun jeton de session dans l'URL).
@@ -16,6 +16,7 @@
   const C = (window.FLEMME || {}).supabase || {};
   const KEY = 'flemmeSession';
   const PKCE = 'flemmePkce';
+  const RECOVER = 'flemmeRecover'; // posé quand on demande un lien « mot de passe oublié »
   const NATIVE = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
   // Page vers laquelle renvoie le lien de connexion (le vrai site depuis l'application mobile).
   const RETURN_URL = NATIVE ? 'https://www.flemme.org/espace.html' : new URL('espace.html', location.href).href;
@@ -41,6 +42,11 @@
     flow_state_not_found: 'Ce lien a été ouvert dans un autre navigateur que celui de la demande. Saisis plutôt le code reçu dans l’e-mail, ou redemande un lien ici.',
     flow_state_expired: 'Ce lien a expiré. Demande-en un nouveau.',
     access_denied: 'Connexion annulée.',
+    invalid_credentials: 'E-mail ou mot de passe incorrect.',
+    email_not_confirmed: 'Confirme d’abord ton adresse avec le lien reçu par e-mail.',
+    weak_password: 'Mot de passe trop faible : au moins 8 caractères, avec lettres et chiffres.',
+    same_password: 'C’est déjà ton mot de passe actuel.',
+    user_already_exists: 'Un compte existe déjà avec cette adresse. Utilise l’onglet « Se connecter ».',
     otp_disabled: 'Aucun compte n’existe avec cette adresse. Utilise l’onglet « Créer mon compte ».',
   };
   const fail = (status, code, msg) => {
@@ -99,6 +105,36 @@
     sendLink: async (email, create) => call('/auth/v1/otp?redirect_to=' + encodeURIComponent(RETURN_URL), {
       method: 'POST', body: Object.assign({ email, create_user: !!create }, await challenge()),
     }),
+
+    // Connexion directe avec e-mail et mot de passe.
+    login: async (email, password) => keep(await call('/auth/v1/token?grant_type=password', { method: 'POST', body: { email, password } })),
+
+    // Inscription avec mot de passe. Renvoie la session si Supabase n'exige pas
+    // de confirmer l'adresse, sinon null : un e-mail de confirmation est parti.
+    async signup(email, password) {
+      const d = await call('/auth/v1/signup?redirect_to=' + encodeURIComponent(RETURN_URL), {
+        method: 'POST', body: Object.assign({ email, password }, await challenge()),
+      });
+      return d && d.access_token ? keep(d) : null;
+    },
+
+    // Mot de passe oublié (ou jamais créé) : lien et code par e-mail, puis nouveau mot de passe.
+    async recover(email) {
+      await call('/auth/v1/recover?redirect_to=' + encodeURIComponent(RETURN_URL), {
+        method: 'POST', body: Object.assign({ email }, await challenge()),
+      });
+      try { localStorage.setItem(RECOVER, '1'); } catch (e) {}
+    },
+    // true une seule fois après le retour d'un lien « mot de passe oublié ».
+    recovering() {
+      try { const r = localStorage.getItem(RECOVER); localStorage.removeItem(RECOVER); return !!r; } catch (e) { return false; }
+    },
+
+    async setPassword(password) {
+      const s = await session();
+      if (!s) throw fail(401, 'no_session', 'Session expirée. Reconnecte-toi.');
+      await call('/auth/v1/user', { method: 'PUT', token: s.access_token, body: { password } });
+    },
 
     // Code à 6 chiffres reçu dans le même e-mail (pratique si le lien s'ouvre ailleurs).
     verify: async (email, token) => keep(await call('/auth/v1/verify', { method: 'POST', body: { type: 'email', email, token } })),

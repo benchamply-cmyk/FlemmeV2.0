@@ -1,14 +1,15 @@
 'use strict';
 /* =========================================================================
    FLEMME — espace personnel (espace.html)
-   1. Connexion par e-mail (lien ou code) ou Google / Apple, via sb.js.
+   1. Connexion par e-mail et mot de passe, lien ou code par e-mail, ou
+      Google / Apple, via sb.js.
    2. Liste des demandes de la personne, avec leur avancement, le mot
       de l'équipe et une discussion par demande. Le statut et les réponses
       de l'équipe se gèrent dans Supabase (voir README).
    ========================================================================= */
 
 const $ = s => document.querySelector(s);
-const show = id => ['off', 'login', 'space'].forEach(v => { $('#' + v).hidden = v !== id; });
+const show = id => ['off', 'login', 'newpwd', 'space'].forEach(v => { $('#' + v).hidden = v !== id; });
 const showError = (box, msg) => { box.textContent = msg; box.hidden = false; };
 const NET = 'Connexion impossible. Vérifie ta connexion internet et réessaie.';
 const msgOf = e => (e instanceof TypeError ? NET : e.message);
@@ -153,8 +154,8 @@ let email = '';
 
 // Deux onglets : « Se connecter » (compte existant) et « Créer mon compte ».
 const MODES = {
-  login: { titre: 'Content de te revoir.', intro: 'Connecte-toi sans mot de passe pour suivre tes demandes.', bouton: 'Recevoir mon lien de connexion →' },
-  signup: { titre: 'Crée ton espace.', intro: 'Inscris-toi avec ton e-mail, sans mot de passe. Tu retrouveras toutes les demandes faites avec cette adresse, même celles envoyées avant ton inscription.', bouton: 'Créer mon compte →' },
+  login: { titre: 'Content de te revoir.', intro: 'Connecte-toi pour suivre tes demandes.', bouton: 'C’est parti →', auto: 'current-password' },
+  signup: { titre: 'Crée ton espace.', intro: 'Inscris-toi avec ton e-mail et un mot de passe. Tu retrouveras toutes les demandes faites avec cette adresse, même celles envoyées avant ton inscription.', bouton: 'Créer mon compte →', auto: 'new-password' },
 };
 let mode = 'login';
 function setMode(m) {
@@ -163,28 +164,60 @@ function setMode(m) {
   $('#loginTitle').textContent = MODES[m].titre;
   $('#loginIntro').textContent = MODES[m].intro;
   $('#mailBtn').textContent = MODES[m].bouton;
+  $('#password').autocomplete = MODES[m].auto;
+  $('#pwdHint').hidden = m !== 'signup';
+  $('#forgot').hidden = m !== 'login';
   $('#mailErr').hidden = true;
   $('#codeForm').hidden = true;
   $('#mailForm').hidden = false;
 }
 document.querySelectorAll('[data-mode]').forEach(t => t.addEventListener('click', () => setMode(t.dataset.mode)));
 
+// Écran « E-mail envoyé » : lien à cliquer, ou code à saisir.
+function mailSent(why) {
+  $('#sentWhy').textContent = why;
+  $('#sentTo').textContent = email;
+  $('#mailForm').hidden = true;
+  $('#codeForm').hidden = false;
+  $('#code').focus();
+}
+
 $('#mailForm').addEventListener('submit', async e => {
   e.preventDefault();
-  const f = e.target, err = $('#mailErr'), btn = f.querySelector('button');
+  const f = e.target, err = $('#mailErr'), btn = $('#mailBtn');
   email = f.elements.email.value.trim().toLowerCase();
+  const password = f.elements.password.value;
   err.hidden = true;
   btn.disabled = true;
   try {
-    await SB.sendLink(email, mode === 'signup');
-    $('#sentTo').textContent = email;
-    f.hidden = true;
-    $('#codeForm').hidden = false;
-    $('#code').focus();
+    if (mode === 'login') return openSpace(await SB.login(email, password));
+    const s = await SB.signup(email, password);
+    if (s) return openSpace(s);
+    mailSent('Dernière étape : confirme ton adresse. Ouvre l’e-mail');
   } catch (x) {
     showError(err, msgOf(x));
   } finally {
     btn.disabled = false;
+  }
+});
+
+let recovering = false; // le code attendu vient d'un e-mail « mot de passe oublié »
+
+// Mot de passe oublié, ou compte créé avant les mots de passe : lien par e-mail.
+$('#forgot').addEventListener('click', async () => {
+  const err = $('#mailErr'), input = $('#email');
+  err.hidden = true;
+  if (!input.checkValidity()) return showError(err, 'Saisis d’abord ton e-mail ci-dessus.');
+  email = input.value.trim().toLowerCase();
+  $('#forgot').disabled = true;
+  try {
+    await SB.recover(email);
+    recovering = true;
+    mailSent('Pour choisir ton mot de passe, ouvre l’e-mail');
+  } catch (x) {
+    showError(err, msgOf(x));
+  } finally {
+    $('#forgot').disabled = false;
   }
 });
 
@@ -196,7 +229,9 @@ $('#codeForm').addEventListener('submit', async e => {
   if (!/^\d{6,10}$/.test(code)) return showError(err, 'Le code contient 6 chiffres.');
   btn.disabled = true;
   try {
-    openSpace(await SB.verify(email, code));
+    const s = await SB.verify(email, code);
+    if (recovering) { SB.recovering(); recovering = false; return askPassword(s); }
+    openSpace(s);
   } catch (x) {
     showError(err, x.status === 403 || x.code === 'otp_expired' ? 'Code incorrect ou expiré. Vérifie-le ou demande un nouveau lien.' : msgOf(x));
   } finally {
@@ -204,7 +239,36 @@ $('#codeForm').addEventListener('submit', async e => {
   }
 });
 
+// Choix d'un nouveau mot de passe (après « mot de passe oublié » ou depuis l'espace).
+let after = null;
+function askPassword(s) {
+  after = s;
+  $('#pwdForm').reset();
+  $('#pwdErr').hidden = true;
+  document.querySelector('.me-mail').value = s.email || '';
+  show('newpwd');
+  $('#newPassword').focus();
+}
+$('#pwdForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const err = $('#pwdErr'), btn = e.target.querySelector('button[type=submit]');
+  err.hidden = true;
+  btn.disabled = true;
+  try {
+    await SB.setPassword($('#newPassword').value);
+    openSpace(after);
+  } catch (x) {
+    if (x.status === 401) return start();
+    showError(err, msgOf(x));
+  } finally {
+    btn.disabled = false;
+  }
+});
+$('#pwdSkip').addEventListener('click', () => openSpace(after));
+$('#changePwd').addEventListener('click', async () => { const s = await SB.session(); s ? askPassword(s) : start(); });
+
 $('#otherMail').addEventListener('click', () => {
+  recovering = false;
   $('#codeForm').hidden = true;
   $('#codeForm').reset();
   $('#mailForm').hidden = false;
@@ -252,15 +316,19 @@ async function showProviders() {
 
 async function start() {
   if (!SB.ready) return show('off');
-  let s = null;
+  let s = null, link = null;
   try {
-    s = (await SB.fromLink()) || (await SB.session());
+    link = await SB.fromLink();
+    s = link || (await SB.session());
   } catch (e) {
     show('login');
     showProviders();
     return showError($('#mailErr'), msgOf(e));
   }
+  if (link && SB.recovering()) return askPassword(link); // retour du lien « mot de passe oublié »
   if (s) return openSpace(s);
+  recovering = false;
+  setMode(mode); // formulaire remis à zéro (après une déconnexion par exemple)
   show('login');
   showProviders();
   const prefill = new URLSearchParams(location.search).get('email');
