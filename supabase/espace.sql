@@ -87,3 +87,37 @@ end $$;
 
 revoke all on function public.supprimer_mon_compte() from public, anon;
 grant execute on function public.supprimer_mon_compte() to authenticated;
+
+-- ---------- Discussion par demande ----------
+-- Fil de messages entre l'utilisateur et l'équipe, affiché sous chaque demande
+-- dans l'espace. L'utilisateur écrit depuis le site (auteur 'client') ;
+-- l'équipe répond depuis Supabase > Table Editor > messages > Insert row,
+-- avec demande_id, auteur = 'equipe' et texte.
+create table if not exists public.messages (
+  id          bigint generated always as identity primary key,
+  demande_id  uuid not null references public.demandes (id) on delete cascade,
+  auteur      text not null default 'client' check (auteur in ('client', 'equipe')),
+  texte       text not null check (char_length(texte) between 1 and 2000),
+  created_at  timestamptz not null default now()
+);
+
+create index if not exists messages_demande_idx on public.messages (demande_id, created_at);
+
+alter table public.messages enable row level security;
+
+-- Le site ne choisit ni l'auteur (toujours 'client') ni la date.
+revoke all on public.messages from anon, authenticated;
+grant select on public.messages to authenticated;
+grant insert (demande_id, texte) on public.messages to authenticated;
+
+-- Lire et écrire uniquement dans les fils de ses propres demandes : la
+-- sous-requête sur demandes applique la règle « voir ses demandes ».
+drop policy if exists "lire ses messages" on public.messages;
+create policy "lire ses messages" on public.messages
+  for select to authenticated
+  using (exists (select 1 from public.demandes d where d.id = demande_id));
+
+drop policy if exists "ecrire ses messages" on public.messages;
+create policy "ecrire ses messages" on public.messages
+  for insert to authenticated
+  with check (auteur = 'client' and exists (select 1 from public.demandes d where d.id = demande_id));

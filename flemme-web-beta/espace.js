@@ -2,8 +2,9 @@
 /* =========================================================================
    FLEMME — espace personnel (espace.html)
    1. Connexion par e-mail (lien ou code) ou Google / Apple, via sb.js.
-   2. Liste des demandes de la personne, avec leur avancement et le mot
-      de l'équipe. Le statut se change dans Supabase (voir README).
+   2. Liste des demandes de la personne, avec leur avancement, le mot
+      de l'équipe et une discussion par demande. Le statut et les réponses
+      de l'équipe se gèrent dans Supabase (voir README).
    ========================================================================= */
 
 const $ = s => document.querySelector(s);
@@ -52,9 +53,75 @@ function renderDemande(d) {
     if (i === at) row.append(el('span', null, s.txt));
     tl.append(row);
   });
-  li.append(tl);
+  li.append(tl, renderChat(d));
   if (d.updated_at && d.updated_at.slice(0, 10) !== d.created_at.slice(0, 10)) li.append(el('p', 'meta', 'Mise à jour le ' + date(d.updated_at)));
   return li;
+}
+
+/* ---------- 2. Discussion avec l'équipe ---------- */
+
+const time = iso => new Date(iso).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+const POLL = 20000; // nouvelles réponses relues toutes les 20 s tant que le fil est ouvert
+
+function renderChat(d) {
+  const box = el('details', 'chat');
+  box.append(el('summary', null, 'Discuter avec l’équipe'));
+  const list = el('ol', 'chat-list');
+  const err = el('p', 'err');
+  err.hidden = true;
+  err.setAttribute('role', 'alert');
+  const form = el('form', 'chat-form');
+  const label = el('label', 'sr', 'Ton message');
+  const input = el('textarea');
+  input.id = 'msg-' + d.id; label.htmlFor = input.id;
+  input.maxLength = 2000; input.required = true; input.rows = 2;
+  input.placeholder = 'Une question, une précision, un retour…';
+  const send = el('button', 'primary', 'Envoyer');
+  send.type = 'submit';
+  form.append(label, input, send);
+  box.append(list, err, form);
+
+  let timer = null, count = -1;
+  async function refresh() {
+    try {
+      const rows = await SB.messages(d.id);
+      if (rows.length === count) return; // rien de nouveau : on ne touche pas au fil
+      count = rows.length;
+      list.replaceChildren(...(rows.length ? rows.map(m => {
+        const li = el('li', 'msg msg-' + m.auteur);
+        li.append(el('p', null, m.texte), el('span', null, (m.auteur === 'equipe' ? 'Équipe Flemme' : 'Toi') + ' · ' + time(m.created_at)));
+        return li;
+      }) : [el('li', 'msg-empty', 'Pas encore de message. Écris-nous si tu as une question ou une précision à ajouter.')]));
+      list.scrollTop = list.scrollHeight;
+      err.hidden = true;
+    } catch (e) {
+      if (e.status === 401) return start();
+      showError(err, msgOf(e));
+    }
+  }
+  box.addEventListener('toggle', () => {
+    clearInterval(timer);
+    if (!box.open) return;
+    refresh();
+    timer = setInterval(() => { if (!document.hidden && box.isConnected) refresh(); else if (!box.isConnected) clearInterval(timer); }, POLL);
+  });
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const texte = input.value.trim();
+    if (!texte) return;
+    send.disabled = true;
+    err.hidden = true;
+    try {
+      await SB.ecrire(d.id, texte);
+      input.value = '';
+      await refresh();
+    } catch (x) {
+      showError(err, msgOf(x));
+    } finally {
+      send.disabled = false;
+    }
+  });
+  return box;
 }
 
 async function loadList() {
@@ -80,7 +147,7 @@ function openSpace(s) {
   loadList();
 }
 
-/* ---------- 2. Connexion ---------- */
+/* ---------- 3. Connexion ---------- */
 
 let email = '';
 
@@ -163,7 +230,7 @@ async function showProviders() {
   $('#social').hidden = !any;
 }
 
-/* ---------- 3. Démarrage ---------- */
+/* ---------- 4. Démarrage ---------- */
 
 async function start() {
   if (!SB.ready) return show('off');

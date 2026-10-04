@@ -146,7 +146,20 @@
     async demandes() {
       const s = await session();
       if (!s) throw fail(401, 'no_session', 'Session expirée. Reconnecte-toi.');
-      return call('/rest/v1/demandes?select=ref,besoin,categorie,echeance,statut,message,created_at,updated_at&order=created_at.desc', { token: s.access_token });
+      return call('/rest/v1/demandes?select=id,ref,besoin,categorie,echeance,statut,message,created_at,updated_at&order=created_at.desc', { token: s.access_token });
+    },
+
+    // Discussion d'une demande, du plus ancien au plus récent.
+    async messages(demandeId) {
+      const s = await session();
+      if (!s) throw fail(401, 'no_session', 'Session expirée. Reconnecte-toi.');
+      return call('/rest/v1/messages?select=id,auteur,texte,created_at&order=created_at.asc&demande_id=eq.' + encodeURIComponent(demandeId), { token: s.access_token });
+    },
+
+    async ecrire(demandeId, texte) {
+      const s = await session();
+      if (!s) throw fail(401, 'no_session', 'Session expirée. Reconnecte-toi.');
+      return call('/rest/v1/messages', { method: 'POST', token: s.access_token, headers: { Prefer: 'return=minimal' }, body: { demande_id: demandeId, texte } });
     },
 
     // Copie d'une demande envoyée depuis l'accueil, pour pouvoir la suivre.

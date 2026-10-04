@@ -51,6 +51,7 @@ Mise en place (une seule fois) :
 8. Pour un vrai volume d'e-mails, brancher un SMTP (Authentication > Emails > SMTP Settings, ex. Brevo ou Resend) : l'envoi intégré de Supabase est limité à quelques e-mails par heure.
 
 Faire avancer une demande : Supabase > Table Editor > `demandes`, changer `statut` (`recue`, `en_etude`, `acceptee`, `en_cours`, `terminee` ou `refusee`) et écrire si besoin un `message` pour l'utilisateur. L'espace l'affiche au prochain chargement.
+Discussion : chaque demande a un fil « Discuter avec l'équipe » dans l'espace. Tout l'historique est dans Supabase > Table Editor > `messages` (filtrer par `demande_id`, l'`id` de la demande). Pour répondre : Insert row avec `demande_id`, `auteur` = `equipe` et `texte`. L'utilisateur voit la réponse en moins de 20 secondes s'il a le fil ouvert, sinon au prochain chargement. Pour être prévenu quand un utilisateur écrit, ajouter un Database Webhook sur l'insertion dans `messages` (Supabase > Database > Webhooks) vers un service d'e-mail.
 Les demandes avec un téléphone comme seul contact ne sont rattachées à aucun espace (sauf si la personne était connectée en l'envoyant).
 
 ### Connexion avec Google
