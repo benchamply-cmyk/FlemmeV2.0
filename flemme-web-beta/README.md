@@ -43,7 +43,7 @@ Tant que Supabase n'est pas configuré, le lien « Mon espace » reste masqué e
 Mise en place (une seule fois) :
 1. Créer un projet gratuit sur https://supabase.com (région Europe, ex. Paris ou Francfort).
 2. Supabase > SQL Editor > New query : coller le contenu de `supabase/espace.sql` (à la racine du dépôt), puis Run.
-3. Supabase > Authentication > URL Configuration : Site URL `https://www.flemme.org`, et dans Redirect URLs ajouter `https://www.flemme.org/espace.html` et `https://*--NOM-DU-SITE.netlify.app/espace.html` (aperçus Netlify ; remplacer NOM-DU-SITE).
+3. Supabase > Authentication > URL Configuration : Site URL `https://www.flemme.org`, et dans Redirect URLs ajouter `https://www.flemme.org/espace.html` et `https://*--flemmeorg.netlify.app/espace.html` (aperçus Netlify).
 4. (Conseillé) Supabase > Authentication > Emails > Magic Link : ajouter le code dans le modèle, par ex. `<p>Ou saisis ce code : {{ .Token }}</p>`. Utile quand le lien s'ouvre dans un autre navigateur que celui de la demande (application mobile, webmail).
 5. Supabase > Project Settings > API : copier la Project URL et la clé publique (`anon` ou `publishable`, jamais la clé `service_role` / `secret`).
 6. Netlify > Site configuration > Environment variables : ajouter `SUPABASE_URL` et `SUPABASE_ANON_KEY` avec ces deux valeurs, puis redéployer.
