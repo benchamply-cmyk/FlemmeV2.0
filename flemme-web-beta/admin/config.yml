@@ -1,0 +1,67 @@
+backend:
+  name: github
+  repo: VOTRE-COMPTE-GITHUB/flemme
+  branch: main
+locale: fr
+media_folder: uploads
+public_folder: /uploads
+publish_mode: simple
+collections:
+  - name: contenu
+    label: Contenu du site
+    files:
+      - name: accueil
+        label: Accueil (textes)
+        file: content/accueil.json
+        format: json
+        fields:
+          - { label: Badge, name: badge, widget: string }
+          - label: Textes grisés du champ de saisie (ils défilent toutes les 3 s)
+            name: placeholders
+            widget: list
+            field: { label: Texte, name: texte, widget: string }
+      - name: categories
+        label: Catégories et sous-catégories
+        file: content/categories.json
+        format: json
+        fields:
+          - label: Grandes catégories
+            name: groupes
+            widget: list
+            summary: "{{fields.emoji}} {{fields.nom}}"
+            fields:
+              - { label: Identifiant (sans espace ni accent), name: id, widget: string }
+              - { label: Emoji, name: emoji, widget: string }
+              - { label: Nom, name: nom, widget: string }
+              - label: Sous-catégories
+                name: sous
+                widget: list
+                summary: "{{fields.emoji}} {{fields.nom}}"
+                fields:
+                  - { label: Identifiant, name: id, widget: string, hint: "Unique, sans espace ni accent. Ne pas modifier pour une catégorie existante." }
+                  - { label: Emoji, name: emoji, widget: string }
+                  - { label: Nom, name: nom, widget: string }
+                  - { label: Importance (1 à 5), name: etoiles, widget: number, value_type: int, min: 1, max: 5 }
+                  - label: Qui s'en occupe
+                    name: type
+                    widget: select
+                    options:
+                      - { label: Agent IA, value: ia }
+                      - { label: IA + assistant humain, value: h }
+                      - { label: IA + Flemmeur sur place, value: f }
+                  - label: Tâches proposées
+                    name: taches
+                    widget: list
+                    field: { label: Tâche, name: tache, widget: string }
+                  - label: Mots-clés pour reconnaître une demande
+                    name: mots_cles
+                    widget: list
+                    required: false
+                    field: { label: Mot-clé, name: mot, widget: string }
+      - name: contact
+        label: Coordonnées de contact
+        file: content/contact.json
+        format: json
+        fields:
+          - { label: E-mail, name: email, widget: string }
+          - { label: Téléphone, name: telephone, widget: string }
