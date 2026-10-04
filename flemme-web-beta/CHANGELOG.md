@@ -63,6 +63,6 @@ Attention : ces ZIP contiennent encore flemme.fr, le jaune, la grille à plat et
 ## Reste à faire
 - Application : compiler et tester sur de vrais téléphones (Xcode, Android Studio).
 - Compléter les passages [...] des mentions légales et de la confidentialité, retirer le noindex.
-- Remplacer VOTRE-COMPTE-GITHUB/flemme dans admin/config.yml et configurer GitHub OAuth + Netlify (voir README).
+- Configurer GitHub OAuth + Netlify pour /admin (voir README).
 - Activer les notifications e-mail Netlify pour les formulaires « beta-besoins » et « facilitateur ».
 - CGV et médiateur de la consommation avant la première facturation ; statut des Facilitateurs à faire valider.

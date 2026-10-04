@@ -29,7 +29,7 @@ Mise en place (une seule fois) :
    Homepage URL : https://www.flemme.org — Authorization callback URL : https://api.netlify.com/auth/done
    Noter le Client ID et générer un Client secret.
 4. Netlify : Site configuration > Access & security > OAuth (l'intitulé peut varier) > Install provider > GitHub, coller le Client ID et le secret.
-5. Dans `admin/config.yml`, remplacer `VOTRE-COMPTE-GITHUB/flemme` par votre dépôt réel, puis envoyer la modification.
+5. `admin/config.yml` pointe déjà vers le dépôt `benchamply-cmyk/FlemmeV2.0` (branche `main`, fichiers dans `flemme-web-beta/content/`).
 6. Ouvrir https://www.flemme.org/admin et se connecter avec GitHub. Chaque enregistrement republie le site en 1 à 2 minutes.
 
 Modifiables depuis /admin : le badge et les textes grisés (qui défilent) du champ de l'accueil, les catégories (utilisées pour classer les demandes reçues) et les coordonnées. Le reste de l'accueil, les pages légales et les écrans du parcours se changent dans index.html.
