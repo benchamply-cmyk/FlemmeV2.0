@@ -59,9 +59,31 @@ create policy "deposer une demande" on public.demandes
   with check (user_id is null or user_id = auth.uid());
 
 -- Une demande est visible par son auteur connecté, ou par la personne dont
--- l'e-mail a servi de contact : se connecter par lien e-mail prouve qu'on
--- possède l'adresse, donc les demandes faites avant l'inscription apparaissent.
+-- l'e-mail a servi de contact : se connecter par lien e-mail, Google ou Apple
+-- prouve qu'on possède l'adresse (Supabase ne délivre de session qu'à une
+-- adresse vérifiée), donc les demandes faites avant l'inscription apparaissent.
 drop policy if exists "voir ses demandes" on public.demandes;
 create policy "voir ses demandes" on public.demandes
   for select to authenticated
   using (user_id = auth.uid() or lower(email) = lower(auth.jwt() ->> 'email'));
+
+-- ---------- Droit à l'effacement (RGPD) ----------
+-- Bouton « Supprimer mon compte et mes demandes » de l'espace : supprime les
+-- demandes de la personne connectée puis son compte. « security definer » :
+-- la fonction a le droit de supprimer le compte, mais uniquement celui de
+-- l'appelant (auth.uid()), jamais un autre.
+create or replace function public.supprimer_mon_compte() returns void
+language plpgsql security definer set search_path = '' as $$
+declare
+  uid  uuid := auth.uid();
+  mail text := lower(auth.jwt() ->> 'email');
+begin
+  if uid is null then
+    raise exception 'Connexion requise';
+  end if;
+  delete from public.demandes where user_id = uid or (mail is not null and lower(email) = mail);
+  delete from auth.users where id = uid;
+end $$;
+
+revoke all on function public.supprimer_mon_compte() from public, anon;
+grant execute on function public.supprimer_mon_compte() to authenticated;

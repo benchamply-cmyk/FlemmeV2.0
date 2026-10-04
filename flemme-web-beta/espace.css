@@ -57,3 +57,20 @@ a.full { display: block; }
   .head-right .beta-tag { display: none; }
   .space-actions, .space-actions > * { width: 100%; }
 }
+
+/* Connexion Google / Apple (boutons conformes aux chartes des deux marques) */
+.social { display: grid; gap: 10px; margin-top: 24px; }
+.social-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 52px; padding: 14px 18px; border-radius: 14px; font: inherit; font-size: 16px; font-weight: 700; cursor: pointer; }
+.social-btn.google { background: #fff; color: #1f1f1f; border: 1px solid #747775; }
+.social-btn.apple { background: #000; color: #fff; border: 1px solid #000; }
+.social-btn:hover { filter: brightness(.95); }
+.or { display: flex; align-items: center; gap: 12px; margin: 14px 0 0; font-size: 13px; color: var(--muted); }
+.or::before, .or::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+
+/* Sécurité et données du compte */
+.account { margin-top: 24px; }
+.account summary { cursor: pointer; font-weight: 850; }
+.account p { color: var(--muted); line-height: 1.5; font-size: 14px; }
+.account button { display: block; width: 100%; margin-top: 10px; }
+.danger { border: 2px solid #8a1c12; border-radius: 14px; padding: 14px 20px; background: #fff; color: #8a1c12; font: inherit; font-weight: 900; font-size: 15px; cursor: pointer; }
+.danger:hover { background: #fde8e6; }

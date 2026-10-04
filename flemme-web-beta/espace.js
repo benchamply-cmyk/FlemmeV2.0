@@ -1,7 +1,7 @@
 'use strict';
 /* =========================================================================
    FLEMME — espace personnel (espace.html)
-   1. Connexion par e-mail (lien ou code), via sb.js.
+   1. Connexion par e-mail (lien ou code) ou Google / Apple, via sb.js.
    2. Liste des demandes de la personne, avec leur avancement et le mot
       de l'équipe. Le statut se change dans Supabase (voir README).
    ========================================================================= */
@@ -126,11 +126,42 @@ $('#otherMail').addEventListener('click', () => {
   $('#email').focus();
 });
 
-$('#logout').addEventListener('click', async () => {
-  await SB.logout();
+async function signOut(everywhere) {
+  await SB.logout(everywhere);
   $('#list').replaceChildren();
   start();
+}
+$('#logout').addEventListener('click', () => signOut(false));
+$('#logoutAll').addEventListener('click', () => signOut(true));
+
+$('#deleteAccount').addEventListener('click', async e => {
+  if (!confirm('Supprimer définitivement ton compte et toutes tes demandes ? Cette action est irréversible.')) return;
+  const btn = e.target, err = $('#accountErr');
+  err.hidden = true;
+  btn.disabled = true;
+  try {
+    await SB.supprimer();
+    $('#list').replaceChildren();
+    show('login');
+    showError($('#mailErr'), 'Ton compte et tes demandes ont été supprimés.');
+  } catch (x) {
+    showError(err, msgOf(x));
+  } finally {
+    btn.disabled = false;
+  }
 });
+
+// Boutons Google / Apple : affichés seulement si le fournisseur est activé dans Supabase.
+document.querySelectorAll('[data-provider]').forEach(b => b.addEventListener('click', async () => {
+  $('#socialErr').hidden = true;
+  try { await SB.oauth(b.dataset.provider); } catch (x) { showError($('#socialErr'), msgOf(x)); }
+}));
+async function showProviders() {
+  const on = await SB.providers();
+  let any = false;
+  document.querySelectorAll('[data-provider]').forEach(b => { b.hidden = !on[b.dataset.provider]; any = any || !b.hidden; });
+  $('#social').hidden = !any;
+}
 
 /* ---------- 3. Démarrage ---------- */
 
@@ -141,10 +172,12 @@ async function start() {
     s = (await SB.fromLink()) || (await SB.session());
   } catch (e) {
     show('login');
+    showProviders();
     return showError($('#mailErr'), msgOf(e));
   }
   if (s) return openSpace(s);
   show('login');
+  showProviders();
   const prefill = new URLSearchParams(location.search).get('email');
   if (prefill && !$('#email').value) $('#email').value = prefill;
 }
