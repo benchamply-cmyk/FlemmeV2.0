@@ -216,7 +216,42 @@
     async demandes() {
       const s = await session();
       if (!s) throw fail(401, 'no_session', 'Session expirée. Reconnecte-toi.');
-      return call('/rest/v1/demandes?select=id,ref,besoin,categorie,echeance,statut,message,created_at,updated_at&order=created_at.desc', { token: s.access_token });
+      // Filtre explicite : un membre de l'équipe a le droit de tout lire, mais son espace ne montre que ses demandes.
+      const mine = 'or=' + encodeURIComponent('(user_id.eq.' + s.id + (s.email ? ',email.ilike."' + s.email.replace(/["\\*%]/g, '') + '"' : '') + ')');
+      return call('/rest/v1/demandes?select=id,ref,besoin,categorie,echeance,statut,message,created_at,updated_at&order=created_at.desc&' + mine, { token: s.access_token });
+    },
+
+    // ----- Page équipe (equipe.html), réservée aux comptes de la table equipe -----
+    equipe: {
+      async membre() {
+        const s = await session();
+        if (!s) return false;
+        try { return !!(await call('/rest/v1/rpc/est_equipe', { method: 'POST', token: s.access_token, body: {} })); } catch (e) { return false; }
+      },
+      async demandes() {
+        const s = await session();
+        if (!s) throw fail(401, 'no_session', 'Session expirée. Reconnecte-toi.');
+        return call('/rest/v1/demandes?select=*&order=created_at.desc', { token: s.access_token });
+      },
+      // Dernier message de chaque discussion, pour repérer celles qui attendent une réponse.
+      async derniers() {
+        const s = await session();
+        if (!s) throw fail(401, 'no_session', 'Session expirée. Reconnecte-toi.');
+        const rows = await call('/rest/v1/messages?select=demande_id,auteur,created_at&order=created_at.desc&limit=2000', { token: s.access_token });
+        const last = {};
+        rows.forEach(m => { if (!last[m.demande_id]) last[m.demande_id] = m; });
+        return last;
+      },
+      async modifier(id, champs) {
+        const s = await session();
+        if (!s) throw fail(401, 'no_session', 'Session expirée. Reconnecte-toi.');
+        return call('/rest/v1/demandes?id=eq.' + encodeURIComponent(id), { method: 'PATCH', token: s.access_token, headers: { Prefer: 'return=minimal' }, body: champs });
+      },
+      async repondre(demandeId, texte) {
+        const s = await session();
+        if (!s) throw fail(401, 'no_session', 'Session expirée. Reconnecte-toi.');
+        return call('/rest/v1/messages', { method: 'POST', token: s.access_token, headers: { Prefer: 'return=minimal' }, body: { demande_id: demandeId, texte, auteur: 'equipe' } });
+      },
     },
 
     // Discussion d'une demande, du plus ancien au plus récent.

@@ -1,0 +1,26 @@
+/* =========================================================================
+   FLEMME — page équipe (equipe.html) : suivi des demandes et réponses.
+   S'appuie sur styles.css et espace.css.
+   ========================================================================= */
+.equipe:has(#board:not([hidden])) { max-width: 960px; }
+.stats { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.stat { border: 1px solid var(--line); background: #fff; border-radius: 14px; padding: 10px 14px; font: inherit; font-size: 14px; cursor: pointer; color: var(--ink); }
+.stat b { display: block; font-size: 22px; }
+.stat.hot { border-color: #e0a800; background: #fff8dc; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+.filters select, .filters input { padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: #fff; font: inherit; font-size: 16px; }
+.filters input { flex: 1; min-width: 200px; }
+.badge-new { font-size: 12px; font-weight: 850; padding: 6px 11px; border-radius: 99px; background: #e0a800; color: #fff; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.infos { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 14px 0 0; font-size: 14px; }
+.infos dt { color: var(--muted); }
+.infos dd { margin: 0; overflow-wrap: anywhere; white-space: pre-line; }
+.suivi { margin-top: 16px; padding: 14px; border-radius: 14px; background: var(--soft); display: grid; gap: 10px; }
+.suivi label { margin: 0 !important; }
+.suivi select, .suivi textarea { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: #fff; font: inherit; font-size: 16px; }
+.suivi .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+/* Vue équipe : les messages du client à gauche, ceux de l'équipe à droite. */
+.equipe .msg-client { align-self: flex-start; background: var(--soft); color: var(--ink); border-radius: 16px; border-bottom-left-radius: 4px; }
+.equipe .msg-client span { color: var(--muted); }
+.equipe .msg-equipe { align-self: flex-end; background: var(--ink); color: #fff; border-radius: 16px; border-bottom-right-radius: 4px; }
+.equipe .msg-equipe span { color: #c9cbc0; }
