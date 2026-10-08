@@ -103,6 +103,7 @@ Attention : ces ZIP contiennent encore flemme.fr, le jaune, la grille à plat et
 - Accueil : bandeau « Toi, t’as jamais la flemme ? », lien « La Brigade recrute » dans l’en-tête (masqué sur mobile), encart sur l’écran de confirmation, lien « Rejoindre la Brigade » en pied de page.
 - L’ancien écran Facilitateur de l’accueil est retiré ; les liens flemme.org/#facilitateur redirigent vers rejoindre.html.
 - CSP ajoutée pour /rejoindre.html, page ajoutée au sitemap, confidentialité mise à jour, cache passé en flemme-v3.8-beta-brigade.
+- Rémunération : un seul pourcentage quelle que soit l’intervention, 65 % pour le Brigadier et 35 % pour Flemme ; 80 % / 20 % pour les ambassadeurs et les Brigadiers de la première heure. Forfaits par type d’intervention retirés.
 
 ## Reste à faire
 - Application : compiler et tester sur de vrais téléphones (Xcode, Android Studio).
@@ -110,4 +111,4 @@ Attention : ces ZIP contiennent encore flemme.fr, le jaune, la grille à plat et
 - Configurer GitHub OAuth + Netlify pour /admin (voir README).
 - Activer les notifications e-mail Netlify pour les formulaires « beta-besoins » et « facilitateur ».
 - CGV et médiateur de la consommation avant la première facturation ; statut des Brigadiers (ex-Facilitateurs) à faire valider.
-- Valider les montants affichés sur rejoindre.html (forfaits bêta, 75 % / 80 %) et le délai de réponse de 72 h.
+- Fixer la rémunération des interventions test pendant la bêta gratuite (annoncée « avant que tu l’acceptes ») et valider le délai de réponse de 72 h.

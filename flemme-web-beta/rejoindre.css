@@ -26,9 +26,13 @@
 .pay .eyebrow { color: var(--acid); }
 .pay p { color: #d9d5f0; }
 .pay strong { color: var(--acid); }
-.pay-grid { list-style: none; padding: 0; margin: 28px 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+.pay-grid { list-style: none; padding: 0; margin: 28px 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
 .pay-grid li { background: var(--paper); color: var(--ink); border-radius: 22px; padding: 20px; display: flex; flex-direction: column; gap: 6px; }
-.pay-grid b { font-size: 34px; font-weight: 800; letter-spacing: -.04em; line-height: 1; }
+.pay-grid li { padding: 24px; }
+.pay-grid b { font-size: clamp(56px, 8vw, 88px); font-weight: 800; letter-spacing: -.05em; line-height: .95; }
+.pay-grid .pay-ex { margin-top: auto; padding-top: 12px; border-top: 2px dashed var(--ink); font-family: var(--mono); font-size: 13px; color: var(--ink); }
+.pay-grid .pay-best { background: var(--acid); }
+.pay-grid .pay-best span, .pay-grid .pay-best .pay-kind { color: var(--ink); }
 .pay-grid span { font-size: 14px; line-height: 1.45; color: var(--muted); }
 .pay-grid .pay-kind { font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--violet); }
 
