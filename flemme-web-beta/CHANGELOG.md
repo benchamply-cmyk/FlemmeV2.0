@@ -66,11 +66,6 @@ Attention : ces ZIP contiennent encore flemme.fr, le jaune, la grille à plat et
 - Sections retirées de l’accueil : « Le principe est simple », « On commence petit », « Et demain ? », « Pourquoi on fait ça ? », dernier appel.
 - content/categories.json et content/accueil.json restructurés (modifiables dans /admin) ; mots-clés et ordre de détection mis à jour.
 
-## Formulaire de demande enrichi (8 oct. 2026)
-- Un clic sur une carte ou un service mène directement au formulaire (#offer), avec le service choisi comme besoin.
-- Nouveau champ « Décris ta demande en détail » (obligatoire depuis une carte, facultatif depuis le champ libre).
-- Pièces jointes : jusqu’à 3 fichiers (8 Mo au total), reçus dans Netlify Forms. Supabase garde la description et le nombre de fichiers (script supabase/details-pieces-jointes.sql), affichés sur la page équipe et dans l’alerte e-mail.
-
 ## Reste à faire
 - Application : compiler et tester sur de vrais téléphones (Xcode, Android Studio).
 - Compléter les passages [...] des mentions légales et de la confidentialité, retirer le noindex.
