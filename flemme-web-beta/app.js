@@ -134,24 +134,25 @@ const ORDER = [...DETECT.filter(byId), ...CATS.map(c => c.id).filter(i => !DETEC
 
 /* ---------- 6. Exemples et proposition ---------- */
 
-// Une carte ou un service cliqué préremplit le champ avec une phrase d'exemple, à compléter.
-function prefill(text) {
-  taskInput.value = text; setCounter(); saveDraft();
-  taskInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  taskInput.focus({ preventScroll: true });
+// Une carte ou un service cliqué mène directement au formulaire de demande (#offer),
+// avec le service choisi comme besoin ; l'utilisateur le décrit ensuite en détail.
+function startOffer(label, cat, example) {
+  task = label;
+  buildOffer(cat || null, example);
   buzz();
 }
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text) n.textContent = text; return n; };
-const ideaButton = (cls, emoji, label, example) => {
+const ideaButton = (cls, emoji, label, onClick) => {
   const b = el('button', cls);
   b.type = 'button';
   b.append(el('span', 'emo', emoji), el('span', '', label));
-  b.addEventListener('click', () => prefill(example || label));
+  b.addEventListener('click', onClick);
   return b;
 };
 
 // « Les flemmes du moment » (content/accueil.json) : cartes sous le grand champ.
-(FL.accueil.flemmes_du_moment || []).forEach(c => $('#ideaGrid').append(ideaButton('idea', c.emoji, c.titre, c.exemple)));
+(FL.accueil.flemmes_du_moment || []).forEach(c => $('#ideaGrid').append(
+  ideaButton('idea', c.emoji, c.titre, () => startOffer(c.titre, classify(c.exemple || c.titre).cat, c.exemple))));
 
 // « Voir tout ce qu'on peut faire pour toi » : tous les résultats, groupés (content/categories.json).
 (FL.categories.groupes || []).forEach(g => {
@@ -161,7 +162,7 @@ const ideaButton = (cls, emoji, label, example) => {
   card.append(head);
   if (g.accroche) card.append(el('p', 'svc-tag', g.accroche));
   const list = el('ul', '');
-  (g.sous || []).forEach(c => { const li = el('li', ''); li.append(ideaButton('svc-item', c.emoji, c.nom, c.exemple)); list.append(li); });
+  (g.sous || []).forEach(c => { const li = el('li', ''); li.append(ideaButton('svc-item', c.emoji, c.nom, () => startOffer(c.nom, byId(c.id), c.exemple))); list.append(li); });
   card.append(list);
   if (g.resultat) { const r = el('p', 'svc-result'); r.append(el('b', '', 'Résultat livré : '), document.createTextNode(g.resultat)); card.append(r); }
   $('#svcList').append(card);
@@ -181,11 +182,19 @@ function classify(text) {
   return { cat: byId(ORDER.find(id => { const x = byId(id); return x.re && x.re.test(text); })) };
 }
 
-function buildOffer() {
-  offer = classify(task);
+// `cat` est fourni quand on vient d'une carte ; sinon on le déduit du texte libre.
+// Depuis une carte, le besoin est générique : la description détaillée devient obligatoire.
+function buildOffer(cat, example) {
+  const fromCard = cat !== undefined;
+  offer = { cat: fromCard ? cat : classify(task).cat };
   $('#summary').textContent = task;
-  $('#mLabel').textContent = 'Ton besoin' + (offer.cat ? ' · ' + offer.cat.e + ' ' + offer.cat.n : '');
+  $('#mLabel').textContent = 'Ton besoin' + (offer.cat && offer.cat.n !== task ? ' · ' + offer.cat.e + ' ' + offer.cat.n : '');
+  const d = $('#details');
+  d.required = fromCard;
+  $('#detailsLabel').textContent = fromCard ? 'Décris ta demande en détail' : 'Décris ta demande en détail (facultatif)';
+  d.placeholder = example ? 'Ex : ' + example : 'Le contexte, ce que tu as déjà essayé, tes contraintes (budget, lieu, dates)…';
   show('offer');
+  if (fromCard) d.focus({ preventScroll: true });
 }
 
 /* ---------- 7. Envoi des formulaires (Netlify Forms) ---------- */
@@ -206,11 +215,12 @@ async function sendForm(form, errBox, onSuccess) {
   btn.disabled = true;
   btn.textContent = 'Envoi…';
   try {
-    const r = await fetch(FORM_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams(new FormData(form)).toString(),
-    });
+    // Avec des fichiers (enctype multipart), on envoie le FormData tel quel :
+    // le navigateur choisit lui-même l'en-tête Content-Type.
+    const data = new FormData(form);
+    const r = await fetch(FORM_URL, form.enctype === 'multipart/form-data'
+      ? { method: 'POST', body: data }
+      : { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(data).toString() });
     if (!r.ok) throw new Error(r.status);
     onSuccess();
     buzz('ok');
@@ -223,12 +233,28 @@ async function sendForm(form, errBox, onSuccess) {
 }
 const showError = (box, msg) => { box.textContent = msg; box.hidden = false; };
 
+// Pièces jointes : 3 champs « fichier » (Netlify Forms n'accepte qu'un fichier par champ),
+// le 2e et le 3e apparaissent à la demande. Netlify limite l'envoi à 8 Mo.
+const MAX_FILES = 8 * 1024 * 1024;
+const slots = $$('.file-slot');
+function resetFiles() { slots.forEach((s, i) => { s.hidden = i > 0; }); $('#addFile').hidden = false; }
+$('#addFile').addEventListener('click', e => {
+  const next = slots.find(s => s.hidden);
+  if (next) { next.hidden = false; next.querySelector('input').focus(); }
+  if (!slots.some(s => s.hidden)) e.currentTarget.hidden = true;
+});
+
 $('#missionForm').addEventListener('submit', e => {
   e.preventDefault();
   const f = e.target, err = $('#err');
   if (!isContact(f.elements.contact.value.trim())) {
     showError(err, 'Indique une adresse e-mail ou un numéro de téléphone valide.');
     f.elements.contact.focus();
+    return;
+  }
+  const files = $$('#missionForm input[type=file]').map(i => i.files[0]).filter(Boolean);
+  if (files.reduce((t, x) => t + x.size, 0) > MAX_FILES) {
+    showError(err, 'Tes fichiers dépassent 8 Mo au total. Retire-en un ou envoie des versions plus légères.');
     return;
   }
   const contact = f.elements.contact.value.trim();
@@ -239,7 +265,7 @@ $('#missionForm').addEventListener('submit', e => {
   f.elements.category.value = offer.cat ? offer.cat.n : '';
   // Copie pour l'espace personnel (sb.js), lue avant f.reset().
   const copy = {
-    ref: n, besoin: task, email: isEmail(contact) ? contact.toLowerCase() : null,
+    ref: n, besoin: task.slice(0, 280), details: f.elements.details.value.trim() || null, pieces_jointes: files.length, email: isEmail(contact) ? contact.toLowerCase() : null,
     categorie: f.elements.category.value || null, echeance: f.elements.echeance.value || null,
     aide_attendue: f.elements.aide_attendue.value.trim() || null, frequence: f.elements.frequence.value || null,
     ambassadeur: f.elements.ambassadeur.checked,
@@ -247,7 +273,7 @@ $('#missionForm').addEventListener('submit', e => {
   sendForm(f, err, () => {
     ref = n;
     trackRequest(copy);
-    f.reset();
+    f.reset(); resetFiles();
     safe(() => SS.removeItem('flemmeDraft'));
     $('#missionRef').textContent = 'Demande ' + ref + ' · Nous te recontacterons pour te dire si nous pouvons t’aider.';
     show('tracking');
@@ -297,7 +323,7 @@ if (window.SB && SB.ready) {
 // Remet tout à zéro pour une nouvelle demande.
 function resetApp() {
   task = ''; ref = ''; offer = null;
-  taskInput.value = ''; $('#missionForm').reset();
+  taskInput.value = ''; $('#missionForm').reset(); resetFiles();
   setCounter();
   safe(() => SS.removeItem('flemmeDraft'));
   show('home');

@@ -43,7 +43,7 @@ function renderList() {
   const f = $('#filter').value, q = $('#search').value.trim().toLowerCase();
   const shown = rows.filter(d =>
     (!f || (f === 'repondre' ? aRepondre(d) : d.statut === f)) &&
-    (!q || [d.ref, d.email, d.besoin, d.categorie, d.aide_attendue].some(v => v && String(v).toLowerCase().includes(q))));
+    (!q || [d.ref, d.email, d.besoin, d.details, d.categorie, d.aide_attendue].some(v => v && String(v).toLowerCase().includes(q))));
   // Les discussions en attente d'une réponse d'abord, puis les plus récentes.
   shown.sort((a, b) => (aRepondre(b) - aRepondre(a)) || b.created_at.localeCompare(a.created_at));
   $('#list').replaceChildren(...shown.map(renderDemande));
@@ -72,7 +72,9 @@ function renderDemande(d) {
   add('Catégorie', d.categorie);
   add('Échéance', d.echeance);
   add('Fréquence', d.frequence);
+  add('Détails', d.details);
   add('Aide attendue', d.aide_attendue);
+  add('Pièces jointes', d.pieces_jointes ? d.pieces_jointes + ' fichier(s), à télécharger dans Netlify > Forms > beta-besoins' : '');
   add('Ambassadeur', d.ambassadeur ? 'Oui, d’accord pour en parler' : '');
   li.append(infos, renderSuivi(d), renderChat(d));
   return li;

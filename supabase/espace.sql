@@ -27,6 +27,10 @@ create table if not exists public.demandes (
   updated_at    timestamptz not null default now()
 );
 
+-- Description détaillée et nombre de pièces jointes (les fichiers restent dans Netlify Forms).
+alter table public.demandes add column if not exists details text check (char_length(details) <= 2000);
+alter table public.demandes add column if not exists pieces_jointes smallint not null default 0 check (pieces_jointes between 0 and 3);
+
 create index if not exists demandes_user_id_idx on public.demandes (user_id);
 create index if not exists demandes_email_idx on public.demandes (lower(email));
 
@@ -49,7 +53,7 @@ create trigger demandes_touch before update on public.demandes
 alter table public.demandes enable row level security;
 
 revoke all on public.demandes from anon, authenticated;
-grant insert (ref, user_id, email, besoin, categorie, echeance, aide_attendue, frequence, ambassadeur)
+grant insert (ref, user_id, email, besoin, details, categorie, echeance, aide_attendue, pieces_jointes, frequence, ambassadeur)
   on public.demandes to anon, authenticated;
 grant select on public.demandes to authenticated;
 
