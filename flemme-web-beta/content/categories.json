@@ -10,7 +10,7 @@
         {
           "id": "artisan",
           "emoji": "🔧",
-          "nom": "On te trouve un artisan",
+          "nom": "On te trouve un artisan pour tes travaux ou réparations",
           "exemple": "J’ai une fuite sous mon évier, trouve-moi un plombier.",
           "etoiles": 5,
           "type": "f",
@@ -37,7 +37,7 @@
         {
           "id": "devis",
           "emoji": "💰",
-          "nom": "On compare tes devis",
+          "nom": "On compare tes devis pour t’aider à choisir",
           "exemple": "J’ai trois devis pour refaire ma terrasse, aide-moi à choisir.",
           "etoiles": 5,
           "type": "h",
@@ -64,7 +64,7 @@
         {
           "id": "jardinier",
           "emoji": "🌿",
-          "nom": "On te trouve un jardinier",
+          "nom": "On te trouve un jardinier pour entretenir ton extérieur",
           "exemple": "Je cherche un jardinier pour tondre la pelouse et tailler la haie.",
           "etoiles": 5,
           "type": "f",

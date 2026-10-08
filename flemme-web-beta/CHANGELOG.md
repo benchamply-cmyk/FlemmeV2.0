@@ -66,6 +66,11 @@ Attention : ces ZIP contiennent encore flemme.fr, le jaune, la grille à plat et
 - Sections retirées de l’accueil : « Le principe est simple », « On commence petit », « Et demain ? », « Pourquoi on fait ça ? », dernier appel.
 - content/categories.json et content/accueil.json restructurés (modifiables dans /admin) ; mots-clés et ordre de détection mis à jour.
 
+## Les flemmes du moment en 7 cartes (8 oct. 2026)
+- Annulation des changements du formulaire (accès direct, description détaillée, pièces jointes).
+- « Les flemmes du moment » et « Voilà toutes les corvées dont on peut te débarrasser » regroupés en une seule section : les 7 résultats concrets en cartes.
+- Le détail des services s’ouvre en menu déroulant au survol de la souris ou au clic (au toucher sur mobile), avec le « Résultat livré ». Un service cliqué préremplit la demande.
+
 ## Reste à faire
 - Application : compiler et tester sur de vrais téléphones (Xcode, Android Studio).
 - Compléter les passages [...] des mentions légales et de la confidentialité, retirer le noindex.

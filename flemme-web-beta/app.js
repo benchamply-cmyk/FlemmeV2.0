@@ -150,29 +150,37 @@ const ideaButton = (cls, emoji, label, example) => {
   return b;
 };
 
-// « Les flemmes du moment » (content/accueil.json) : cartes sous le grand champ.
-(FL.accueil.flemmes_du_moment || []).forEach(c => $('#ideaGrid').append(ideaButton('idea', c.emoji, c.titre, c.exemple)));
-
-// « Voir tout ce qu'on peut faire pour toi » : tous les résultats, groupés (content/categories.json).
-(FL.categories.groupes || []).forEach(g => {
-  const card = el('article', 'svc');
-  const head = el('h3', '');
-  head.append(el('span', 'emo', g.emoji), el('span', '', g.nom));
-  card.append(head);
-  if (g.accroche) card.append(el('p', 'svc-tag', g.accroche));
+// Les 7 résultats concrets (content/categories.json) : une carte chacun. Le détail des
+// services s'ouvre en menu déroulant au survol de la souris ou au clic (au toucher sur mobile).
+const cats = [];
+const closeCats = except => cats.forEach(c => { if (c !== except) { c.classList.remove('open'); c.firstChild.setAttribute('aria-expanded', 'false'); } });
+(FL.categories.groupes || []).forEach((g, i) => {
+  const card = el('div', 'cat');
+  const head = el('button', 'cat-head');
+  head.type = 'button';
+  head.setAttribute('aria-expanded', 'false');
+  head.setAttribute('aria-controls', 'catMenu' + i);
+  head.append(el('span', 'emo', g.emoji), el('span', 'cat-title', g.nom));
+  if (g.accroche) head.append(el('span', 'cat-tag', g.accroche));
+  const menu = el('div', 'cat-menu');
+  menu.id = 'catMenu' + i;
   const list = el('ul', '');
   (g.sous || []).forEach(c => { const li = el('li', ''); li.append(ideaButton('svc-item', c.emoji, c.nom, c.exemple)); list.append(li); });
-  card.append(list);
-  if (g.resultat) { const r = el('p', 'svc-result'); r.append(el('b', '', 'Résultat livré : '), document.createTextNode(g.resultat)); card.append(r); }
-  $('#svcList').append(card);
+  menu.append(list);
+  if (g.resultat) { const r = el('p', 'svc-result'); r.append(el('b', '', 'Résultat livré : '), document.createTextNode(g.resultat)); menu.append(r); }
+  card.append(head, menu);
+  head.addEventListener('click', () => {
+    const open = !card.classList.contains('open');
+    closeCats(card);
+    card.classList.toggle('open', open);
+    head.setAttribute('aria-expanded', String(open));
+  });
+  card.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') closeCats(); });
+  cats.push(card);
+  $('#catGrid').append(card);
 });
-$('#showAll').addEventListener('click', e => {
-  const sec = $('#services'), open = sec.hidden;
-  sec.hidden = !open;
-  e.currentTarget.setAttribute('aria-expanded', String(open));
-  e.currentTarget.textContent = open ? 'Masquer la liste ↑' : 'Voir tout ce qu’on peut faire pour toi →';
-  if (open) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-});
+document.addEventListener('click', e => { if (!e.target.closest('.cat')) closeCats(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCats(); });
 $$('[data-focus-task]').forEach(b => b.addEventListener('click', () => { taskInput.scrollIntoView({ behavior: 'smooth', block: 'center' }); taskInput.focus({ preventScroll: true }); }));
 $('#ambassadorBtn').addEventListener('click', () => { $('#missionForm input[name=ambassadeur]').checked = true; taskInput.scrollIntoView({ behavior: 'smooth', block: 'center' }); taskInput.focus({ preventScroll: true }); });
 

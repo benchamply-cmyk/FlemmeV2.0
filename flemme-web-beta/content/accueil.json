@@ -6,47 +6,5 @@
     "Vide ton sac, c’est le moment…",
     "Plus de honte à avoir la flemme…",
     "Arrête de dire que tu le feras demain…"
-  ],
-  "flemmes_du_moment": [
-    {
-      "emoji": "🔧",
-      "titre": "Trouve-moi un artisan",
-      "exemple": "J’ai une fuite sous mon évier, trouve-moi un plombier."
-    },
-    {
-      "emoji": "📅",
-      "titre": "Prends mon rendez-vous",
-      "exemple": "Je cherche un dermatologue près de chez moi."
-    },
-    {
-      "emoji": "💰",
-      "titre": "Compare mes devis",
-      "exemple": "J’ai trois devis pour refaire ma terrasse, aide-moi à choisir."
-    },
-    {
-      "emoji": "📄",
-      "titre": "Aide-moi avec ma paperasse",
-      "exemple": "Je dois préparer un dossier administratif."
-    },
-    {
-      "emoji": "🛍️",
-      "titre": "Vends mes affaires",
-      "exemple": "Je veux vendre mon canapé sur Leboncoin."
-    },
-    {
-      "emoji": "✈️",
-      "titre": "Organise mon voyage",
-      "exemple": "Je pars cinq jours à Rome, organise mon voyage."
-    },
-    {
-      "emoji": "🎁",
-      "titre": "Trouve-moi un cadeau",
-      "exemple": "Un cadeau original pour les 60 ans de mon père."
-    },
-    {
-      "emoji": "🔎",
-      "titre": "Fais mes recherches",
-      "exemple": "Compare les meilleures assurances habitation."
-    }
   ]
 }

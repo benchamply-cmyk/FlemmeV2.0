@@ -20,14 +20,6 @@ collections:
             name: placeholders
             widget: list
             field: { label: Texte, name: texte, widget: string }
-          - label: Les flemmes du moment (cartes sous le champ, 8 conseillées)
-            name: flemmes_du_moment
-            widget: list
-            summary: "{{fields.emoji}} {{fields.titre}}"
-            fields:
-              - { label: Emoji, name: emoji, widget: string }
-              - { label: Titre de la carte, name: titre, widget: string, hint: "Ex : Trouve-moi un artisan" }
-              - { label: Phrase préremplie au clic, name: exemple, widget: string }
       - name: categories
         label: Ce qu'on peut faire pour toi (résultats)
         file: flemme-web-beta/content/categories.json
