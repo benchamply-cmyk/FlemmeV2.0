@@ -95,9 +95,19 @@ Attention : ces ZIP contiennent encore flemme.fr, le jaune, la grille à plat et
 - Limite : la suppression du compte n’efface pas encore les fichiers stockés.
 - Dictée retirée (trop peu fiable, notamment dans Safari) et remplacée sur l’accueil par un bouton « Message vocal » : l’enregistrement est joint à la demande et réécoutable dans le formulaire. On peut envoyer une demande avec seulement un message vocal.
 
+## La Brigade anti-flemme recrute (8 oct. 2026)
+- Les Facilitateurs deviennent la **Brigade anti-flemme** ; ses membres sont des Brigadiers et Brigadières.
+- Nouvelle page `rejoindre.html` (+ rejoindre.css, rejoindre.js) : accroche « On cherche des gens qui n’ont pas la flemme », lettre d’ouverture, 3 arguments (Libre, Payé clairement, Épaulé), « Comment ça marche » en 4 étapes, rémunération indicative, grades (Recrue, Brigadier-chef, Brigadier de la première heure), FAQ.
+- Candidature en deux temps dans le formulaire Netlify « facilitateur » : candidature express (etape=1) envoyée tout de suite, puis profil facultatif (etape=2) ; les deux envois portent le même identifiant `candidat` (BR-XXXXX). Brouillon conservé au rechargement.
+- Nouveaux champs du formulaire « facilitateur » : etape, candidat, pourquoi ; compétences et disponibilités en cases à cocher.
+- Accueil : bandeau « Toi, t’as jamais la flemme ? », lien « La Brigade recrute » dans l’en-tête (masqué sur mobile), encart sur l’écran de confirmation, lien « Rejoindre la Brigade » en pied de page.
+- L’ancien écran Facilitateur de l’accueil est retiré ; les liens flemme.org/#facilitateur redirigent vers rejoindre.html.
+- CSP ajoutée pour /rejoindre.html, page ajoutée au sitemap, confidentialité mise à jour, cache passé en flemme-v3.8-beta-brigade.
+
 ## Reste à faire
 - Application : compiler et tester sur de vrais téléphones (Xcode, Android Studio).
 - Compléter les passages [...] des mentions légales et de la confidentialité, retirer le noindex.
 - Configurer GitHub OAuth + Netlify pour /admin (voir README).
 - Activer les notifications e-mail Netlify pour les formulaires « beta-besoins » et « facilitateur ».
-- CGV et médiateur de la consommation avant la première facturation ; statut des Facilitateurs à faire valider.
+- CGV et médiateur de la consommation avant la première facturation ; statut des Brigadiers (ex-Facilitateurs) à faire valider.
+- Valider les montants affichés sur rejoindre.html (forfaits bêta, 75 % / 80 %) et le délai de réponse de 72 h.

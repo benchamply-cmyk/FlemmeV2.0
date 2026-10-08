@@ -355,3 +355,14 @@ footer b { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-size:
 @media (max-width: 600px) {
   .ask-bottom .voice-msg { order: 3; flex-basis: 100%; padding-bottom: 6px; }
 }
+
+/* ---------- Brigade anti-flemme : bandeau de recrutement (accueil) ---------- */
+/* La page rejoindre.html a ses propres styles dans rejoindre.css. */
+.brigade-panel { background: var(--acid); border: 3px solid var(--ink); border-radius: 36px; padding: clamp(28px, 5vw, 56px); box-shadow: 12px 12px 0 var(--violet); }
+.brigade-panel .eyebrow, .brigade-panel p { color: var(--ink); }
+.recruit { margin-top: 18px; font-size: 14px; }
+.recruit a { color: var(--ink); font-weight: 800; }
+@media (max-width: 600px) {
+  .brigade-panel { padding: 24px 20px; box-shadow: 8px 8px 0 var(--violet); }
+  .recruit-link { display: none; }
+}
