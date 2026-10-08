@@ -15,32 +15,43 @@ collections:
         file: flemme-web-beta/content/accueil.json
         format: json
         fields:
-          - { label: Badge, name: badge, widget: string }
+          - { label: Phrase sous le titre, name: accroche, widget: string }
           - label: Textes grisés du champ de saisie (ils défilent toutes les 3 s)
             name: placeholders
             widget: list
             field: { label: Texte, name: texte, widget: string }
+          - label: Les flemmes du moment (cartes sous le champ, 8 conseillées)
+            name: flemmes_du_moment
+            widget: list
+            summary: "{{fields.emoji}} {{fields.titre}}"
+            fields:
+              - { label: Emoji, name: emoji, widget: string }
+              - { label: Titre de la carte, name: titre, widget: string, hint: "Ex : Trouve-moi un artisan" }
+              - { label: Phrase préremplie au clic, name: exemple, widget: string }
       - name: categories
-        label: Catégories et sous-catégories
+        label: Ce qu'on peut faire pour toi (résultats)
         file: flemme-web-beta/content/categories.json
         format: json
         fields:
-          - label: Grandes catégories
+          - label: Groupes
             name: groupes
             widget: list
             summary: "{{fields.emoji}} {{fields.nom}}"
             fields:
               - { label: Identifiant (sans espace ni accent), name: id, widget: string }
               - { label: Emoji, name: emoji, widget: string }
-              - { label: Nom, name: nom, widget: string }
-              - label: Sous-catégories
+              - { label: Titre, name: nom, widget: string, hint: "Ex : On te trouve quelqu’un pour faire le boulot" }
+              - { label: Accroche, name: accroche, widget: string }
+              - { label: Résultat livré, name: resultat, widget: text }
+              - label: Résultats proposés
                 name: sous
                 widget: list
                 summary: "{{fields.emoji}} {{fields.nom}}"
                 fields:
                   - { label: Identifiant, name: id, widget: string, hint: "Unique, sans espace ni accent. Ne pas modifier pour une catégorie existante." }
                   - { label: Emoji, name: emoji, widget: string }
-                  - { label: Nom, name: nom, widget: string }
+                  - { label: Intitulé, name: nom, widget: string, hint: "Ex : On te trouve un artisan" }
+                  - { label: Phrase préremplie au clic, name: exemple, widget: string }
                   - { label: Importance (1 à 5), name: etoiles, widget: number, value_type: int, min: 1, max: 5 }
                   - label: Qui s'en occupe
                     name: type
@@ -49,10 +60,6 @@ collections:
                       - { label: Agent IA, value: ia }
                       - { label: IA + assistant humain, value: h }
                       - { label: IA + Flemmeur sur place, value: f }
-                  - label: Tâches proposées
-                    name: taches
-                    widget: list
-                    field: { label: Tâche, name: tache, widget: string }
                   - label: Mots-clés pour reconnaître une demande
                     name: mots_cles
                     widget: list

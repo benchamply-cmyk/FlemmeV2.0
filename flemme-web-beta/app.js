@@ -126,15 +126,53 @@ const CATS = (FL.categories.groupes || [])
   .sort((a, b) => b.s - a.s);
 const byId = id => CATS.find(c => c.id === id);
 
-// Ordre de détection dans le texte libre : les catégories les plus précises d'abord
-// (« résilier ma box » doit tomber dans Résiliations avant Opérateurs, « location de voiture »
-// avant Véhicules). Les catégories absentes de cette liste passent après, par importance.
-const DETECT = ['location', 'resiliation', 'operateurs', 'francetravail', 'cpam', 'mairie', 'politique', 'annonces', 'vols', 'trains', 'hotels', 'cours', 'devoirs', 'langues', 'plomberie', 'electricite', 'maconnerie', 'peinture', 'jardinage', 'menage', 'demenagement', 'chef', 'vehicules', 'cadeaux', 'banque', 'assurance', 'sav', 'histoire', 'litterature', 'art', 'actu', 'activites', 'medecin', 'devis', 'documents', 'culturegen'];
+// Ordre de détection dans le texte libre : les résultats les plus précis d'abord
+// (« vendre sur Vinted » avant « estimer un prix », « dermatologue » avant « médecin »,
+// les résumés avant « synthèse », « recherche » en tout dernier car très large). Ceux absents de la liste passent après.
+const DETECT = ['location', 'leasing', 'resiliation', 'vinted', 'leboncoin', 'estimation', 'politique', 'specialiste', 'rdvbanque', 'rdvadmin', 'actu', 'livre', 'film', 'histoire', 'synthese', 'serviceclient', 'devis', 'menage', 'jardinier', 'demenagement', 'cuisinier', 'artisan', 'vols', 'trains', 'hotels', 'activites', 'itineraire', 'programme', 'voiture', 'cadeau', 'prix', 'langue', 'prof', 'fiches', 'devoirs', 'cours', 'informatique', 'sav', 'reclamation', 'assurances', 'banque', 'documents', 'formulaires', 'medecin', 'recherche'];
 const ORDER = [...DETECT.filter(byId), ...CATS.map(c => c.id).filter(i => !DETECT.includes(i))];
 
 /* ---------- 6. Exemples et proposition ---------- */
 
-$$('[data-example]').forEach(b => b.addEventListener('click', () => { taskInput.value = b.dataset.example; setCounter(); saveDraft(); taskInput.focus(); }));
+// Une carte ou un service cliqué préremplit le champ avec une phrase d'exemple, à compléter.
+function prefill(text) {
+  taskInput.value = text; setCounter(); saveDraft();
+  taskInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  taskInput.focus({ preventScroll: true });
+  buzz();
+}
+const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text) n.textContent = text; return n; };
+const ideaButton = (cls, emoji, label, example) => {
+  const b = el('button', cls);
+  b.type = 'button';
+  b.append(el('span', 'emo', emoji), el('span', '', label));
+  b.addEventListener('click', () => prefill(example || label));
+  return b;
+};
+
+// « Les flemmes du moment » (content/accueil.json) : cartes sous le grand champ.
+(FL.accueil.flemmes_du_moment || []).forEach(c => $('#ideaGrid').append(ideaButton('idea', c.emoji, c.titre, c.exemple)));
+
+// « Voir tout ce qu'on peut faire pour toi » : tous les résultats, groupés (content/categories.json).
+(FL.categories.groupes || []).forEach(g => {
+  const card = el('article', 'svc');
+  const head = el('h3', '');
+  head.append(el('span', 'emo', g.emoji), el('span', '', g.nom));
+  card.append(head);
+  if (g.accroche) card.append(el('p', 'svc-tag', g.accroche));
+  const list = el('ul', '');
+  (g.sous || []).forEach(c => { const li = el('li', ''); li.append(ideaButton('svc-item', c.emoji, c.nom, c.exemple)); list.append(li); });
+  card.append(list);
+  if (g.resultat) { const r = el('p', 'svc-result'); r.append(el('b', '', 'Résultat livré : '), document.createTextNode(g.resultat)); card.append(r); }
+  $('#svcList').append(card);
+});
+$('#showAll').addEventListener('click', e => {
+  const sec = $('#services'), open = sec.hidden;
+  sec.hidden = !open;
+  e.currentTarget.setAttribute('aria-expanded', String(open));
+  e.currentTarget.textContent = open ? 'Masquer la liste ↑' : 'Voir tout ce qu’on peut faire pour toi →';
+  if (open) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
 $$('[data-focus-task]').forEach(b => b.addEventListener('click', () => { taskInput.scrollIntoView({ behavior: 'smooth', block: 'center' }); taskInput.focus({ preventScroll: true }); }));
 $('#ambassadorBtn').addEventListener('click', () => { $('#missionForm input[name=ambassadeur]').checked = true; taskInput.scrollIntoView({ behavior: 'smooth', block: 'center' }); taskInput.focus({ preventScroll: true }); });
 
@@ -269,7 +307,7 @@ function resetApp() {
 
 (() => {
   const A = FL.accueil || {};
-  if (A.badge) $('.badge').textContent = A.badge;
+  if (A.accroche) $('#heroLead').textContent = A.accroche;
   // Textes grisés du champ : le premier s'affiche, puis ils défilent toutes les 3 s
   // tant que le champ est vide (sauf si l'utilisateur a demandé moins d'animations).
   const hints = (A.placeholders || []).filter(Boolean);

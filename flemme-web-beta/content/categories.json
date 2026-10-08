@@ -1,152 +1,89 @@
 {
   "groupes": [
     {
-      "id": "travaux",
-      "emoji": "🛠️",
-      "nom": "Travaux & services à domicile",
+      "id": "boulot",
+      "emoji": "🔧",
+      "nom": "On te trouve quelqu’un pour faire le boulot",
+      "accroche": "Plus besoin de chercher pendant des heures.",
+      "resultat": "Une sélection de professionnels adaptés à ton besoin, avec leurs coordonnées et les informations utiles pour les contacter.",
       "sous": [
         {
-          "id": "peinture",
-          "emoji": "🎨",
-          "nom": "Peinture",
+          "id": "artisan",
+          "emoji": "🔧",
+          "nom": "On te trouve un artisan",
+          "exemple": "J’ai une fuite sous mon évier, trouve-moi un plombier.",
           "etoiles": 5,
           "type": "f",
-          "taches": [
-            "Repeindre une pièce",
-            "Rafraîchir une façade",
-            "Trouver un peintre"
-          ],
           "mots_cles": [
-            "peint",
-            "repein"
-          ]
-        },
-        {
-          "id": "maconnerie",
-          "emoji": "🧱",
-          "nom": "Maçonnerie",
-          "etoiles": 5,
-          "type": "f",
-          "taches": [
-            "Monter un mur",
-            "Couler une dalle",
-            "Poser du carrelage",
-            "Trouver un maçon"
-          ],
-          "mots_cles": [
-            "maçon",
-            "maconn",
-            "murs?(?![a-zà-ÿ])",
-            "dalle",
-            "carrelage"
-          ]
-        },
-        {
-          "id": "plomberie",
-          "emoji": "🚰",
-          "nom": "Plomberie",
-          "etoiles": 5,
-          "type": "f",
-          "taches": [
-            "Réparer une fuite",
-            "Changer un robinet",
-            "Déboucher",
-            "Trouver un plombier"
-          ],
-          "mots_cles": [
+            "artisan",
+            "travaux",
+            "répar",
+            "repar",
+            "bricol",
             "plomb",
             "fuite",
             "robinet",
-            "chauffe-eau",
-            "débouch"
-          ]
-        },
-        {
-          "id": "electricite",
-          "emoji": "💡",
-          "nom": "Électricité",
-          "etoiles": 5,
-          "type": "f",
-          "taches": [
-            "Installer une prise",
-            "Réparer une panne",
-            "Poser un luminaire",
-            "Trouver un électricien"
-          ],
-          "mots_cles": [
             "électric",
             "electric",
             "disjonct",
-            "luminaire"
+            "peint",
+            "repein",
+            "maçon",
+            "maconn",
+            "carrelage",
+            "serrur"
           ]
         },
         {
-          "id": "chef",
-          "emoji": "👨‍🍳",
-          "nom": "Chef à domicile",
-          "etoiles": 4,
-          "type": "f",
-          "taches": [
-            "Repas à domicile",
-            "Préparer un dîner",
-            "Organiser un buffet"
-          ],
+          "id": "devis",
+          "emoji": "💰",
+          "nom": "On compare tes devis",
+          "exemple": "J’ai trois devis pour refaire ma terrasse, aide-moi à choisir.",
+          "etoiles": 5,
+          "type": "h",
           "mots_cles": [
-            "cuisinier",
-            "chefs?(?![a-zà-ÿ])",
-            "traiteur",
-            "cuisine",
-            "buffet"
+            "devis"
           ]
         },
         {
           "id": "menage",
           "emoji": "🧹",
-          "nom": "Ménage",
+          "nom": "On te trouve quelqu’un pour faire le ménage",
+          "exemple": "Je cherche quelqu’un pour faire le ménage chez moi chaque semaine.",
           "etoiles": 5,
           "type": "f",
-          "taches": [
-            "Ménage régulier",
-            "Grand nettoyage",
-            "Repassage"
-          ],
           "mots_cles": [
             "ménage",
             "menage",
             "nettoy",
-            "repass"
+            "repass",
+            "femme de ménage",
+            "aide ménagère"
           ]
         },
         {
-          "id": "jardinage",
+          "id": "jardinier",
           "emoji": "🌿",
-          "nom": "Jardinage",
+          "nom": "On te trouve un jardinier",
+          "exemple": "Je cherche un jardinier pour tondre la pelouse et tailler la haie.",
           "etoiles": 5,
           "type": "f",
-          "taches": [
-            "Tondre la pelouse",
-            "Tailler une haie",
-            "Entretenir le jardin"
-          ],
           "mots_cles": [
             "jardin",
             "tondre",
             "tonte",
             "haies?(?![a-zà-ÿ])",
-            "pelouse"
+            "pelouse",
+            "élagu"
           ]
         },
         {
           "id": "demenagement",
           "emoji": "📦",
-          "nom": "Déménagement",
+          "nom": "On t’aide à organiser ton déménagement",
+          "exemple": "Je déménage le mois prochain, aide-moi à tout organiser.",
           "etoiles": 5,
           "type": "f",
-          "taches": [
-            "Trouver des déménageurs",
-            "Faire les cartons",
-            "Transférer les contrats"
-          ],
           "mots_cles": [
             "déménag",
             "demenag",
@@ -154,20 +91,17 @@
           ]
         },
         {
-          "id": "devis",
-          "emoji": "⚖️",
-          "nom": "Comparer des devis",
-          "etoiles": 5,
-          "type": "h",
-          "taches": [
-            "Demander des devis",
-            "Comparer les devis",
-            "Choisir un artisan"
-          ],
+          "id": "cuisinier",
+          "emoji": "🍳",
+          "nom": "On te trouve un cuisinier à domicile",
+          "exemple": "Je cherche un cuisinier à domicile pour un dîner de 8 personnes.",
+          "etoiles": 4,
+          "type": "f",
           "mots_cles": [
-            "devis",
-            "artisan",
-            "prestataire"
+            "cuisinier",
+            "chefs?(?![a-zà-ÿ])",
+            "traiteur",
+            "buffet"
           ]
         }
       ]
@@ -175,216 +109,215 @@
     {
       "id": "rdv",
       "emoji": "📅",
-      "nom": "Rendez-vous",
+      "nom": "On s’occupe de tes rendez-vous",
+      "accroche": "Fini les recherches interminables et les coups de téléphone.",
+      "resultat": "Des créneaux identifiés ou un rendez-vous organisé lorsque la réservation est possible et autorisée.",
       "sous": [
         {
           "id": "medecin",
-          "emoji": "🩺",
-          "nom": "Médecin & santé",
+          "emoji": "📅",
+          "nom": "On te trouve un rendez-vous chez un médecin",
+          "exemple": "Je cherche un médecin généraliste disponible cette semaine.",
           "etoiles": 5,
           "type": "h",
-          "taches": [
-            "Prendre RDV chez le médecin",
-            "Dentiste",
-            "Spécialiste",
-            "Kiné"
-          ],
           "mots_cles": [
             "médecin",
             "medecin",
             "docteur",
-            "dentiste",
-            "kiné",
-            "kine(?![a-zà-ÿ])",
-            "ophtalm",
+            "généraliste",
+            "generaliste",
             "doctolib",
-            "santé",
             "rendez",
             "rdv"
           ]
         },
         {
-          "id": "mairie",
+          "id": "rdvadmin",
           "emoji": "🏛️",
-          "nom": "Mairie",
+          "nom": "On t’aide à obtenir un rendez-vous administratif",
+          "exemple": "Il me faut un rendez-vous en mairie pour refaire mon passeport.",
           "etoiles": 5,
           "type": "h",
-          "taches": [
-            "Carte d’identité",
-            "Passeport",
-            "État civil",
-            "Inscription"
-          ],
           "mots_cles": [
             "mairie",
+            "préfecture",
+            "prefecture",
             "passeport",
-            "identité",
-            "état civil",
-            "etat civil"
-          ]
-        },
-        {
-          "id": "cpam",
-          "emoji": "🩹",
-          "nom": "CPAM",
-          "etoiles": 5,
-          "type": "h",
-          "taches": [
-            "Carte Vitale",
-            "Remboursement de soins",
-            "Attestation de droits"
-          ],
-          "mots_cles": [
+            "carte d.identité",
+            "titre de séjour",
             "cpam",
-            "ameli",
-            "sécu(?![a-zà-ÿ])",
-            "secu(?![a-zà-ÿ])",
-            "carte vitale"
-          ]
-        },
-        {
-          "id": "francetravail",
-          "emoji": "🧑‍💼",
-          "nom": "France Travail",
-          "etoiles": 5,
-          "type": "h",
-          "taches": [
-            "Inscription",
-            "Actualisation",
-            "Rendez-vous conseiller"
-          ],
-          "mots_cles": [
+            "caf(?![a-zà-ÿ])",
             "france travail",
             "pôle emploi",
-            "pole emploi",
-            "chômage",
-            "chomage"
+            "pole emploi"
+          ]
+        },
+        {
+          "id": "serviceclient",
+          "emoji": "📞",
+          "nom": "On prépare ton appel au service client",
+          "exemple": "Je dois appeler le service client de mon fournisseur d’énergie.",
+          "etoiles": 5,
+          "type": "h",
+          "mots_cles": [
+            "service client",
+            "hotline",
+            "appel",
+            "téléphon",
+            "telephon"
+          ]
+        },
+        {
+          "id": "rdvbanque",
+          "emoji": "🏦",
+          "nom": "On t’aide à organiser un rendez-vous avec ta banque",
+          "exemple": "Je veux un rendez-vous avec un conseiller de ma banque.",
+          "etoiles": 4,
+          "type": "h",
+          "mots_cles": [
+            "conseiller",
+            "banquier"
+          ]
+        },
+        {
+          "id": "specialiste",
+          "emoji": "🩺",
+          "nom": "On recherche un spécialiste disponible près de chez toi",
+          "exemple": "Je cherche un dermatologue près de chez moi.",
+          "etoiles": 5,
+          "type": "h",
+          "mots_cles": [
+            "spécialiste",
+            "specialiste",
+            "dermato",
+            "dentiste",
+            "ophtalm",
+            "kiné",
+            "kine(?![a-zà-ÿ])",
+            "gynéco",
+            "gyneco",
+            "cardio",
+            "psy",
+            "orthodont",
+            "ORL(?![a-zà-ÿ])",
+            "pédiatre",
+            "pediatre"
           ]
         }
       ]
     },
     {
-      "id": "admin",
-      "emoji": "🧾",
-      "nom": "Administratif",
+      "id": "paperasse",
+      "emoji": "📄",
+      "nom": "On te débarrasse de la paperasse",
+      "accroche": "Ces démarches que tu repousses depuis des semaines.",
+      "resultat": "Des documents préparés, une comparaison exploitable ou une démarche prête à être validée et effectuée.",
       "sous": [
         {
           "id": "documents",
           "emoji": "📄",
-          "nom": "Documents & démarches",
+          "nom": "On prépare tes documents administratifs",
+          "exemple": "Je dois préparer un dossier administratif.",
           "etoiles": 5,
           "type": "h",
-          "taches": [
-            "Remplir un formulaire",
-            "Envoyer un justificatif",
-            "Suivre un dossier"
-          ],
           "mots_cles": [
-            "formulaire",
-            "justificatif",
-            "administr",
-            "dossier",
-            "démarche",
-            "demarche",
+            "document",
             "papiers",
-            "document"
+            "justificatif",
+            "attestation",
+            "administr",
+            "dossier"
+          ]
+        },
+        {
+          "id": "reclamation",
+          "emoji": "✉️",
+          "nom": "On rédige ta réclamation",
+          "exemple": "Mon opérateur me facture trop cher, écris ma réclamation.",
+          "etoiles": 5,
+          "type": "h",
+          "mots_cles": [
+            "réclam",
+            "reclam",
+            "litige",
+            "rembours",
+            "factur",
+            "trop cher",
+            "contest"
+          ]
+        },
+        {
+          "id": "resiliation",
+          "emoji": "📱",
+          "nom": "On t’aide à résilier ton abonnement",
+          "exemple": "Je veux arrêter mon abonnement Internet.",
+          "etoiles": 5,
+          "type": "h",
+          "mots_cles": [
+            "résili",
+            "resili",
+            "abonnement",
+            "désabonn",
+            "desabonn"
           ]
         },
         {
           "id": "sav",
-          "emoji": "📢",
-          "nom": "Réclamations & SAV",
+          "emoji": "🛠️",
+          "nom": "On prépare ton dossier SAV",
+          "exemple": "Mon lave-linge est en panne et toujours sous garantie.",
           "etoiles": 5,
           "type": "h",
-          "taches": [
-            "Écrire une réclamation",
-            "Contacter un SAV",
-            "Demander un remboursement"
-          ],
           "mots_cles": [
             "sav(?![a-zà-ÿ])",
-            "réclam",
-            "reclam",
-            "rembours",
-            "litige"
-          ]
-        },
-        {
-          "id": "operateurs",
-          "emoji": "📱",
-          "nom": "Opérateurs (box, mobile)",
-          "etoiles": 5,
-          "type": "h",
-          "taches": [
-            "Changer de forfait",
-            "Signaler une panne",
-            "Comparer les offres"
-          ],
-          "mots_cles": [
-            "opérateur",
-            "operateur",
-            "box(?![a-zà-ÿ])",
-            "forfait",
-            "sfr(?![a-zà-ÿ])",
-            "bouygues",
-            "free(?![a-zà-ÿ])",
-            "fibre"
+            "panne",
+            "garantie",
+            "défectueu",
+            "defectueu"
           ]
         },
         {
           "id": "banque",
           "emoji": "🏦",
-          "nom": "Banque",
+          "nom": "On compare tes offres bancaires",
+          "exemple": "Je veux changer de banque, compare les offres pour moi.",
           "etoiles": 5,
           "type": "h",
-          "taches": [
-            "Ouvrir un compte",
-            "Contester un prélèvement",
-            "Demander un prêt"
-          ],
           "mots_cles": [
             "banque",
             "bancaire",
-            "virement",
-            "prélèvement",
-            "prêts?(?![a-zà-ÿ])",
             "crédit",
-            "credit"
+            "credit",
+            "prêts?(?![a-zà-ÿ])",
+            "compte courant"
           ]
         },
         {
-          "id": "assurance",
+          "id": "assurances",
           "emoji": "🛡️",
-          "nom": "Assurances",
+          "nom": "On compare tes assurances",
+          "exemple": "Compare les meilleures assurances habitation.",
           "etoiles": 5,
           "type": "h",
-          "taches": [
-            "Déclarer un sinistre",
-            "Comparer des assurances",
-            "Changer de mutuelle"
-          ],
           "mots_cles": [
             "assur",
-            "sinistre",
-            "mutuelle"
+            "mutuelle",
+            "sinistre"
           ]
         },
         {
-          "id": "resiliation",
-          "emoji": "✂️",
-          "nom": "Résiliations",
+          "id": "formulaires",
+          "emoji": "📋",
+          "nom": "On t’aide à remplir tes formulaires",
+          "exemple": "J’ai un formulaire à remplir et je n’y comprends rien.",
           "etoiles": 5,
           "type": "h",
-          "taches": [
-            "Résilier un abonnement",
-            "Résilier la salle de sport",
-            "Résilier un streaming"
-          ],
           "mots_cles": [
-            "résili",
-            "resili",
-            "abonnement",
-            "désabonn"
+            "formulaire",
+            "cerfa",
+            "remplir",
+            "démarche",
+            "demarche"
           ]
         }
       ]
@@ -392,82 +325,123 @@
     {
       "id": "achats",
       "emoji": "🛍️",
-      "nom": "Achat & vente",
+      "nom": "On cherche, on compare, on vend",
+      "accroche": "Tu nous dis ce que tu veux. On fait les recherches.",
+      "resultat": "Une sélection personnalisée, un comparatif clair ou une annonce prête à publier.",
       "sous": [
         {
-          "id": "vehicules",
+          "id": "voiture",
           "emoji": "🚗",
-          "nom": "Véhicules",
+          "nom": "On te trouve une voiture adaptée à ton budget",
+          "exemple": "Je cherche une voiture d’occasion à moins de 12 000 €.",
           "etoiles": 5,
-          "type": "h",
-          "taches": [
-            "Trouver une voiture",
-            "Comparer des leasings",
-            "Vendre son véhicule"
-          ],
+          "type": "ia",
           "mots_cles": [
             "voiture",
             "véhicule",
             "vehicule",
+            "occasion",
             "motos?(?![a-zà-ÿ])",
-            "scooter",
-            "leasing"
+            "scooter"
           ]
         },
         {
-          "id": "cadeaux",
+          "id": "cadeau",
           "emoji": "🎁",
-          "nom": "Cadeaux",
+          "nom": "On te trouve le cadeau idéal",
+          "exemple": "Un cadeau original pour les 60 ans de mon père.",
           "etoiles": 5,
           "type": "ia",
-          "taches": [
-            "Trouver une idée",
-            "Commander",
-            "Penser à la date"
-          ],
           "mots_cles": [
             "cadeau",
             "anniversaire"
           ]
         },
         {
-          "id": "annonces",
-          "emoji": "🏷️",
-          "nom": "Petites annonces (Leboncoin, Vinted)",
+          "id": "prix",
+          "emoji": "🛍️",
+          "nom": "On compare les prix avant ton achat",
+          "exemple": "Je veux acheter un aspirateur, compare les prix pour moi.",
+          "etoiles": 5,
+          "type": "ia",
+          "mots_cles": [
+            "prix",
+            "achat",
+            "acheter",
+            "moins cher"
+          ]
+        },
+        {
+          "id": "leboncoin",
+          "emoji": "📸",
+          "nom": "On prépare ton annonce Leboncoin",
+          "exemple": "Je veux vendre mon canapé sur Leboncoin.",
           "etoiles": 5,
           "type": "h",
-          "taches": [
-            "Créer une annonce",
-            "Répondre aux acheteurs",
-            "Gérer les envois"
-          ],
           "mots_cles": [
             "leboncoin",
             "bon coin",
+            "annonce"
+          ]
+        },
+        {
+          "id": "vinted",
+          "emoji": "👗",
+          "nom": "On prépare tes annonces Vinted",
+          "exemple": "Je veux vendre mes vêtements sur Vinted.",
+          "etoiles": 5,
+          "type": "h",
+          "mots_cles": [
             "vinted",
-            "annonce",
+            "vêtement",
+            "vetement",
+            "fringue"
+          ]
+        },
+        {
+          "id": "estimation",
+          "emoji": "💸",
+          "nom": "On estime le prix de vente de ton objet",
+          "exemple": "Combien je peux revendre mon vélo ?",
+          "etoiles": 5,
+          "type": "ia",
+          "mots_cles": [
+            "estim",
+            "combien (je peux|vaut|ça vaut)",
             "revendre",
-            "vendre(?![a-zà-ÿ])"
+            "vendre(?![a-zà-ÿ])",
+            "valeur"
+          ]
+        },
+        {
+          "id": "leasing",
+          "emoji": "🚘",
+          "nom": "On compare les meilleures offres de leasing",
+          "exemple": "Compare les offres de leasing pour ma prochaine voiture.",
+          "etoiles": 5,
+          "type": "ia",
+          "mots_cles": [
+            "leasing",
+            "lld(?![a-zà-ÿ])",
+            "loa(?![a-zà-ÿ])"
           ]
         }
       ]
     },
     {
-      "id": "voyages",
+      "id": "voyage",
       "emoji": "✈️",
-      "nom": "Voyages",
+      "nom": "On prépare ton prochain voyage",
+      "accroche": "Profite du voyage, pas des heures de recherche.",
+      "resultat": "Un programme personnalisé avec prix indicatifs, liens de réservation et recommandations.",
       "sous": [
         {
           "id": "vols",
-          "emoji": "🛫",
-          "nom": "Vols",
+          "emoji": "✈️",
+          "nom": "On te trouve des vols adaptés à ton budget",
+          "exemple": "Trouve-moi un vol pas cher pour Lisbonne en mai.",
           "etoiles": 5,
           "type": "ia",
-          "taches": [
-            "Trouver un vol",
-            "Comparer les prix",
-            "Enregistrement"
-          ],
           "mots_cles": [
             "vols?(?![a-zà-ÿ])",
             "avion",
@@ -478,18 +452,18 @@
         {
           "id": "trains",
           "emoji": "🚆",
-          "nom": "Trains",
+          "nom": "On compare tes trajets en train",
+          "exemple": "Je dois aller à Lyon en train vendredi.",
           "etoiles": 5,
           "type": "ia",
-          "taches": [
-            "Trouver un billet",
-            "Comparer les horaires"
-          ],
           "mots_cles": [
             "sncf",
             "tgv",
             "ouigo",
             "billets? de train",
+            "train pour",
+            "trajet",
+            "en train(?!\\s+d)",
             "le train",
             "un train",
             "trains(?![a-zà-ÿ])"
@@ -498,187 +472,227 @@
         {
           "id": "hotels",
           "emoji": "🏨",
-          "nom": "Hôtels",
+          "nom": "On sélectionne tes hôtels",
+          "exemple": "Trouve-moi un hôtel sympa à Bordeaux pour deux nuits.",
           "etoiles": 5,
           "type": "ia",
-          "taches": [
-            "Trouver un hôtel",
-            "Comparer les logements"
-          ],
           "mots_cles": [
             "hôtel",
             "hotel",
             "airbnb",
             "hébergement",
-            "hebergement"
-          ]
-        },
-        {
-          "id": "activites",
-          "emoji": "🎡",
-          "nom": "Activités",
-          "etoiles": 4,
-          "type": "ia",
-          "taches": [
-            "Trouver quoi faire",
-            "Réserver une activité",
-            "Préparer un itinéraire"
-          ],
-          "mots_cles": [
-            "activité",
-            "activite",
-            "week-end",
-            "weekend",
-            "excursion",
-            "voyage",
-            "vacances",
-            "itinéraire"
+            "hebergement",
+            "logement"
           ]
         },
         {
           "id": "location",
-          "emoji": "🚙",
-          "nom": "Location de voiture",
+          "emoji": "🚗",
+          "nom": "On compare les locations de voitures",
+          "exemple": "Je veux louer une voiture à Nice pour une semaine.",
           "etoiles": 5,
           "type": "ia",
-          "taches": [
-            "Louer une voiture",
-            "Comparer les loueurs"
-          ],
           "mots_cles": [
             "location de voiture",
             "louer une voiture",
             "loueur"
           ]
+        },
+        {
+          "id": "itineraire",
+          "emoji": "🏝️",
+          "nom": "On organise ton itinéraire de vacances",
+          "exemple": "Je pars cinq jours à Rome, organise mon voyage.",
+          "etoiles": 5,
+          "type": "ia",
+          "mots_cles": [
+            "itinéraire",
+            "itineraire",
+            "vacances",
+            "road trip",
+            "séjour",
+            "sejour",
+            "je pars"
+          ]
+        },
+        {
+          "id": "activites",
+          "emoji": "🎟️",
+          "nom": "On trouve des activités pour ton séjour",
+          "exemple": "Quoi faire à Barcelone avec des enfants ?",
+          "etoiles": 4,
+          "type": "ia",
+          "mots_cles": [
+            "activité",
+            "activite",
+            "quoi faire",
+            "excursion",
+            "visiter"
+          ]
+        },
+        {
+          "id": "programme",
+          "emoji": "🧳",
+          "nom": "On prépare ton programme de voyage",
+          "exemple": "Prépare le programme de notre week-end en Normandie.",
+          "etoiles": 5,
+          "type": "ia",
+          "mots_cles": [
+            "voyage",
+            "week-end",
+            "weekend"
+          ]
         }
       ]
     },
     {
-      "id": "culture",
-      "emoji": "📚",
-      "nom": "Culture & actualité",
+      "id": "resume",
+      "emoji": "🔎",
+      "nom": "On cherche et on résume pour toi",
+      "accroche": "L’essentiel, sans passer des heures à chercher.",
+      "resultat": "Une synthèse facile à comprendre, avec des sources vérifiables lorsque nécessaire.",
       "sous": [
         {
           "id": "actu",
           "emoji": "📰",
-          "nom": "Actualités",
+          "nom": "On te résume l’actualité",
+          "exemple": "Résume-moi l’actualité de la semaine.",
           "etoiles": 4,
           "type": "ia",
-          "taches": [
-            "Résumer l’actualité",
-            "Trouver des sources fiables"
-          ],
           "mots_cles": [
             "actu",
             "nouvelles",
-            "informations",
-            "sources"
+            "informations"
           ]
         },
         {
           "id": "politique",
           "emoji": "🗳️",
-          "nom": "Programmes politiques (résumés neutres)",
+          "nom": "On compare les programmes politiques de façon neutre",
+          "exemple": "Compare les programmes des candidats aux municipales.",
           "etoiles": 4,
           "type": "ia",
-          "taches": [
-            "Résumer un programme",
-            "Comparer des programmes"
-          ],
           "mots_cles": [
             "politique",
-            "programme",
             "élection",
             "election",
-            "candidats?(?![a-zà-ÿ])"
+            "candidats?(?![a-zà-ÿ])",
+            "municipales",
+            "présidentielle"
           ]
         },
         {
-          "id": "litterature",
-          "emoji": "📖",
-          "nom": "Littérature",
+          "id": "livre",
+          "emoji": "📚",
+          "nom": "On te résume un livre",
+          "exemple": "Résume-moi le livre « L’Étranger » de Camus.",
           "etoiles": 4,
           "type": "ia",
-          "taches": [
-            "Résumer un livre",
-            "Trouver un livre"
-          ],
           "mots_cles": [
             "livres?(?![a-zà-ÿ])",
             "romans?(?![a-zà-ÿ])",
             "littéra",
-            "littera",
-            "résumé"
+            "littera"
+          ]
+        },
+        {
+          "id": "film",
+          "emoji": "🎬",
+          "nom": "On t’explique un film ou une œuvre",
+          "exemple": "Explique-moi la fin du film Inception.",
+          "etoiles": 4,
+          "type": "ia",
+          "mots_cles": [
+            "films?(?![a-zà-ÿ])",
+            "œuvre",
+            "oeuvre",
+            "série",
+            "serie(?![a-zà-ÿ])",
+            "cinéma",
+            "cinema"
+          ]
+        },
+        {
+          "id": "recherche",
+          "emoji": "🔎",
+          "nom": "On fait une recherche approfondie à ta place",
+          "exemple": "Fais une recherche sur les aides à la rénovation énergétique.",
+          "etoiles": 4,
+          "type": "ia",
+          "mots_cles": [
+            "recherche",
+            "renseign",
+            "cherch",
+            "trouv"
+          ]
+        },
+        {
+          "id": "synthese",
+          "emoji": "📊",
+          "nom": "On prépare une synthèse claire sur un sujet",
+          "exemple": "Résume-moi ce document de 50 pages.",
+          "etoiles": 4,
+          "type": "ia",
+          "mots_cles": [
+            "synthèse",
+            "synthese",
+            "résum",
+            "resum"
           ]
         },
         {
           "id": "histoire",
-          "emoji": "🏺",
-          "nom": "Histoire",
+          "emoji": "🎨",
+          "nom": "On t’explique un événement historique ou artistique",
+          "exemple": "Explique-moi simplement la Révolution française.",
           "etoiles": 4,
           "type": "ia",
-          "taches": [
-            "Expliquer un fait historique"
-          ],
           "mots_cles": [
             "histoire",
-            "historique"
-          ]
-        },
-        {
-          "id": "art",
-          "emoji": "🎬",
-          "nom": "Art & cinéma",
-          "etoiles": 4,
-          "type": "ia",
-          "taches": [
-            "Découvrir un artiste",
-            "Trouver un film",
-            "Expliquer une œuvre"
-          ],
-          "mots_cles": [
-            "art(?![a-zà-ÿ])",
+            "historique",
+            "révolution",
+            "revolution",
+            "guerre",
+            "siècle",
+            "siecle",
             "artiste",
+            "art(?![a-zà-ÿ])",
             "musée",
-            "musee",
-            "films?(?![a-zà-ÿ])",
-            "cinéma",
-            "cinema",
-            "série"
-          ]
-        },
-        {
-          "id": "culturegen",
-          "emoji": "🧠",
-          "nom": "Culture générale",
-          "etoiles": 4,
-          "type": "ia",
-          "taches": [
-            "Répondre à une question",
-            "Préparer un quiz"
-          ],
-          "mots_cles": [
-            "culture",
-            "quiz"
+            "musee"
           ]
         }
       ]
     },
     {
-      "id": "education",
+      "id": "apprendre",
       "emoji": "🎓",
-      "nom": "Éducation",
+      "nom": "On t’aide à apprendre plus facilement",
+      "accroche": "Moins de galère, plus de progrès.",
+      "resultat": "Des explications personnalisées, des exercices ou un accompagnement adapté.",
       "sous": [
         {
-          "id": "devoirs",
-          "emoji": "✏️",
-          "nom": "Aide aux devoirs",
+          "id": "cours",
+          "emoji": "📖",
+          "nom": "On t’explique un cours compliqué",
+          "exemple": "Explique-moi mon cours sur les probabilités.",
           "etoiles": 5,
           "type": "ia",
-          "taches": [
-            "Expliquer un exercice",
-            "Réviser un contrôle"
-          ],
+          "mots_cles": [
+            "mon cours",
+            "un cours",
+            "ce cours",
+            "leçon",
+            "lecon",
+            "chapitre"
+          ]
+        },
+        {
+          "id": "devoirs",
+          "emoji": "📝",
+          "nom": "On t’aide à faire tes devoirs",
+          "exemple": "Aide mon fils à faire ses devoirs de maths.",
+          "etoiles": 5,
+          "type": "ia",
           "mots_cles": [
             "devoirs(?![a-zà-ÿ])",
             "exercices?(?![a-zà-ÿ])",
@@ -687,38 +701,16 @@
             "collège",
             "college",
             "lycée",
-            "lycee",
-            "révis",
-            "revis"
+            "lycee"
           ]
         },
         {
-          "id": "cours",
-          "emoji": "👩‍🏫",
-          "nom": "Cours particuliers",
-          "etoiles": 5,
-          "type": "f",
-          "taches": [
-            "Trouver un professeur",
-            "Soutien scolaire"
-          ],
-          "mots_cles": [
-            "cours particuliers?",
-            "profs?(?![a-zà-ÿ])",
-            "professeur",
-            "soutien scolaire"
-          ]
-        },
-        {
-          "id": "langues",
-          "emoji": "🌍",
-          "nom": "Langues",
+          "id": "langue",
+          "emoji": "🇪🇸",
+          "nom": "On t’aide à apprendre une langue",
+          "exemple": "Je veux apprendre l’espagnol avant l’été.",
           "etoiles": 5,
           "type": "ia",
-          "taches": [
-            "Apprendre une langue",
-            "Traduire un texte"
-          ],
           "mots_cles": [
             "langue",
             "anglais",
@@ -726,7 +718,56 @@
             "allemand",
             "italien",
             "chinois",
+            "japonais",
             "tradu"
+          ]
+        },
+        {
+          "id": "prof",
+          "emoji": "🎓",
+          "nom": "On te trouve un professeur particulier",
+          "exemple": "Je cherche un prof particulier de maths pour ma fille.",
+          "etoiles": 5,
+          "type": "f",
+          "mots_cles": [
+            "profs?(?![a-zà-ÿ])",
+            "professeur",
+            "cours particuliers?",
+            "soutien scolaire"
+          ]
+        },
+        {
+          "id": "fiches",
+          "emoji": "🧠",
+          "nom": "On prépare tes fiches de révision",
+          "exemple": "Prépare mes fiches de révision pour le bac.",
+          "etoiles": 5,
+          "type": "ia",
+          "mots_cles": [
+            "fiches?(?![a-zà-ÿ])",
+            "révis",
+            "revis",
+            "examen",
+            "partiel",
+            "bac(?![a-zà-ÿ])"
+          ]
+        },
+        {
+          "id": "informatique",
+          "emoji": "💻",
+          "nom": "On t’aide à comprendre un outil informatique",
+          "exemple": "Explique-moi comment faire un tableau sur Excel.",
+          "etoiles": 5,
+          "type": "ia",
+          "mots_cles": [
+            "excel",
+            "word(?![a-zà-ÿ])",
+            "powerpoint",
+            "ordinateur",
+            "logiciel",
+            "informatique",
+            "tableur",
+            "appli"
           ]
         }
       ]
