@@ -332,16 +332,20 @@ if (window.MediaRecorder && navigator.mediaDevices && navigator.mediaDevices.get
 }
 
 // Dictée : la reconnaissance vocale du navigateur (Chrome, Edge, Safari) écrit dans le champ.
-// Une seule dictée à la fois. Chaque phrase est une session courte, relancée tant que
-// l'utilisateur n'a pas arrêté : c'est plus fiable sur mobile (Android répète le texte
-// en mode continu, Safari iOS coupe la session après chaque phrase).
+// Une seule dictée à la fois. Session continue partout, sauf Chrome Android qui répète le
+// texte en mode continu : là, chaque phrase est une session courte relancée.
+// La session est relancée si le navigateur la coupe, et la dictée s'arrête avec un message
+// si plusieurs sessions de suite n'ont rien capté (micro ou Dictée désactivés).
 const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+const SHORT_SESSIONS = /Android/i.test(navigator.userAgent);
 const DICTATE_ERRORS = {
   'not-allowed': 'Autorise l’accès au micro pour dicter.',
-  'service-not-allowed': 'La dictée n’est pas disponible dans ce navigateur.',
+  'service-not-allowed': 'Dictée indisponible. Sur Mac ou iPhone, active Siri ou la Dictée dans les réglages, ou laisse plutôt un message vocal.',
   'audio-capture': 'Aucun micro détecté.',
   network: 'La dictée a besoin d’une connexion Internet.',
+  'language-not-supported': 'La dictée en français n’est pas disponible dans ce navigateur.',
 };
+const DICTATE_SILENT = 'On n’entend rien. Vérifie le micro choisi par ton navigateur, ou laisse plutôt un message vocal.';
 let dictation = null; // { btn, stop() }
 if (Speech) $$('[data-dictate]').forEach(btn => {
   const field = $('#' + btn.dataset.dictate);
@@ -355,10 +359,11 @@ if (Speech) $$('[data-dictate]').forEach(btn => {
     const mine = dictation && dictation.btn === btn;
     if (dictation) dictation.stop();
     if (mine) return;
-    let active = true, rec = null, base = '';
+    let active = true, rec = null, base = '', heard = false, empty = 0;
     const finish = text => {
       active = false;
-      if (rec) rec.abort();
+      // stop() et non abort() : le navigateur livre encore les derniers mots prononcés.
+      if (rec) { try { rec.stop(); } catch (err) { /* déjà arrêtée */ } }
       btn.classList.remove('rec');
       btn.setAttribute('aria-pressed', 'false');
       label.textContent = 'Dicter';
@@ -367,18 +372,29 @@ if (Speech) $$('[data-dictate]').forEach(btn => {
     };
     const listen = () => {
       base = field.value.trim();
-      rec = new Speech();
-      rec.lang = 'fr-FR';
-      rec.continuous = false;
-      rec.interimResults = true;
-      rec.onresult = e => {
-        const said = [...e.results].map(r => r[0].transcript).join(' ').trim();
-        field.value = base + (base && said ? ' ' : '') + said;
+      heard = false;
+      const r = rec = new Speech();
+      r.lang = 'fr-FR';
+      r.continuous = !SHORT_SESSIONS;
+      r.interimResults = true;
+      r.onresult = e => {
+        const said = [...e.results].map(x => x[0].transcript.trim()).filter(Boolean).join(' ');
+        if (!said) return;
+        heard = true; empty = 0;
+        if (active) msg.textContent = 'Parle, on écrit…';
+        field.value = base + (base ? ' ' : '') + said;
         field.dispatchEvent(new Event('input'));
       };
-      rec.onerror = e => { if (DICTATE_ERRORS[e.error]) finish(DICTATE_ERRORS[e.error]); };
-      rec.onend = () => { if (active) setTimeout(() => { if (active) listen(); }, 150); };
-      try { rec.start(); } catch (err) { finish('La dictée n’a pas pu démarrer. Réessaie.'); }
+      r.onerror = e => {
+        if (DICTATE_ERRORS[e.error]) finish(DICTATE_ERRORS[e.error]);
+        else if (e.error === 'no-speech' && active) msg.textContent = 'On t’écoute… parle un peu plus fort.';
+      };
+      r.onend = () => {
+        if (!active || r !== rec) return;
+        if (!heard && ++empty >= 3) return finish(DICTATE_SILENT);
+        setTimeout(() => { if (active && r === rec) listen(); }, 250);
+      };
+      try { r.start(); } catch (err) { finish('La dictée n’a pas pu démarrer. Réessaie.'); }
     };
     dictation = { btn, stop: () => finish() };
     btn.classList.add('rec');

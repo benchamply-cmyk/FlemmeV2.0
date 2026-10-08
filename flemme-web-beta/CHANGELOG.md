@@ -93,6 +93,7 @@ Attention : ces ZIP contiennent encore flemme.fr, le jaune, la grille à plat et
 - Espace perso et espace équipe : précisions, liens vers les fichiers et lecteur du message vocal (liens temporaires d’une heure).
 - Script Supabase à exécuter : supabase/formulaire-enrichi.sql (colonne fichiers, compartiment et règles d’accès). Les demandes envoyées avant ne sont pas rattrapées.
 - Limite : la suppression du compte n’efface pas encore les fichiers stockés.
+- Dictée : session continue (sauf Android), derniers mots conservés à l’arrêt, message si rien n’est capté ou si la Dictée est désactivée (Safari).
 
 ## Reste à faire
 - Application : compiler et tester sur de vrais téléphones (Xcode, Android Studio).
