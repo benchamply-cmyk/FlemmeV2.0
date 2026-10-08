@@ -345,7 +345,13 @@ const DICTATE_ERRORS = {
   network: 'La dictée a besoin d’une connexion Internet.',
   'language-not-supported': 'La dictée en français n’est pas disponible dans ce navigateur.',
 };
-const DICTATE_SILENT = 'On n’entend rien. Vérifie le micro choisi par ton navigateur, ou laisse plutôt un message vocal.';
+const MAC = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+const DICTATE_SILENT = MAC
+  ? 'Ton navigateur n’écrit rien. Utilise plutôt la dictée de ton appareil : touche micro du clavier sur iPhone, deux appuis sur Fn (ou la touche micro) sur Mac. Ou laisse un message vocal.'
+  : 'On n’entend rien. Vérifie le micro choisi par ton navigateur, ou laisse plutôt un message vocal.';
+// Safari peut écouter sans jamais rien renvoyer (Siri ou Dictée désactivés) : au bout de
+// ce délai sans un seul mot reconnu, la dictée s'arrête et propose une autre solution.
+const DICTATE_TIMEOUT = 8000;
 let dictation = null; // { btn, stop() }
 if (Speech) $$('[data-dictate]').forEach(btn => {
   const field = $('#' + btn.dataset.dictate);
@@ -359,9 +365,11 @@ if (Speech) $$('[data-dictate]').forEach(btn => {
     const mine = dictation && dictation.btn === btn;
     if (dictation) dictation.stop();
     if (mine) return;
-    let active = true, rec = null, base = '', heard = false, empty = 0;
+    let active = true, rec = null, base = '', heard = false, empty = 0, any = false;
+    const watchdog = setTimeout(() => { if (active && !any) finish(DICTATE_SILENT); }, DICTATE_TIMEOUT);
     const finish = text => {
       active = false;
+      clearTimeout(watchdog);
       // stop() et non abort() : le navigateur livre encore les derniers mots prononcés.
       if (rec) { try { rec.stop(); } catch (err) { /* déjà arrêtée */ } }
       btn.classList.remove('rec');
@@ -380,7 +388,7 @@ if (Speech) $$('[data-dictate]').forEach(btn => {
       r.onresult = e => {
         const said = [...e.results].map(x => x[0].transcript.trim()).filter(Boolean).join(' ');
         if (!said) return;
-        heard = true; empty = 0;
+        heard = any = true; empty = 0;
         if (active) msg.textContent = 'Parle, on écrit…';
         field.value = base + (base ? ' ' : '') + said;
         field.dispatchEvent(new Event('input'));
