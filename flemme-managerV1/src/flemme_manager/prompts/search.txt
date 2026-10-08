@@ -1,0 +1,1 @@
+Search agent instructions will be defined with the search workflow.
