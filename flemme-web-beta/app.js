@@ -102,6 +102,7 @@ const saveDraft = () => safe(() => SS.setItem('flemmeDraft', taskInput.value));
 taskInput.addEventListener('input', saveDraft);
 $('#flemmeForm').addEventListener('submit', e => {
   e.preventDefault(); // on ne recharge pas la page : on passe à l'écran suivant
+  if (dictation) dictation.stop();
   task = taskInput.value.trim();
   if (!task) return;
   buildOffer();
@@ -331,32 +332,61 @@ if (window.MediaRecorder && navigator.mediaDevices && navigator.mediaDevices.get
 }
 
 // Dictée : la reconnaissance vocale du navigateur (Chrome, Edge, Safari) écrit dans le champ.
+// Une seule dictée à la fois. Chaque phrase est une session courte, relancée tant que
+// l'utilisateur n'a pas arrêté : c'est plus fiable sur mobile (Android répète le texte
+// en mode continu, Safari iOS coupe la session après chaque phrase).
 const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+const DICTATE_ERRORS = {
+  'not-allowed': 'Autorise l’accès au micro pour dicter.',
+  'service-not-allowed': 'La dictée n’est pas disponible dans ce navigateur.',
+  'audio-capture': 'Aucun micro détecté.',
+  network: 'La dictée a besoin d’une connexion Internet.',
+};
+let dictation = null; // { btn, stop() }
 if (Speech) $$('[data-dictate]').forEach(btn => {
   const field = $('#' + btn.dataset.dictate);
   const label = btn.querySelector('span');
-  let rec = null;
+  const msg = el('span', 'dictate-msg');
+  msg.setAttribute('aria-live', 'polite');
+  btn.after(msg);
   btn.hidden = false;
   btn.setAttribute('aria-pressed', 'false');
   btn.addEventListener('click', () => {
-    if (rec) { rec.stop(); return; }
-    rec = new Speech();
-    rec.lang = 'fr-FR';
-    rec.continuous = true;
-    rec.interimResults = true;
-    const base = field.value.trim();
-    rec.onresult = e => {
-      const said = [...e.results].map(r => r[0].transcript).join('').trim();
-      field.value = base + (base && said ? ' ' : '') + said;
-      field.dispatchEvent(new Event('input'));
+    const mine = dictation && dictation.btn === btn;
+    if (dictation) dictation.stop();
+    if (mine) return;
+    let active = true, rec = null, base = '';
+    const finish = text => {
+      active = false;
+      if (rec) rec.abort();
+      btn.classList.remove('rec');
+      btn.setAttribute('aria-pressed', 'false');
+      label.textContent = 'Dicter';
+      msg.textContent = text || '';
+      if (dictation && dictation.btn === btn) dictation = null;
     };
-    rec.onend = () => { rec = null; btn.classList.remove('rec'); btn.setAttribute('aria-pressed', 'false'); label.textContent = 'Dicter'; };
-    rec.onerror = () => rec && rec.stop();
-    rec.start();
+    const listen = () => {
+      base = field.value.trim();
+      rec = new Speech();
+      rec.lang = 'fr-FR';
+      rec.continuous = false;
+      rec.interimResults = true;
+      rec.onresult = e => {
+        const said = [...e.results].map(r => r[0].transcript).join(' ').trim();
+        field.value = base + (base && said ? ' ' : '') + said;
+        field.dispatchEvent(new Event('input'));
+      };
+      rec.onerror = e => { if (DICTATE_ERRORS[e.error]) finish(DICTATE_ERRORS[e.error]); };
+      rec.onend = () => { if (active) setTimeout(() => { if (active) listen(); }, 150); };
+      try { rec.start(); } catch (err) { finish('La dictée n’a pas pu démarrer. Réessaie.'); }
+    };
+    dictation = { btn, stop: () => finish() };
     btn.classList.add('rec');
     btn.setAttribute('aria-pressed', 'true');
     label.textContent = 'Arrêter la dictée';
+    msg.textContent = 'Parle, on écrit…';
     field.focus();
+    listen();
   });
 });
 
@@ -369,6 +399,7 @@ $('#missionForm').addEventListener('submit', e => {
     return;
   }
   if (recorder) { showError(err, 'Arrête d’abord l’enregistrement du message vocal.'); voiceBtn.focus(); return; }
+  if (dictation) dictation.stop();
   const files = chosenFiles();
   if (files.reduce((t, x) => t + x.size, 0) + (voiceFile ? voiceFile.size : 0) > MAX_UPLOAD) {
     showError(err, 'Tes fichiers dépassent 8 Mo au total. Retire-en un ou envoie des versions plus légères.');
@@ -419,7 +450,13 @@ function trackRequest(copy) {
   if (!window.SB || !SB.ready) return;
   const s = SB.current();
   if (!s && !copy.email) return; // contact par téléphone : rien à rattacher à un compte
-  SB.deposer(copy).then(() => {
+  // Si la base n'a pas encore les colonnes du formulaire enrichi (script
+  // supabase/formulaire-enrichi.sql pas encore exécuté), on réessaie avec les anciens champs.
+  SB.deposer(copy).catch(() => {
+    const old = Object.assign({}, copy, { besoin: copy.besoin.slice(0, 280), aide_attendue: copy.precisions ? copy.precisions.slice(0, 600) : null });
+    delete old.precisions; delete old.pieces_jointes; delete old.vocal;
+    return SB.deposer(old);
+  }).then(() => {
     const link = $('#trackLink');
     if (s) {
       $('#trackTxt').textContent = 'Retrouve cette demande et son avancement dans ton espace.';

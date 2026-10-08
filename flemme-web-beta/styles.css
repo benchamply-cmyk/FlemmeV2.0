@@ -351,3 +351,4 @@ footer b { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-size:
 @media (prefers-reduced-motion: reduce) { .tool-btn.rec .ico { animation: none; } }
 .ask-bottom .primary { margin-left: auto; }
 .ask-bottom .tool-btn { font-family: "Bricolage Grotesque", system-ui, sans-serif; }
+.dictate-msg { font-size: 13px; color: var(--muted); }

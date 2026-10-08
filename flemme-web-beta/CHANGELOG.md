@@ -84,6 +84,10 @@ Attention : ces ZIP contiennent encore flemme.fr, le jaune, la grille à plat et
 - Dictée vocale sur le grand champ et sur « Précisions » (navigateurs compatibles) ; micro autorisé dans _headers.
 - Plus de limite de caractères. Script Supabase à exécuter : supabase/formulaire-enrichi.sql.
 
+## Corrections (8 oct. 2026)
+- Dictée : une seule à la fois, sessions courtes relancées automatiquement (plus fiable sur mobile), message affiché en cas de refus du micro ou d’erreur.
+- « Suivre ma demande » : si la base Supabase n’a pas encore les nouvelles colonnes, la demande est enregistrée avec les anciens champs (précisions dans « aide attendue ») et le bouton réapparaît.
+
 ## Reste à faire
 - Application : compiler et tester sur de vrais téléphones (Xcode, Android Studio).
 - Compléter les passages [...] des mentions légales et de la confidentialité, retirer le noindex.
