@@ -62,7 +62,7 @@ Attention : ces ZIP contiennent encore flemme.fr, le jaune, la grille à plat et
 
 ## Résultats concrets à la place des catégories (8 oct. 2026)
 - Accueil en trois parties : « T’as la flemme de quoi ? » avec le champ libre, 8 cartes « Les flemmes du moment » qui préremplissent la demande, puis « Et toi, t’as la flemme de quoi d’autre ? » (proposer une flemme, devenir ambassadeur).
-- « Voir tout ce qu’on peut faire pour toi » dévoile les 7 groupes de résultats (44 au total), chacun avec son accroche et son « Résultat livré ». Un clic préremplit la demande.
+- « Voir tout ce qu’on peut faire pour toi » dévoile les 7 groupes de résultats (45 au total), chacun avec son accroche et son « Résultat livré ». Un clic préremplit la demande.
 - Sections retirées de l’accueil : « Le principe est simple », « On commence petit », « Et demain ? », « Pourquoi on fait ça ? », dernier appel.
 - content/categories.json et content/accueil.json restructurés (modifiables dans /admin) ; mots-clés et ordre de détection mis à jour.
 
