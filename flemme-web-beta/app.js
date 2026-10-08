@@ -2,7 +2,7 @@
 /* =========================================================================
    FLEMME — logique de la page (JavaScript, sans framework)
    Le site est une « application d'une seule page » : toutes les étapes
-   (accueil, demande, confirmation, facilitateur) sont dans
+   (accueil, demande, confirmation) sont dans
    index.html, et ce fichier affiche l'une ou l'autre selon le parcours.
    ========================================================================= */
 
@@ -88,7 +88,6 @@ document.addEventListener('click', e => {
   if (!b) return;
   e.preventDefault();
   const go = b.dataset.go;
-  if (go === 'facilitateur') { $('#facForm').hidden = false; $('#facOk').hidden = true; }
   if (go === 'reset') resetApp();
   else show(go);
 });
@@ -403,15 +402,7 @@ $('#missionForm').addEventListener('submit', e => {
   }, data => { if (voice) data.set('vocal', voice); });
 });
 
-$('#facForm').addEventListener('submit', e => {
-  e.preventDefault();
-  const f = e.target, err = $('#facErr');
-  if (!f.querySelector('input[name=mode]:checked')) {
-    showError(err, 'Choisis au moins une façon d’aider (à distance ou sur place).');
-    return;
-  }
-  sendForm(f, err, () => { f.reset(); f.hidden = true; $('#facOk').hidden = false; });
-});
+// La candidature Brigadier (ex-Facilitateur) a sa propre page : rejoindre.html.
 
 /* ---------- 8. Espace personnel (Supabase, voir sb.js) ---------- */
 
@@ -497,10 +488,10 @@ function resetApp() {
 const draft = safe(() => SS.getItem('flemmeDraft'));
 if (draft) taskInput.value = draft;
 
-// Un lien direct vers flemme.org/#facilitateur ouvre le formulaire Facilitateur.
-const start = location.hash === '#facilitateur' ? 'facilitateur' : 'home';
-history.replaceState(null, '', start === 'home' ? './' : '#' + start);
-show(start, false, false);
+// Les anciens liens flemme.org/#facilitateur mènent à la page de la Brigade anti-flemme.
+if (location.hash === '#facilitateur') location.replace('rejoindre.html');
+history.replaceState(null, '', './');
+show('home', false, false);
 
 // Service worker : permet au site de s'afficher même hors connexion.
 if (!NATIVE && 'serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
