@@ -71,13 +71,15 @@ function renderDemande(d) {
   add('Compte', d.user_id ? 'Oui' : 'Pas encore (demande envoyée sans être connecté)');
   add('Catégorie', d.categorie);
   add('Échéance', d.echeance);
-  add('Précisions', d.precisions);
   add('Fréquence', d.frequence);
   add('Aide attendue', d.aide_attendue);
-  add('Pièces jointes', d.pieces_jointes ? d.pieces_jointes + ' fichier(s), à télécharger dans Netlify > Forms > beta-besoins' : '');
-  add('Message vocal', d.vocal ? 'Oui, à écouter dans Netlify > Forms > beta-besoins' : '');
+  // Demandes envoyées avant le stockage Supabase : fichiers seulement dans Netlify Forms.
+  if (!(d.fichiers || []).length) {
+    add('Pièces jointes', d.pieces_jointes ? d.pieces_jointes + ' fichier(s), dans Netlify > Forms > beta-besoins' : '');
+    add('Message vocal', d.vocal ? 'Oui, dans Netlify > Forms > beta-besoins' : '');
+  }
   add('Ambassadeur', d.ambassadeur ? 'Oui, d’accord pour en parler' : '');
-  li.append(infos, renderSuivi(d), renderChat(d));
+  li.append(infos, SB.blocPieces(d), renderSuivi(d), renderChat(d));
   return li;
 }
 

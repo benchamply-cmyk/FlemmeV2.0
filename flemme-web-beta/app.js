@@ -419,10 +419,14 @@ $('#missionForm').addEventListener('submit', e => {
     pieces_jointes: files.length, vocal: !!voiceFile,
     ambassadeur: f.elements.ambassadeur.checked,
   };
+  // Copie des fichiers dans l'espace (Supabase Storage), sous la référence de la demande.
+  const uploads = files.map((file, i) => ({ chemin: n + '/' + (i + 1) + '-' + safeName(file.name), file }));
+  if (voiceFile) uploads.push({ chemin: n + '/' + voiceFile.name, file: voiceFile });
+  copy.fichiers = uploads.map(u => u.chemin);
   const voice = voiceFile;
   sendForm(f, err, () => {
     ref = n;
-    trackRequest(copy);
+    trackRequest(copy, uploads);
     f.reset(); resetAttachments();
     safe(() => SS.removeItem('flemmeDraft'));
     $('#missionRef').textContent = 'Demande ' + ref + ' · Nous te recontacterons pour te dire si nous pouvons t’aider.';
@@ -444,19 +448,33 @@ $('#facForm').addEventListener('submit', e => {
 
 // Enregistre la demande pour qu'elle apparaisse dans l'espace, puis propose de la suivre.
 // Netlify Forms reste la source principale : un échec ici n'empêche rien.
-function trackRequest(copy) {
+// Nom de fichier sans accents ni caractères spéciaux, pour un chemin de stockage sûr.
+const safeName = name => (name || 'fichier').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  .replace(/[^A-Za-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '').slice(-60) || 'fichier';
+
+function trackRequest(copy, uploads = []) {
   const box = $('#trackBox');
   box.hidden = true;
   if (!window.SB || !SB.ready) return;
   const s = SB.current();
   if (!s && !copy.email) return; // contact par téléphone : rien à rattacher à un compte
   // Si la base n'a pas encore les colonnes du formulaire enrichi (script
-  // supabase/formulaire-enrichi.sql pas encore exécuté), on réessaie avec les anciens champs.
+  // supabase/formulaire-enrichi.sql pas encore exécuté), on réessaie sans les fichiers,
+  // puis avec les anciens champs.
+  const sansFichiers = Object.assign({}, copy);
+  delete sansFichiers.fichiers;
   SB.deposer(copy).catch(() => {
+    uploads = []; // sans le compartiment de stockage, les fichiers restent dans Netlify Forms
+    return SB.deposer(sansFichiers);
+  }).catch(() => {
     const old = Object.assign({}, copy, { besoin: copy.besoin.slice(0, 280), aide_attendue: copy.precisions ? copy.precisions.slice(0, 600) : null });
-    delete old.precisions; delete old.pieces_jointes; delete old.vocal;
+    delete old.precisions; delete old.pieces_jointes; delete old.vocal; delete old.fichiers;
     return SB.deposer(old);
-  }).then(() => {
+  }).then(() =>
+    // Fichiers copiés un par un, avant d'afficher le lien vers l'espace (quitter la page
+    // couperait l'envoi). Un fichier refusé n'empêche rien : il reste reçu via Netlify Forms.
+    uploads.reduce((p, u) => p.then(() => SB.envoyerFichier(u.chemin, u.file).catch(e => console.warn('Fichier non copié', u.chemin, e))), Promise.resolve())
+  ).then(() => {
     const link = $('#trackLink');
     if (s) {
       $('#trackTxt').textContent = 'Retrouve cette demande et son avancement dans ton espace.';

@@ -28,10 +28,11 @@ create table if not exists public.demandes (
 );
 
 -- Formulaire enrichi (bases créées avant le 8 oct. 2026) : nouvelles colonnes et
--- plus de limite de longueur. Les fichiers et le message vocal restent dans Netlify Forms.
+-- plus de limite de longueur. Fichiers et message vocal : Netlify Forms + stockage Supabase (fin du script).
 alter table public.demandes add column if not exists precisions text;
 alter table public.demandes add column if not exists pieces_jointes smallint not null default 0 check (pieces_jointes between 0 and 3);
 alter table public.demandes add column if not exists vocal boolean not null default false;
+alter table public.demandes add column if not exists fichiers text[] not null default '{}' check (cardinality(fichiers) <= 4);
 alter table public.demandes drop constraint if exists demandes_besoin_check;
 alter table public.demandes add constraint demandes_besoin_check check (char_length(besoin) >= 1);
 alter table public.demandes drop constraint if exists demandes_aide_attendue_check;
@@ -58,7 +59,7 @@ create trigger demandes_touch before update on public.demandes
 alter table public.demandes enable row level security;
 
 revoke all on public.demandes from anon, authenticated;
-grant insert (ref, user_id, email, besoin, precisions, categorie, echeance, aide_attendue, frequence, pieces_jointes, vocal, ambassadeur)
+grant insert (ref, user_id, email, besoin, precisions, categorie, echeance, aide_attendue, frequence, pieces_jointes, vocal, fichiers, ambassadeur)
   on public.demandes to anon, authenticated;
 grant select on public.demandes to authenticated;
 
@@ -254,3 +255,39 @@ create policy "equipe lit les messages" on public.messages
 drop policy if exists "equipe repond" on public.messages;
 create policy "equipe repond" on public.messages
   for insert to authenticated with check (auteur = 'equipe' and public.est_equipe());
+
+-- ---------- Pièces jointes et message vocal visibles dans l'espace et la page équipe ----------
+-- Chemins des fichiers de la demande dans le stockage (ex. FL-7KQ2M/1-devis.pdf).
+
+-- Compartiment privé « pieces-jointes » : 8 Mo par fichier au plus.
+insert into storage.buckets (id, name, public, file_size_limit)
+values ('pieces-jointes', 'pieces-jointes', false, 8388608)
+on conflict (id) do update set public = false, file_size_limit = 8388608;
+
+-- Dépôt : seulement un chemin annoncé dans demandes.fichiers, dans l'heure qui suit
+-- la création de la demande. « security definer » : le visiteur n'a pas le droit de lire
+-- la table demandes, la fonction vérifie à sa place sans rien lui montrer.
+create or replace function public.piece_attendue(chemin text) returns boolean
+language sql stable security definer set search_path = '' as $$
+  select exists (
+    select 1 from public.demandes d
+    where d.ref = split_part(chemin, '/', 1)
+      and chemin = any (d.fichiers)
+      and d.created_at > now() - interval '1 hour'
+  );
+$$;
+revoke all on function public.piece_attendue(text) from public;
+grant execute on function public.piece_attendue(text) to anon, authenticated;
+
+drop policy if exists "deposer une piece jointe" on storage.objects;
+create policy "deposer une piece jointe" on storage.objects
+  for insert to anon, authenticated
+  with check (bucket_id = 'pieces-jointes' and public.piece_attendue(name));
+
+-- Lecture : l'auteur de la demande et l'équipe (la sous-requête applique les règles
+-- « voir ses demandes » et « equipe voit les demandes »).
+drop policy if exists "voir ses pieces jointes" on storage.objects;
+create policy "voir ses pieces jointes" on storage.objects
+  for select to authenticated
+  using (bucket_id = 'pieces-jointes'
+    and exists (select 1 from public.demandes d where d.ref = split_part(name, '/', 1)));

@@ -88,6 +88,12 @@ Attention : ces ZIP contiennent encore flemme.fr, le jaune, la grille à plat et
 - Dictée : une seule à la fois, sessions courtes relancées automatiquement (plus fiable sur mobile), message affiché en cas de refus du micro ou d’erreur.
 - « Suivre ma demande » : si la base Supabase n’a pas encore les nouvelles colonnes, la demande est enregistrée avec les anciens champs (précisions dans « aide attendue ») et le bouton réapparaît.
 
+## Pièces jointes visibles dans les espaces (8 oct. 2026)
+- Fichiers et message vocal copiés dans le stockage Supabase privé « pieces-jointes » après l’enregistrement de la demande.
+- Espace perso et espace équipe : précisions, liens vers les fichiers et lecteur du message vocal (liens temporaires d’une heure).
+- Script Supabase à exécuter : supabase/formulaire-enrichi.sql (colonne fichiers, compartiment et règles d’accès). Les demandes envoyées avant ne sont pas rattrapées.
+- Limite : la suppression du compte n’efface pas encore les fichiers stockés.
+
 ## Reste à faire
 - Application : compiler et tester sur de vrais téléphones (Xcode, Android Studio).
 - Compléter les passages [...] des mentions légales et de la confidentialité, retirer le noindex.

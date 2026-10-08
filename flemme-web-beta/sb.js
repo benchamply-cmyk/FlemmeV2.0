@@ -56,6 +56,9 @@
     return e;
   };
 
+  const BUCKET = 'pieces-jointes';
+  const encPath = p => p.split('/').map(encodeURIComponent).join('/');
+
   async function call(path, { method = 'GET', body, token, headers = {} } = {}) {
     const r = await fetch(C.url + path, {
       method,
@@ -218,7 +221,63 @@
       if (!s) throw fail(401, 'no_session', 'Session expirée. Reconnecte-toi.');
       // Filtre explicite : un membre de l'équipe a le droit de tout lire, mais son espace ne montre que ses demandes.
       const mine = 'or=' + encodeURIComponent('(user_id.eq.' + s.id + (s.email ? ',email.ilike."' + s.email.replace(/["\\*%]/g, '') + '"' : '') + ')');
-      return call('/rest/v1/demandes?select=id,ref,besoin,categorie,echeance,statut,message,created_at,updated_at&order=created_at.desc&' + mine, { token: s.access_token });
+      // select=* : reste valable avant et après le script supabase/formulaire-enrichi.sql (précisions, fichiers).
+      return call('/rest/v1/demandes?select=*&order=created_at.desc&' + mine, { token: s.access_token });
+    },
+
+    // ----- Pièces jointes et message vocal (Supabase Storage, compartiment privé) -----
+    // Le chemin commence par la référence de la demande (FL-XXXXX/…). Le dépôt n'est
+    // accepté que pour les chemins annoncés dans demandes.fichiers, juste après la
+    // création de la demande ; la lecture est réservée à l'auteur et à l'équipe.
+    async envoyerFichier(chemin, fichier) {
+      const s = await session();
+      const r = await fetch(C.url + '/storage/v1/object/' + BUCKET + '/' + encPath(chemin), {
+        method: 'POST',
+        headers: Object.assign({ apikey: C.cle, 'Content-Type': fichier.type || 'application/octet-stream', 'x-upsert': 'false' },
+          s ? { Authorization: 'Bearer ' + s.access_token } : {}),
+        body: fichier,
+      });
+      if (!r.ok) throw fail(r.status, 'upload', 'Fichier non enregistré');
+    },
+    // Lien temporaire (1 h) pour ouvrir ou écouter une pièce jointe.
+    async lienFichier(chemin) {
+      const s = await session();
+      if (!s) throw fail(401, 'no_session', 'Session expirée. Reconnecte-toi.');
+      const d = await call('/storage/v1/object/sign/' + BUCKET + '/' + encPath(chemin), { method: 'POST', token: s.access_token, body: { expiresIn: 3600 } });
+      return C.url + '/storage/v1' + (d.signedURL || d.signedUrl);
+    },
+
+    // Bloc « Précisions » + pièces jointes d'une demande, pour l'espace et la page équipe.
+    // Les liens sont signés au moment de l'affichage (valables 1 h).
+    blocPieces(d) {
+      const mk = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+      const box = mk('div', 'pieces-box');
+      if (d.precisions) box.append(mk('b', null, 'Précisions'), mk('p', 'precisions-txt', d.precisions));
+      const files = Array.isArray(d.fichiers) ? d.fichiers : [];
+      if (files.length) {
+        box.append(mk('b', null, 'Pièces jointes'));
+        const list = mk('ul', 'pieces');
+        files.forEach(chemin => {
+          const nom = chemin.split('/').slice(1).join('/').replace(/^\d+-/, '');
+          const li = mk('li');
+          if (/^message-vocal\./.test(nom)) {
+            const audio = mk('audio');
+            audio.controls = true;
+            audio.preload = 'none';
+            li.append(mk('span', null, 'Message vocal'), audio);
+            SB.lienFichier(chemin).then(u => { audio.src = u; }).catch(() => li.append(mk('span', 'meta', ' (indisponible)')));
+          } else {
+            const a = mk('a', null, nom);
+            a.target = '_blank';
+            a.rel = 'noopener';
+            li.append(a);
+            SB.lienFichier(chemin).then(u => { a.href = u; }).catch(() => li.append(mk('span', 'meta', ' (indisponible)')));
+          }
+          list.append(li);
+        });
+        box.append(list);
+      }
+      return box.childNodes.length ? box : document.createTextNode('');
     },
 
     // ----- Page équipe (equipe.html), réservée aux comptes de la table equipe -----
