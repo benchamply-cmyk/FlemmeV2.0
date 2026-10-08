@@ -94,3 +94,10 @@ Avec « Masquer mon adresse e-mail », Apple transmet une adresse relais (`…@p
 - Ne jamais mettre la clé `service_role` / `secret` dans le site ni dans Netlify.
 - Réglages Supabase conseillés : Authentication > Attack Protection (CAPTCHA Turnstile ou hCaptcha si des inscriptions abusives apparaissent ; demande alors d'ajouter le widget au site), Authentication > Rate Limits (laisser les valeurs par défaut), activer la double authentification sur le compte Supabase de l'équipe, et choisir une région Europe pour l'hébergement.
 - Limite connue : n'importe qui peut déposer une demande en indiquant l'e-mail d'un tiers, qui la verrait alors dans son espace. Personne ne peut en revanche lire les demandes d'autrui.
+
+### Assistant IA pour créer une demande
+Une bulle « Me faire guider » (en bas à droite de l'accueil, et le lien « Laisse-toi guider » sous le champ) ouvre une conversation : l'assistant pose quelques questions (résultat attendu, lieu, délai, budget…), puis prépare la demande. « Remplir le formulaire » recopie le besoin, la catégorie, l'échéance et les précisions dans le formulaire ; l'utilisateur relit, indique son contact et envoie lui-même.
+- Code : `assistant.js` / `assistant.css` (site) et `netlify/functions/assistant.mjs` (adresse `/api/assistant`), qui appelle l'API Claude d'Anthropic. La liste des catégories vient de `content/categories.json`.
+- Mise en place, une seule fois : https://console.anthropic.com > API Keys > Create Key, puis Netlify > Site configuration > Environment variables : `ANTHROPIC_API_KEY` = cette clé, et redéployer. Facultatif : `ASSISTANT_MODEL` pour changer de modèle (par défaut `claude-opus-5-5`).
+- La clé reste côté serveur (jamais dans le site). Sans clé, l'assistant répond qu'il n'est pas disponible et le formulaire classique fonctionne normalement.
+- Coût : facturé à l'usage par Anthropic. Mettre une limite mensuelle dans la console Anthropic (Settings > Limits). Chaque conversation est limitée à 24 messages de 2000 caractères.
