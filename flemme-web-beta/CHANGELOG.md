@@ -76,6 +76,14 @@ Attention : ces ZIP contiennent encore flemme.fr, le jaune, la grille à plat et
 - La flèche de chaque carte ouvre le détail (indispensable sur mobile) ; sur ordinateur, le survol l’ouvre aussi.
 - Service « Autre » ajouté automatiquement à la fin de chaque section (« Autre demande », rangée dans la section).
 
+## Icônes et formulaire enrichi (8 oct. 2026)
+- Icônes au trait monochromes (Lucide, licence ISC) à la place des emojis, dans le fichier icons.svg ; l’icône de chaque section et service se choisit dans /admin.
+- « Pour quand ? » : Aucune urgence, Cette année, Ce mois-ci, Cette semaine, Aujourd’hui, Urgent, délai dépassé.
+- Champ « Précisions » visible ; la fréquence et « Quel résultat te serait utile ? » sont retirés du formulaire.
+- Pièces jointes (3 fichiers) et message vocal (3 min), 8 Mo au total, reçus dans Netlify Forms.
+- Dictée vocale sur le grand champ et sur « Précisions » (navigateurs compatibles) ; micro autorisé dans _headers.
+- Plus de limite de caractères. Script Supabase à exécuter : supabase/formulaire-enrichi.sql.
+
 ## Reste à faire
 - Application : compiler et tester sur de vrais téléphones (Xcode, Android Studio).
 - Compléter les passages [...] des mentions légales et de la confidentialité, retirer le noindex.

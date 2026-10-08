@@ -2,14 +2,14 @@
   "groupes": [
     {
       "id": "boulot",
-      "emoji": "🔧",
+      "icone": "hammer",
       "nom": "On te trouve quelqu’un pour faire le boulot",
       "accroche": "Plus besoin de chercher pendant des heures.",
       "resultat": "Une sélection de professionnels adaptés à ton besoin, avec leurs coordonnées et les informations utiles pour les contacter.",
       "sous": [
         {
           "id": "artisan",
-          "emoji": "🔧",
+          "icone": "wrench",
           "nom": "On te trouve un artisan pour tes travaux ou réparations",
           "exemple": "J’ai une fuite sous mon évier, trouve-moi un plombier.",
           "etoiles": 5,
@@ -36,7 +36,7 @@
         },
         {
           "id": "devis",
-          "emoji": "💰",
+          "icone": "scale",
           "nom": "On compare tes devis pour t’aider à choisir",
           "exemple": "J’ai trois devis pour refaire ma terrasse, aide-moi à choisir.",
           "etoiles": 5,
@@ -47,7 +47,7 @@
         },
         {
           "id": "menage",
-          "emoji": "🧹",
+          "icone": "spray-can",
           "nom": "On te trouve quelqu’un pour faire le ménage",
           "exemple": "Je cherche quelqu’un pour faire le ménage chez moi chaque semaine.",
           "etoiles": 5,
@@ -63,7 +63,7 @@
         },
         {
           "id": "jardinier",
-          "emoji": "🌿",
+          "icone": "sprout",
           "nom": "On te trouve un jardinier pour entretenir ton extérieur",
           "exemple": "Je cherche un jardinier pour tondre la pelouse et tailler la haie.",
           "etoiles": 5,
@@ -79,7 +79,7 @@
         },
         {
           "id": "demenagement",
-          "emoji": "📦",
+          "icone": "truck",
           "nom": "On t’aide à organiser ton déménagement",
           "exemple": "Je déménage le mois prochain, aide-moi à tout organiser.",
           "etoiles": 5,
@@ -92,7 +92,7 @@
         },
         {
           "id": "cuisinier",
-          "emoji": "🍳",
+          "icone": "chef-hat",
           "nom": "On te trouve un cuisinier à domicile",
           "exemple": "Je cherche un cuisinier à domicile pour un dîner de 8 personnes.",
           "etoiles": 4,
@@ -108,14 +108,14 @@
     },
     {
       "id": "rdv",
-      "emoji": "📅",
+      "icone": "calendar-days",
       "nom": "On s’occupe de tes rendez-vous",
       "accroche": "Fini les recherches interminables et les coups de téléphone.",
       "resultat": "Des créneaux identifiés ou un rendez-vous organisé lorsque la réservation est possible et autorisée.",
       "sous": [
         {
           "id": "medecin",
-          "emoji": "📅",
+          "icone": "stethoscope",
           "nom": "On te trouve un rendez-vous chez un médecin",
           "exemple": "Je cherche un médecin généraliste disponible cette semaine.",
           "etoiles": 5,
@@ -133,7 +133,7 @@
         },
         {
           "id": "rdvadmin",
-          "emoji": "🏛️",
+          "icone": "landmark",
           "nom": "On t’aide à obtenir un rendez-vous administratif",
           "exemple": "Il me faut un rendez-vous en mairie pour refaire mon passeport.",
           "etoiles": 5,
@@ -154,7 +154,7 @@
         },
         {
           "id": "serviceclient",
-          "emoji": "📞",
+          "icone": "phone",
           "nom": "On prépare ton appel au service client",
           "exemple": "Je dois appeler le service client de mon fournisseur d’énergie.",
           "etoiles": 5,
@@ -169,7 +169,7 @@
         },
         {
           "id": "rdvbanque",
-          "emoji": "🏦",
+          "icone": "piggy-bank",
           "nom": "On t’aide à organiser un rendez-vous avec ta banque",
           "exemple": "Je veux un rendez-vous avec un conseiller de ma banque.",
           "etoiles": 4,
@@ -181,7 +181,7 @@
         },
         {
           "id": "specialiste",
-          "emoji": "🩺",
+          "icone": "user-round-search",
           "nom": "On recherche un spécialiste disponible près de chez toi",
           "exemple": "Je cherche un dermatologue près de chez moi.",
           "etoiles": 5,
@@ -208,14 +208,14 @@
     },
     {
       "id": "paperasse",
-      "emoji": "📄",
+      "icone": "file-text",
       "nom": "On te débarrasse de la paperasse",
       "accroche": "Ces démarches que tu repousses depuis des semaines.",
       "resultat": "Des documents préparés, une comparaison exploitable ou une démarche prête à être validée et effectuée.",
       "sous": [
         {
           "id": "documents",
-          "emoji": "📄",
+          "icone": "files",
           "nom": "On prépare tes documents administratifs",
           "exemple": "Je dois préparer un dossier administratif.",
           "etoiles": 5,
@@ -231,7 +231,7 @@
         },
         {
           "id": "reclamation",
-          "emoji": "✉️",
+          "icone": "mail",
           "nom": "On rédige ta réclamation",
           "exemple": "Mon opérateur me facture trop cher, écris ma réclamation.",
           "etoiles": 5,
@@ -248,7 +248,7 @@
         },
         {
           "id": "resiliation",
-          "emoji": "📱",
+          "icone": "scissors",
           "nom": "On t’aide à résilier ton abonnement",
           "exemple": "Je veux arrêter mon abonnement Internet.",
           "etoiles": 5,
@@ -263,7 +263,7 @@
         },
         {
           "id": "sav",
-          "emoji": "🛠️",
+          "icone": "life-buoy",
           "nom": "On prépare ton dossier SAV",
           "exemple": "Mon lave-linge est en panne et toujours sous garantie.",
           "etoiles": 5,
@@ -278,7 +278,7 @@
         },
         {
           "id": "banque",
-          "emoji": "🏦",
+          "icone": "credit-card",
           "nom": "On compare tes offres bancaires",
           "exemple": "Je veux changer de banque, compare les offres pour moi.",
           "etoiles": 5,
@@ -294,7 +294,7 @@
         },
         {
           "id": "assurances",
-          "emoji": "🛡️",
+          "icone": "shield-check",
           "nom": "On compare tes assurances",
           "exemple": "Compare les meilleures assurances habitation.",
           "etoiles": 5,
@@ -307,7 +307,7 @@
         },
         {
           "id": "formulaires",
-          "emoji": "📋",
+          "icone": "clipboard-list",
           "nom": "On t’aide à remplir tes formulaires",
           "exemple": "J’ai un formulaire à remplir et je n’y comprends rien.",
           "etoiles": 5,
@@ -324,14 +324,14 @@
     },
     {
       "id": "achats",
-      "emoji": "🛍️",
+      "icone": "shopping-bag",
       "nom": "On cherche, on compare, on vend",
       "accroche": "Tu nous dis ce que tu veux. On fait les recherches.",
       "resultat": "Une sélection personnalisée, un comparatif clair ou une annonce prête à publier.",
       "sous": [
         {
           "id": "voiture",
-          "emoji": "🚗",
+          "icone": "car",
           "nom": "On te trouve une voiture adaptée à ton budget",
           "exemple": "Je cherche une voiture d’occasion à moins de 12 000 €.",
           "etoiles": 5,
@@ -347,7 +347,7 @@
         },
         {
           "id": "cadeau",
-          "emoji": "🎁",
+          "icone": "gift",
           "nom": "On te trouve le cadeau idéal",
           "exemple": "Un cadeau original pour les 60 ans de mon père.",
           "etoiles": 5,
@@ -359,7 +359,7 @@
         },
         {
           "id": "prix",
-          "emoji": "🛍️",
+          "icone": "tag",
           "nom": "On compare les prix avant ton achat",
           "exemple": "Je veux acheter un aspirateur, compare les prix pour moi.",
           "etoiles": 5,
@@ -373,7 +373,7 @@
         },
         {
           "id": "leboncoin",
-          "emoji": "📸",
+          "icone": "camera",
           "nom": "On prépare ton annonce Leboncoin",
           "exemple": "Je veux vendre mon canapé sur Leboncoin.",
           "etoiles": 5,
@@ -386,7 +386,7 @@
         },
         {
           "id": "vinted",
-          "emoji": "👗",
+          "icone": "shirt",
           "nom": "On prépare tes annonces Vinted",
           "exemple": "Je veux vendre mes vêtements sur Vinted.",
           "etoiles": 5,
@@ -400,7 +400,7 @@
         },
         {
           "id": "estimation",
-          "emoji": "💸",
+          "icone": "coins",
           "nom": "On estime le prix de vente de ton objet",
           "exemple": "Combien je peux revendre mon vélo ?",
           "etoiles": 5,
@@ -415,7 +415,7 @@
         },
         {
           "id": "leasing",
-          "emoji": "🚘",
+          "icone": "key-round",
           "nom": "On compare les meilleures offres de leasing",
           "exemple": "Compare les offres de leasing pour ma prochaine voiture.",
           "etoiles": 5,
@@ -430,14 +430,14 @@
     },
     {
       "id": "voyage",
-      "emoji": "✈️",
+      "icone": "plane",
       "nom": "On prépare ton prochain voyage",
       "accroche": "Profite du voyage, pas des heures de recherche.",
       "resultat": "Un programme personnalisé avec prix indicatifs, liens de réservation et recommandations.",
       "sous": [
         {
           "id": "vols",
-          "emoji": "✈️",
+          "icone": "plane-takeoff",
           "nom": "On te trouve des vols adaptés à ton budget",
           "exemple": "Trouve-moi un vol pas cher pour Lisbonne en mai.",
           "etoiles": 5,
@@ -451,7 +451,7 @@
         },
         {
           "id": "trains",
-          "emoji": "🚆",
+          "icone": "train-front",
           "nom": "On compare tes trajets en train",
           "exemple": "Je dois aller à Lyon en train vendredi.",
           "etoiles": 5,
@@ -471,7 +471,7 @@
         },
         {
           "id": "hotels",
-          "emoji": "🏨",
+          "icone": "bed-double",
           "nom": "On sélectionne tes hôtels",
           "exemple": "Trouve-moi un hôtel sympa à Bordeaux pour deux nuits.",
           "etoiles": 5,
@@ -487,7 +487,7 @@
         },
         {
           "id": "location",
-          "emoji": "🚗",
+          "icone": "car-front",
           "nom": "On compare les locations de voitures",
           "exemple": "Je veux louer une voiture à Nice pour une semaine.",
           "etoiles": 5,
@@ -500,7 +500,7 @@
         },
         {
           "id": "itineraire",
-          "emoji": "🏝️",
+          "icone": "map",
           "nom": "On organise ton itinéraire de vacances",
           "exemple": "Je pars cinq jours à Rome, organise mon voyage.",
           "etoiles": 5,
@@ -517,7 +517,7 @@
         },
         {
           "id": "activites",
-          "emoji": "🎟️",
+          "icone": "ticket",
           "nom": "On trouve des activités pour ton séjour",
           "exemple": "Quoi faire à Barcelone avec des enfants ?",
           "etoiles": 4,
@@ -532,7 +532,7 @@
         },
         {
           "id": "programme",
-          "emoji": "🧳",
+          "icone": "luggage",
           "nom": "On prépare ton programme de voyage",
           "exemple": "Prépare le programme de notre week-end en Normandie.",
           "etoiles": 5,
@@ -547,14 +547,14 @@
     },
     {
       "id": "resume",
-      "emoji": "🔎",
+      "icone": "search",
       "nom": "On cherche et on résume pour toi",
       "accroche": "L’essentiel, sans passer des heures à chercher.",
       "resultat": "Une synthèse facile à comprendre, avec des sources vérifiables lorsque nécessaire.",
       "sous": [
         {
           "id": "actu",
-          "emoji": "📰",
+          "icone": "newspaper",
           "nom": "On te résume l’actualité",
           "exemple": "Résume-moi l’actualité de la semaine.",
           "etoiles": 4,
@@ -567,7 +567,7 @@
         },
         {
           "id": "politique",
-          "emoji": "🗳️",
+          "icone": "vote",
           "nom": "On compare les programmes politiques de façon neutre",
           "exemple": "Compare les programmes des candidats aux municipales.",
           "etoiles": 4,
@@ -583,7 +583,7 @@
         },
         {
           "id": "livre",
-          "emoji": "📚",
+          "icone": "book-open",
           "nom": "On te résume un livre",
           "exemple": "Résume-moi le livre « L’Étranger » de Camus.",
           "etoiles": 4,
@@ -597,7 +597,7 @@
         },
         {
           "id": "film",
-          "emoji": "🎬",
+          "icone": "clapperboard",
           "nom": "On t’explique un film ou une œuvre",
           "exemple": "Explique-moi la fin du film Inception.",
           "etoiles": 4,
@@ -614,7 +614,7 @@
         },
         {
           "id": "recherche",
-          "emoji": "🔎",
+          "icone": "search",
           "nom": "On fait une recherche approfondie à ta place",
           "exemple": "Fais une recherche sur les aides à la rénovation énergétique.",
           "etoiles": 4,
@@ -628,7 +628,7 @@
         },
         {
           "id": "synthese",
-          "emoji": "📊",
+          "icone": "chart-column",
           "nom": "On prépare une synthèse claire sur un sujet",
           "exemple": "Résume-moi ce document de 50 pages.",
           "etoiles": 4,
@@ -642,7 +642,7 @@
         },
         {
           "id": "histoire",
-          "emoji": "🎨",
+          "icone": "palette",
           "nom": "On t’explique un événement historique ou artistique",
           "exemple": "Explique-moi simplement la Révolution française.",
           "etoiles": 4,
@@ -665,14 +665,14 @@
     },
     {
       "id": "apprendre",
-      "emoji": "🎓",
+      "icone": "graduation-cap",
       "nom": "On t’aide à apprendre plus facilement",
       "accroche": "Moins de galère, plus de progrès.",
       "resultat": "Des explications personnalisées, des exercices ou un accompagnement adapté.",
       "sous": [
         {
           "id": "cours",
-          "emoji": "📖",
+          "icone": "book-marked",
           "nom": "On t’explique un cours compliqué",
           "exemple": "Explique-moi mon cours sur les probabilités.",
           "etoiles": 5,
@@ -688,7 +688,7 @@
         },
         {
           "id": "devoirs",
-          "emoji": "📝",
+          "icone": "pencil",
           "nom": "On t’aide à faire tes devoirs",
           "exemple": "Aide mon fils à faire ses devoirs de maths.",
           "etoiles": 5,
@@ -706,7 +706,7 @@
         },
         {
           "id": "langue",
-          "emoji": "🇪🇸",
+          "icone": "languages",
           "nom": "On t’aide à apprendre une langue",
           "exemple": "Je veux apprendre l’espagnol avant l’été.",
           "etoiles": 5,
@@ -724,7 +724,7 @@
         },
         {
           "id": "prof",
-          "emoji": "🎓",
+          "icone": "presentation",
           "nom": "On te trouve un professeur particulier",
           "exemple": "Je cherche un prof particulier de maths pour ma fille.",
           "etoiles": 5,
@@ -738,7 +738,7 @@
         },
         {
           "id": "fiches",
-          "emoji": "🧠",
+          "icone": "brain",
           "nom": "On prépare tes fiches de révision",
           "exemple": "Prépare mes fiches de révision pour le bac.",
           "etoiles": 5,
@@ -754,7 +754,7 @@
         },
         {
           "id": "informatique",
-          "emoji": "💻",
+          "icone": "laptop",
           "nom": "On t’aide à comprendre un outil informatique",
           "exemple": "Explique-moi comment faire un tableau sur Excel.",
           "etoiles": 5,

@@ -97,10 +97,9 @@ addEventListener('popstate', () => show(location.hash.slice(1) || 'home', false)
 /* ---------- 4. Saisie de la demande ---------- */
 
 const taskInput = $('#task');
-const setCounter = () => { $('#counter').textContent = taskInput.value.length + '/280'; };
 const saveDraft = () => safe(() => SS.setItem('flemmeDraft', taskInput.value));
 
-taskInput.addEventListener('input', () => { setCounter(); saveDraft(); });
+taskInput.addEventListener('input', saveDraft);
 $('#flemmeForm').addEventListener('submit', e => {
   e.preventDefault(); // on ne recharge pas la page : on passe à l'écran suivant
   task = taskInput.value.trim();
@@ -121,7 +120,7 @@ function keywordRegex(words) {
 // Liste à plat de toutes les sous-catégories, triées par importance (étoiles).
 const CATS = (FL.categories.groupes || [])
   .flatMap(g => (g.sous || []).map(c => ({
-    id: c.id, e: c.emoji, n: c.nom, s: c.etoiles || 3, re: keywordRegex(c.mots_cles),
+    id: c.id, n: c.nom, s: c.etoiles || 3, re: keywordRegex(c.mots_cles),
   })))
   .sort((a, b) => b.s - a.s);
 const byId = id => CATS.find(c => c.id === id);
@@ -142,10 +141,21 @@ function startOffer(label, cat) {
   buzz();
 }
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text) n.textContent = text; return n; };
-const ideaButton = (cls, emoji, label, onClick) => {
+// Icône au trait (sprite icons.svg, icônes Lucide) : monochrome, prend la couleur du texte.
+const SVGNS = 'http://www.w3.org/2000/svg';
+function icon(name) {
+  const svg = document.createElementNS(SVGNS, 'svg'), use = document.createElementNS(SVGNS, 'use');
+  svg.setAttribute('class', 'ico');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('aria-hidden', 'true');
+  use.setAttribute('href', 'icons.svg#i-' + (name || 'sparkles'));
+  svg.append(use);
+  return svg;
+}
+const ideaButton = (cls, iconName, label, onClick) => {
   const b = el('button', cls);
   b.type = 'button';
-  b.append(el('span', 'emo', emoji), el('span', '', label));
+  b.append(icon(iconName), el('span', '', label));
   b.addEventListener('click', onClick);
   return b;
 };
@@ -155,26 +165,27 @@ const ideaButton = (cls, emoji, label, onClick) => {
 const cats = [];
 const closeCats = except => cats.forEach(c => { if (c !== except) { c.classList.remove('open'); c.querySelector('.cat-toggle').setAttribute('aria-expanded', 'false'); } });
 (FL.categories.groupes || []).forEach((g, i) => {
-  const groupCat = { e: g.emoji, n: g.nom };
+  const groupCat = { n: g.nom };
   const card = el('div', 'cat');
   // La carte entière mène au formulaire ; la flèche ouvre le détail (utile sur mobile).
   const head = el('button', 'cat-head');
   head.type = 'button';
-  head.append(el('span', 'emo', g.emoji), el('span', 'cat-title', g.nom));
+  head.append(icon(g.icone), el('span', 'cat-title', g.nom));
   if (g.accroche) head.append(el('span', 'cat-tag', g.accroche));
   head.addEventListener('click', () => startOffer(g.nom, groupCat));
-  const toggle = el('button', 'cat-toggle', '▾');
+  const toggle = el('button', 'cat-toggle');
   toggle.type = 'button';
+  toggle.append(icon('chevron-down'));
   toggle.setAttribute('aria-expanded', 'false');
   toggle.setAttribute('aria-controls', 'catMenu' + i);
   toggle.setAttribute('aria-label', 'Voir le détail : ' + g.nom);
   const menu = el('div', 'cat-menu');
   menu.id = 'catMenu' + i;
   const list = el('ul', '');
-  const item = (emoji, label, onClick) => { const li = el('li', ''); li.append(ideaButton('svc-item', emoji, label, onClick)); list.append(li); };
-  (g.sous || []).forEach(c => item(c.emoji, c.nom, () => startOffer(c.nom, byId(c.id))));
+  const item = (iconName, label, onClick) => { const li = el('li', ''); li.append(ideaButton('svc-item', iconName, label, onClick)); list.append(li); };
+  (g.sous || []).forEach(c => item(c.icone, c.nom, () => startOffer(c.nom, byId(c.id))));
   // Service « Autre » ajouté automatiquement à chaque section.
-  item('✨', 'Autre', () => startOffer('Autre demande', groupCat));
+  item('plus', 'Autre', () => startOffer('Autre demande', groupCat));
   menu.append(list);
   if (g.resultat) { const r = el('p', 'svc-result'); r.append(el('b', '', 'Résultat livré : '), document.createTextNode(g.resultat)); menu.append(r); }
   const top = el('div', 'cat-top');
@@ -204,7 +215,7 @@ function classify(text) {
 function buildOffer(cat) {
   offer = { cat: cat !== undefined ? cat : classify(task).cat };
   $('#summary').textContent = task;
-  $('#mLabel').textContent = 'Ton besoin' + (offer.cat && offer.cat.n !== task ? ' · ' + offer.cat.e + ' ' + offer.cat.n : '');
+  $('#mLabel').textContent = 'Ton besoin' + (offer.cat && offer.cat.n !== task ? ' · ' + offer.cat.n : '');
   show('offer');
 }
 
@@ -219,18 +230,21 @@ const isContact = v => isEmail(v) || v.replace(/\D/g, '').length >= 8;
 
 // Envoie un formulaire comme le ferait le navigateur, mais sans quitter la page.
 // Pendant l'envoi, le bouton est désactivé pour éviter les doubles clics.
-async function sendForm(form, errBox, onSuccess) {
+// `extra(data)` peut compléter les données envoyées (ex. : le message vocal enregistré).
+async function sendForm(form, errBox, onSuccess, extra) {
   const btn = form.querySelector('button[type=submit]');
   const label = btn.textContent;
   errBox.hidden = true;
   btn.disabled = true;
   btn.textContent = 'Envoi…';
   try {
-    const r = await fetch(FORM_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams(new FormData(form)).toString(),
-    });
+    const data = new FormData(form);
+    if (extra) extra(data);
+    // Avec des fichiers (enctype multipart), le FormData part tel quel : le navigateur
+    // choisit lui-même l'en-tête Content-Type.
+    const r = await fetch(FORM_URL, form.enctype === 'multipart/form-data'
+      ? { method: 'POST', body: data }
+      : { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(data).toString() });
     if (!r.ok) throw new Error(r.status);
     onSuccess();
     buzz('ok');
@@ -243,12 +257,121 @@ async function sendForm(form, errBox, onSuccess) {
 }
 const showError = (box, msg) => { box.textContent = msg; box.hidden = false; };
 
+/* ---------- 7 bis. Pièces jointes, message vocal et dictée ---------- */
+
+// Netlify Forms accepte un fichier par champ et 8 Mo par envoi : 3 champs « fichier »
+// (le 2e et le 3e apparaissent à la demande) et un champ « vocal ».
+const MAX_UPLOAD = 8 * 1024 * 1024;
+const slots = $$('.file-slot');
+let voiceFile = null;
+const chosenFiles = () => $$('#missionForm input[type=file]:not([name=vocal])').map(i => i.files[0]).filter(Boolean);
+$('#addFile').addEventListener('click', e => {
+  const next = slots.find(s => s.hidden);
+  if (next) { next.hidden = false; next.querySelector('input').focus(); }
+  if (!slots.some(s => s.hidden)) e.currentTarget.hidden = true;
+});
+function resetAttachments() {
+  slots.forEach((s, i) => { s.hidden = i > 0; });
+  $('#addFile').hidden = false;
+  clearVoice();
+}
+
+// Message vocal : enregistré dans le navigateur (MediaRecorder), 3 minutes au plus.
+const voiceBtn = $('#voiceBtn'), voiceTimer = $('#voiceTimer'), voiceAudio = $('#voiceAudio');
+let recorder = null, voiceTick = null;
+const VOICE_MAX = 180;
+const mmss = t => Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0');
+const setVoiceLabel = txt => { voiceBtn.querySelector('span').textContent = txt; };
+function clearVoice() {
+  voiceFile = null;
+  if (voiceAudio.src) { URL.revokeObjectURL(voiceAudio.src); voiceAudio.removeAttribute('src'); }
+  $('#voicePreview').hidden = true;
+  voiceBtn.hidden = false;
+}
+async function startVoice() {
+  let stream;
+  try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
+  catch (e) { showError($('#err'), 'Impossible d’accéder au micro. Vérifie l’autorisation de ton navigateur.'); return; }
+  const chunks = [];
+  recorder = new MediaRecorder(stream);
+  recorder.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+  recorder.onstop = () => {
+    stream.getTracks().forEach(t => t.stop());
+    clearInterval(voiceTick);
+    voiceTimer.hidden = true;
+    voiceBtn.classList.remove('rec');
+    voiceBtn.setAttribute('aria-pressed', 'false');
+    setVoiceLabel('Enregistrer un message vocal');
+    recorder = null;
+    if (!chunks.length) return;
+    const type = chunks[0].type || 'audio/webm';
+    const ext = type.includes('mp4') ? 'm4a' : type.includes('ogg') ? 'ogg' : 'webm';
+    voiceFile = new File(chunks, 'message-vocal.' + ext, { type });
+    voiceAudio.src = URL.createObjectURL(voiceFile);
+    $('#voicePreview').hidden = false;
+    voiceBtn.hidden = true;
+  };
+  recorder.start();
+  let t = 0;
+  voiceTimer.textContent = 'Enregistrement… 0:00';
+  voiceTimer.hidden = false;
+  voiceBtn.classList.add('rec');
+  voiceBtn.setAttribute('aria-pressed', 'true');
+  setVoiceLabel('Arrêter l’enregistrement');
+  voiceTick = setInterval(() => {
+    t += 1;
+    voiceTimer.textContent = 'Enregistrement… ' + mmss(t) + ' / ' + mmss(VOICE_MAX);
+    if (t >= VOICE_MAX) recorder.stop();
+  }, 1000);
+}
+if (window.MediaRecorder && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  $('#voiceBox').hidden = false;
+  voiceBtn.addEventListener('click', () => { if (recorder) recorder.stop(); else startVoice(); });
+  $('#voiceDel').addEventListener('click', () => { clearVoice(); voiceBtn.focus(); });
+}
+
+// Dictée : la reconnaissance vocale du navigateur (Chrome, Edge, Safari) écrit dans le champ.
+const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+if (Speech) $$('[data-dictate]').forEach(btn => {
+  const field = $('#' + btn.dataset.dictate);
+  const label = btn.querySelector('span');
+  let rec = null;
+  btn.hidden = false;
+  btn.setAttribute('aria-pressed', 'false');
+  btn.addEventListener('click', () => {
+    if (rec) { rec.stop(); return; }
+    rec = new Speech();
+    rec.lang = 'fr-FR';
+    rec.continuous = true;
+    rec.interimResults = true;
+    const base = field.value.trim();
+    rec.onresult = e => {
+      const said = [...e.results].map(r => r[0].transcript).join('').trim();
+      field.value = base + (base && said ? ' ' : '') + said;
+      field.dispatchEvent(new Event('input'));
+    };
+    rec.onend = () => { rec = null; btn.classList.remove('rec'); btn.setAttribute('aria-pressed', 'false'); label.textContent = 'Dicter'; };
+    rec.onerror = () => rec && rec.stop();
+    rec.start();
+    btn.classList.add('rec');
+    btn.setAttribute('aria-pressed', 'true');
+    label.textContent = 'Arrêter la dictée';
+    field.focus();
+  });
+});
+
 $('#missionForm').addEventListener('submit', e => {
   e.preventDefault();
   const f = e.target, err = $('#err');
   if (!isContact(f.elements.contact.value.trim())) {
     showError(err, 'Indique une adresse e-mail ou un numéro de téléphone valide.');
     f.elements.contact.focus();
+    return;
+  }
+  if (recorder) { showError(err, 'Arrête d’abord l’enregistrement du message vocal.'); voiceBtn.focus(); return; }
+  const files = chosenFiles();
+  if (files.reduce((t, x) => t + x.size, 0) + (voiceFile ? voiceFile.size : 0) > MAX_UPLOAD) {
+    showError(err, 'Tes fichiers dépassent 8 Mo au total. Retire-en un ou envoie des versions plus légères.');
     return;
   }
   const contact = f.elements.contact.value.trim();
@@ -261,17 +384,19 @@ $('#missionForm').addEventListener('submit', e => {
   const copy = {
     ref: n, besoin: task, email: isEmail(contact) ? contact.toLowerCase() : null,
     categorie: f.elements.category.value || null, echeance: f.elements.echeance.value || null,
-    aide_attendue: f.elements.aide_attendue.value.trim() || null, frequence: f.elements.frequence.value || null,
+    precisions: f.elements.precisions.value.trim() || null,
+    pieces_jointes: files.length, vocal: !!voiceFile,
     ambassadeur: f.elements.ambassadeur.checked,
   };
+  const voice = voiceFile;
   sendForm(f, err, () => {
     ref = n;
     trackRequest(copy);
-    f.reset();
+    f.reset(); resetAttachments();
     safe(() => SS.removeItem('flemmeDraft'));
     $('#missionRef').textContent = 'Demande ' + ref + ' · Nous te recontacterons pour te dire si nous pouvons t’aider.';
     show('tracking');
-  });
+  }, data => { if (voice) data.set('vocal', voice); });
 });
 
 $('#facForm').addEventListener('submit', e => {
@@ -317,8 +442,7 @@ if (window.SB && SB.ready) {
 // Remet tout à zéro pour une nouvelle demande.
 function resetApp() {
   task = ''; ref = ''; offer = null;
-  taskInput.value = ''; $('#missionForm').reset();
-  setCounter();
+  taskInput.value = ''; $('#missionForm').reset(); resetAttachments();
   safe(() => SS.removeItem('flemmeDraft'));
   show('home');
 }
@@ -347,7 +471,7 @@ function resetApp() {
 /* ---------- 10. Démarrage ---------- */
 
 const draft = safe(() => SS.getItem('flemmeDraft'));
-if (draft) { taskInput.value = draft; setCounter(); }
+if (draft) taskInput.value = draft;
 
 // Un lien direct vers flemme.org/#facilitateur ouvre le formulaire Facilitateur.
 const start = location.hash === '#facilitateur' ? 'facilitateur' : 'home';

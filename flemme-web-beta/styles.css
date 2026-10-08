@@ -287,7 +287,8 @@ footer b { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-size:
 .ideas { margin: 48px 0 24px; }
 .ideas-title { font-size: clamp(28px, 4vw, 44px); font-weight: 800; letter-spacing: -.04em; margin: 6px 0 20px; }
 .promise { font-size: 18px; font-weight: 700; margin: 0 0 22px; }
-.emo { font-size: 26px; line-height: 1; }
+.ico { width: 1em; height: 1em; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.cat-head > .ico { font-size: 30px; }
 
 /* Les 7 résultats concrets : cartes avec menu déroulant (survol ou clic) */
 .cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
@@ -307,7 +308,8 @@ footer b { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-size:
 .cat-menu ul { list-style: none; padding: 0; margin: 0 0 12px; display: grid; gap: 6px; }
 .svc-item { display: flex; gap: 10px; align-items: center; width: 100%; text-align: left; font: inherit; font-size: 15px; font-weight: 600; line-height: 1.25; color: var(--ink); background: var(--soft); border: 2px solid transparent; border-radius: 12px; padding: 9px 11px; cursor: pointer; }
 .svc-item:hover, .svc-item:focus-visible { border-color: var(--ink); background: var(--acid); }
-.svc-item .emo { font-size: 19px; }
+.svc-item .ico { font-size: 20px; }
+.cat-toggle .ico { font-size: 18px; vertical-align: middle; }
 .svc-result { margin: 0; font-size: 14px; line-height: 1.5; color: var(--muted); border-top: 2px dashed var(--ink); padding-top: 10px; }
 .svc-result b { color: var(--violet); }
 .cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
@@ -325,3 +327,27 @@ footer b { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-size:
   .cat-menu { position: static; width: auto; max-width: none; margin-top: 8px; box-shadow: 5px 5px 0 var(--violet); }
 }
 @media (prefers-reduced-motion: reduce) { .cat-head, .cat-toggle { transition: none; } }
+
+/* ---------- Formulaire : dictée, précisions, message vocal, pièces jointes ---------- */
+.tool-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 8px 14px; font: inherit; font-size: 15px; font-weight: 700; color: var(--ink); background: #fff; border: 2px solid var(--ink); border-radius: 999px; cursor: pointer; }
+.tool-btn .ico { font-size: 18px; }
+.tool-btn:hover { background: var(--acid); }
+.tool-btn.rec { background: var(--orange); }
+.tool-btn.rec .ico { animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .35; } }
+.ask-bottom { gap: 10px; }
+.ask-bottom .tool-btn { margin-right: auto; }
+.field-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.field-head .tool-btn { min-height: 34px; padding: 5px 12px; font-size: 14px; margin-bottom: 6px; }
+#precisions { min-height: 130px; }
+.voice, .files { margin-top: 18px; display: grid; gap: 8px; justify-items: start; }
+.files-title { font-weight: 700; font-size: 15px; }
+.voice-timer { font-family: var(--mono); font-size: 14px; color: var(--muted); }
+.voice-preview { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; width: 100%; }
+.voice-preview audio { flex: 1 1 220px; max-width: 100%; }
+.file-slot { display: block; width: 100%; margin: 0; }
+.file-slot input { width: 100%; font: inherit; font-size: 15px; padding: 10px; border: 2px dashed var(--ink); border-radius: 14px; background: var(--soft); }
+.files .micro { margin: 0; }
+@media (prefers-reduced-motion: reduce) { .tool-btn.rec .ico { animation: none; } }
+.ask-bottom .primary { margin-left: auto; }
+.ask-bottom .tool-btn { font-family: "Bricolage Grotesque", system-ui, sans-serif; }

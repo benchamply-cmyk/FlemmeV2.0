@@ -32,7 +32,9 @@ export function alerte(p) {
     subject: `Nouvelle demande ${r.ref} : ${String(r.besoin || '').slice(0, 60)}`,
     html: mail('Nouvelle demande client', [
       ['Référence', r.ref], ['Besoin', r.besoin], ['Catégorie', r.categorie], ['Échéance', r.echeance],
-      ['Fréquence', r.frequence], ['Aide attendue', r.aide_attendue], ['Contact', r.email || 'téléphone (voir Netlify Forms)'],
+      ['Précisions', r.precisions], ['Fréquence', r.frequence], ['Aide attendue', r.aide_attendue],
+      ['Pièces jointes', r.pieces_jointes ? r.pieces_jointes + ' fichier(s) dans Netlify Forms' : ''],
+      ['Message vocal', r.vocal ? 'Oui, dans Netlify Forms' : ''], ['Contact', r.email || 'téléphone (voir Netlify Forms)'],
     ], 'Ouvrir la page équipe'),
   };
   if (p.table === 'messages' && r.auteur === 'client') return {

@@ -13,10 +13,10 @@ create table if not exists public.demandes (
   ref           text not null unique,                 -- ex. FL-7KQ2M, affichée à l'utilisateur
   user_id       uuid references auth.users (id) on delete set null,
   email         text check (char_length(email) <= 120),
-  besoin        text not null check (char_length(besoin) between 1 and 280),
+  besoin        text not null check (char_length(besoin) >= 1),
   categorie     text check (char_length(categorie) <= 80),
   echeance      text check (char_length(echeance) <= 40),
-  aide_attendue text check (char_length(aide_attendue) <= 600),
+  aide_attendue text,
   frequence     text check (char_length(frequence) <= 40),
   ambassadeur   boolean not null default false,
   -- recue → en_etude → acceptee → en_cours → terminee, ou refusee
@@ -26,6 +26,15 @@ create table if not exists public.demandes (
   created_at    timestamptz not null default now(),
   updated_at    timestamptz not null default now()
 );
+
+-- Formulaire enrichi (bases créées avant le 8 oct. 2026) : nouvelles colonnes et
+-- plus de limite de longueur. Les fichiers et le message vocal restent dans Netlify Forms.
+alter table public.demandes add column if not exists precisions text;
+alter table public.demandes add column if not exists pieces_jointes smallint not null default 0 check (pieces_jointes between 0 and 3);
+alter table public.demandes add column if not exists vocal boolean not null default false;
+alter table public.demandes drop constraint if exists demandes_besoin_check;
+alter table public.demandes add constraint demandes_besoin_check check (char_length(besoin) >= 1);
+alter table public.demandes drop constraint if exists demandes_aide_attendue_check;
 
 create index if not exists demandes_user_id_idx on public.demandes (user_id);
 create index if not exists demandes_email_idx on public.demandes (lower(email));
@@ -49,7 +58,7 @@ create trigger demandes_touch before update on public.demandes
 alter table public.demandes enable row level security;
 
 revoke all on public.demandes from anon, authenticated;
-grant insert (ref, user_id, email, besoin, categorie, echeance, aide_attendue, frequence, ambassadeur)
+grant insert (ref, user_id, email, besoin, precisions, categorie, echeance, aide_attendue, frequence, pieces_jointes, vocal, ambassadeur)
   on public.demandes to anon, authenticated;
 grant select on public.demandes to authenticated;
 
