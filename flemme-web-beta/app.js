@@ -102,10 +102,18 @@ const saveDraft = () => safe(() => SS.setItem('flemmeDraft', taskInput.value));
 taskInput.addEventListener('input', saveDraft);
 $('#flemmeForm').addEventListener('submit', e => {
   e.preventDefault(); // on ne recharge pas la page : on passe à l'écran suivant
-  if (dictation) dictation.stop();
+  // Un enregistrement en cours est d'abord arrêté, puis joint à la demande.
+  if (recorder) { afterVoice = () => $('#flemmeForm').requestSubmit(); recorder.stop(); return; }
   task = taskInput.value.trim();
-  if (!task) return;
-  buildOffer();
+  if (!task && !voiceFile) {
+    homeVoiceMsg.textContent = 'Écris ta flemme ou laisse un message vocal.';
+    taskInput.focus();
+    return;
+  }
+  if (task) return buildOffer();
+  task = 'Message vocal';
+  buildOffer(null);
+  $('#summary').textContent = 'Demande en message vocal';
 });
 
 /* ---------- 5. Catégories ---------- */
@@ -278,141 +286,79 @@ function resetAttachments() {
 }
 
 // Message vocal : enregistré dans le navigateur (MediaRecorder), 3 minutes au plus.
+// On peut l'enregistrer dès l'accueil (à la place du texte) ou dans le formulaire :
+// c'est le même message, joint à la demande et réécoutable dans le formulaire.
 const voiceBtn = $('#voiceBtn'), voiceTimer = $('#voiceTimer'), voiceAudio = $('#voiceAudio');
-let recorder = null, voiceTick = null;
+const homeVoiceBtn = $('#homeVoiceBtn'), homeVoiceMsg = $('#homeVoiceMsg');
+const VOICE_UI = {
+  form: { btn: voiceBtn, out: voiceTimer, idle: 'Enregistrer un message vocal' },
+  home: { btn: homeVoiceBtn, out: homeVoiceMsg, idle: 'Message vocal' },
+};
+let recorder = null, voiceTick = null, afterVoice = null;
 const VOICE_MAX = 180;
 const mmss = t => Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0');
-const setVoiceLabel = txt => { voiceBtn.querySelector('span').textContent = txt; };
+const setLabel = (btn, txt) => { btn.querySelector('span').textContent = txt; };
 function clearVoice() {
   voiceFile = null;
   if (voiceAudio.src) { URL.revokeObjectURL(voiceAudio.src); voiceAudio.removeAttribute('src'); }
   $('#voicePreview').hidden = true;
   voiceBtn.hidden = false;
+  setLabel(homeVoiceBtn, VOICE_UI.home.idle);
+  homeVoiceMsg.textContent = '';
 }
-async function startVoice() {
+async function startVoice(where) {
+  const ui = VOICE_UI[where];
   let stream;
   try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
-  catch (e) { showError($('#err'), 'Impossible d’accéder au micro. Vérifie l’autorisation de ton navigateur.'); return; }
+  catch (e) {
+    const txt = 'Impossible d’accéder au micro. Vérifie l’autorisation de ton navigateur.';
+    if (where === 'home') homeVoiceMsg.textContent = txt; else showError($('#err'), txt);
+    return;
+  }
   const chunks = [];
+  let t = 0;
   recorder = new MediaRecorder(stream);
   recorder.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
   recorder.onstop = () => {
-    stream.getTracks().forEach(t => t.stop());
+    stream.getTracks().forEach(tr => tr.stop());
     clearInterval(voiceTick);
-    voiceTimer.hidden = true;
-    voiceBtn.classList.remove('rec');
-    voiceBtn.setAttribute('aria-pressed', 'false');
-    setVoiceLabel('Enregistrer un message vocal');
+    ui.btn.classList.remove('rec');
+    ui.btn.setAttribute('aria-pressed', 'false');
     recorder = null;
-    if (!chunks.length) return;
-    const type = chunks[0].type || 'audio/webm';
-    const ext = type.includes('mp4') ? 'm4a' : type.includes('ogg') ? 'ogg' : 'webm';
-    voiceFile = new File(chunks, 'message-vocal.' + ext, { type });
-    voiceAudio.src = URL.createObjectURL(voiceFile);
-    $('#voicePreview').hidden = false;
-    voiceBtn.hidden = true;
+    if (where === 'form') { voiceTimer.hidden = true; setLabel(voiceBtn, ui.idle); }
+    if (chunks.length) {
+      const type = chunks[0].type || 'audio/webm';
+      const ext = type.includes('mp4') ? 'm4a' : type.includes('ogg') ? 'ogg' : 'webm';
+      clearVoice();
+      voiceFile = new File(chunks, 'message-vocal.' + ext, { type });
+      voiceAudio.src = URL.createObjectURL(voiceFile);
+      $('#voicePreview').hidden = false;
+      voiceBtn.hidden = true;
+      setLabel(homeVoiceBtn, 'Réenregistrer');
+      homeVoiceMsg.textContent = 'Message vocal de ' + mmss(Math.max(t, 1)) + ' enregistré. Il sera joint à ta demande.';
+    } else if (where === 'home') { setLabel(homeVoiceBtn, ui.idle); homeVoiceMsg.textContent = ''; }
+    const next = afterVoice; afterVoice = null;
+    if (next) next();
   };
   recorder.start();
-  let t = 0;
-  voiceTimer.textContent = 'Enregistrement… 0:00';
-  voiceTimer.hidden = false;
-  voiceBtn.classList.add('rec');
-  voiceBtn.setAttribute('aria-pressed', 'true');
-  setVoiceLabel('Arrêter l’enregistrement');
+  ui.btn.classList.add('rec');
+  ui.btn.setAttribute('aria-pressed', 'true');
+  setLabel(ui.btn, 'Arrêter l’enregistrement');
+  ui.out.textContent = 'Enregistrement… 0:00 / ' + mmss(VOICE_MAX);
+  ui.out.hidden = false;
   voiceTick = setInterval(() => {
     t += 1;
-    voiceTimer.textContent = 'Enregistrement… ' + mmss(t) + ' / ' + mmss(VOICE_MAX);
+    ui.out.textContent = 'Enregistrement… ' + mmss(t) + ' / ' + mmss(VOICE_MAX);
     if (t >= VOICE_MAX) recorder.stop();
   }, 1000);
 }
 if (window.MediaRecorder && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
   $('#voiceBox').hidden = false;
-  voiceBtn.addEventListener('click', () => { if (recorder) recorder.stop(); else startVoice(); });
+  homeVoiceBtn.hidden = false;
+  voiceBtn.addEventListener('click', () => { if (recorder) recorder.stop(); else startVoice('form'); });
+  homeVoiceBtn.addEventListener('click', () => { if (recorder) recorder.stop(); else startVoice('home'); });
   $('#voiceDel').addEventListener('click', () => { clearVoice(); voiceBtn.focus(); });
 }
-
-// Dictée : la reconnaissance vocale du navigateur (Chrome, Edge, Safari) écrit dans le champ.
-// Une seule dictée à la fois. Session continue partout, sauf Chrome Android qui répète le
-// texte en mode continu : là, chaque phrase est une session courte relancée.
-// La session est relancée si le navigateur la coupe, et la dictée s'arrête avec un message
-// si plusieurs sessions de suite n'ont rien capté (micro ou Dictée désactivés).
-const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
-const SHORT_SESSIONS = /Android/i.test(navigator.userAgent);
-const DICTATE_ERRORS = {
-  'not-allowed': 'Autorise l’accès au micro pour dicter.',
-  'service-not-allowed': 'Dictée indisponible. Sur Mac ou iPhone, active Siri ou la Dictée dans les réglages, ou laisse plutôt un message vocal.',
-  'audio-capture': 'Aucun micro détecté.',
-  network: 'La dictée a besoin d’une connexion Internet.',
-  'language-not-supported': 'La dictée en français n’est pas disponible dans ce navigateur.',
-};
-const MAC = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
-const DICTATE_SILENT = MAC
-  ? 'Ton navigateur n’écrit rien. Utilise plutôt la dictée de ton appareil : touche micro du clavier sur iPhone, deux appuis sur Fn (ou la touche micro) sur Mac. Ou laisse un message vocal.'
-  : 'On n’entend rien. Vérifie le micro choisi par ton navigateur, ou laisse plutôt un message vocal.';
-// Safari peut écouter sans jamais rien renvoyer (Siri ou Dictée désactivés) : au bout de
-// ce délai sans un seul mot reconnu, la dictée s'arrête et propose une autre solution.
-const DICTATE_TIMEOUT = 8000;
-let dictation = null; // { btn, stop() }
-if (Speech) $$('[data-dictate]').forEach(btn => {
-  const field = $('#' + btn.dataset.dictate);
-  const label = btn.querySelector('span');
-  const msg = el('span', 'dictate-msg');
-  msg.setAttribute('aria-live', 'polite');
-  btn.after(msg);
-  btn.hidden = false;
-  btn.setAttribute('aria-pressed', 'false');
-  btn.addEventListener('click', () => {
-    const mine = dictation && dictation.btn === btn;
-    if (dictation) dictation.stop();
-    if (mine) return;
-    let active = true, rec = null, base = '', heard = false, empty = 0, any = false;
-    const watchdog = setTimeout(() => { if (active && !any) finish(DICTATE_SILENT); }, DICTATE_TIMEOUT);
-    const finish = text => {
-      active = false;
-      clearTimeout(watchdog);
-      // stop() et non abort() : le navigateur livre encore les derniers mots prononcés.
-      if (rec) { try { rec.stop(); } catch (err) { /* déjà arrêtée */ } }
-      btn.classList.remove('rec');
-      btn.setAttribute('aria-pressed', 'false');
-      label.textContent = 'Dicter';
-      msg.textContent = text || '';
-      if (dictation && dictation.btn === btn) dictation = null;
-    };
-    const listen = () => {
-      base = field.value.trim();
-      heard = false;
-      const r = rec = new Speech();
-      r.lang = 'fr-FR';
-      r.continuous = !SHORT_SESSIONS;
-      r.interimResults = true;
-      r.onresult = e => {
-        const said = [...e.results].map(x => x[0].transcript.trim()).filter(Boolean).join(' ');
-        if (!said) return;
-        heard = any = true; empty = 0;
-        if (active) msg.textContent = 'Parle, on écrit…';
-        field.value = base + (base ? ' ' : '') + said;
-        field.dispatchEvent(new Event('input'));
-      };
-      r.onerror = e => {
-        if (DICTATE_ERRORS[e.error]) finish(DICTATE_ERRORS[e.error]);
-        else if (e.error === 'no-speech' && active) msg.textContent = 'On t’écoute… parle un peu plus fort.';
-      };
-      r.onend = () => {
-        if (!active || r !== rec) return;
-        if (!heard && ++empty >= 3) return finish(DICTATE_SILENT);
-        setTimeout(() => { if (active && r === rec) listen(); }, 250);
-      };
-      try { r.start(); } catch (err) { finish('La dictée n’a pas pu démarrer. Réessaie.'); }
-    };
-    dictation = { btn, stop: () => finish() };
-    btn.classList.add('rec');
-    btn.setAttribute('aria-pressed', 'true');
-    label.textContent = 'Arrêter la dictée';
-    msg.textContent = 'Parle, on écrit…';
-    field.focus();
-    listen();
-  });
-});
 
 $('#missionForm').addEventListener('submit', e => {
   e.preventDefault();
@@ -423,7 +369,6 @@ $('#missionForm').addEventListener('submit', e => {
     return;
   }
   if (recorder) { showError(err, 'Arrête d’abord l’enregistrement du message vocal.'); voiceBtn.focus(); return; }
-  if (dictation) dictation.stop();
   const files = chosenFiles();
   if (files.reduce((t, x) => t + x.size, 0) + (voiceFile ? voiceFile.size : 0) > MAX_UPLOAD) {
     showError(err, 'Tes fichiers dépassent 8 Mo au total. Retire-en un ou envoie des versions plus légères.');

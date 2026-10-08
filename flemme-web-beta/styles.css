@@ -337,8 +337,6 @@ footer b { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-size:
 @keyframes pulse { 50% { opacity: .35; } }
 .ask-bottom { gap: 10px; }
 .ask-bottom .tool-btn { margin-right: auto; }
-.field-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
-.field-head .tool-btn { min-height: 34px; padding: 5px 12px; font-size: 14px; margin-bottom: 6px; }
 #precisions { min-height: 130px; }
 .voice, .files { margin-top: 18px; display: grid; gap: 8px; justify-items: start; }
 .files-title { font-weight: 700; font-size: 15px; }
@@ -351,4 +349,9 @@ footer b { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-size:
 @media (prefers-reduced-motion: reduce) { .tool-btn.rec .ico { animation: none; } }
 .ask-bottom .primary { margin-left: auto; }
 .ask-bottom .tool-btn { font-family: "Bricolage Grotesque", system-ui, sans-serif; }
-.dictate-msg { font-size: 13px; color: var(--muted); }
+.voice-msg { font-size: 13px; color: var(--muted); }
+.voice-msg:empty { display: none; }
+.ask-bottom { flex-wrap: wrap; }
+@media (max-width: 600px) {
+  .ask-bottom .voice-msg { order: 3; flex-basis: 100%; padding-bottom: 6px; }
+}

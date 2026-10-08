@@ -93,7 +93,7 @@ Attention : ces ZIP contiennent encore flemme.fr, le jaune, la grille à plat et
 - Espace perso et espace équipe : précisions, liens vers les fichiers et lecteur du message vocal (liens temporaires d’une heure).
 - Script Supabase à exécuter : supabase/formulaire-enrichi.sql (colonne fichiers, compartiment et règles d’accès). Les demandes envoyées avant ne sont pas rattrapées.
 - Limite : la suppression du compte n’efface pas encore les fichiers stockés.
-- Dictée : session continue (sauf Android), derniers mots conservés à l’arrêt. Si rien n’est reconnu en 8 secondes (Safari avec Siri ou Dictée désactivés), la dictée s’arrête et propose la dictée du clavier de l’appareil ou un message vocal.
+- Dictée retirée (trop peu fiable, notamment dans Safari) et remplacée sur l’accueil par un bouton « Message vocal » : l’enregistrement est joint à la demande et réécoutable dans le formulaire. On peut envoyer une demande avec seulement un message vocal.
 
 ## Reste à faire
 - Application : compiler et tester sur de vrais téléphones (Xcode, Android Studio).
