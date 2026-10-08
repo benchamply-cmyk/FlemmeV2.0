@@ -15,32 +15,35 @@ collections:
         file: flemme-web-beta/content/accueil.json
         format: json
         fields:
-          - { label: Badge, name: badge, widget: string }
+          - { label: Phrase sous le titre, name: accroche, widget: string }
           - label: Textes grisés du champ de saisie (ils défilent toutes les 3 s)
             name: placeholders
             widget: list
             field: { label: Texte, name: texte, widget: string }
       - name: categories
-        label: Catégories et sous-catégories
+        label: Ce qu'on peut faire pour toi (résultats)
         file: flemme-web-beta/content/categories.json
         format: json
         fields:
-          - label: Grandes catégories
+          - label: Groupes
             name: groupes
             widget: list
-            summary: "{{fields.emoji}} {{fields.nom}}"
+            summary: "{{fields.nom}}"
             fields:
               - { label: Identifiant (sans espace ni accent), name: id, widget: string }
-              - { label: Emoji, name: emoji, widget: string }
-              - { label: Nom, name: nom, widget: string }
-              - label: Sous-catégories
+              - { label: Icône, name: icone, widget: select, options: [hammer, calendar-days, file-text, shopping-bag, plane, search, graduation-cap, wrench, scale, spray-can, sprout, truck, chef-hat, stethoscope, landmark, phone, wallet, map-pin, files, mail, scissors, life-buoy, credit-card, shield-check, clipboard-list, car, gift, tag, camera, shirt, coins, key-round, plane-takeoff, train-front, bed-double, car-front, map, ticket, luggage, newspaper, vote, book-open, clapperboard, chart-column, palette, book-marked, pencil, languages, presentation, brain, laptop, plus, chevron-down, mic, square, paperclip, trash-2, x, piggy-bank, user-round-search, house, heart, briefcase, users, sparkles, star, bike, baby, dog, dumbbell, music, utensils, zap, globe, calculator, receipt, building-2, euro, hand-helping, paint-roller, drill, bath, sofa, pill, hospital, school, smartphone, wifi, tv, package, recycle, hourglass, clock, bell, message-circle, lightbulb], hint: "Aperçu des icônes sur lucide.dev" }
+              - { label: Titre, name: nom, widget: string, hint: "Ex : On te trouve quelqu’un pour faire le boulot" }
+              - { label: Accroche, name: accroche, widget: string }
+              - { label: Résultat livré, name: resultat, widget: text }
+              - label: Résultats proposés
                 name: sous
                 widget: list
-                summary: "{{fields.emoji}} {{fields.nom}}"
+                summary: "{{fields.nom}}"
                 fields:
                   - { label: Identifiant, name: id, widget: string, hint: "Unique, sans espace ni accent. Ne pas modifier pour une catégorie existante." }
-                  - { label: Emoji, name: emoji, widget: string }
-                  - { label: Nom, name: nom, widget: string }
+                  - { label: Icône, name: icone, widget: select, options: [hammer, calendar-days, file-text, shopping-bag, plane, search, graduation-cap, wrench, scale, spray-can, sprout, truck, chef-hat, stethoscope, landmark, phone, wallet, map-pin, files, mail, scissors, life-buoy, credit-card, shield-check, clipboard-list, car, gift, tag, camera, shirt, coins, key-round, plane-takeoff, train-front, bed-double, car-front, map, ticket, luggage, newspaper, vote, book-open, clapperboard, chart-column, palette, book-marked, pencil, languages, presentation, brain, laptop, plus, chevron-down, mic, square, paperclip, trash-2, x, piggy-bank, user-round-search, house, heart, briefcase, users, sparkles, star, bike, baby, dog, dumbbell, music, utensils, zap, globe, calculator, receipt, building-2, euro, hand-helping, paint-roller, drill, bath, sofa, pill, hospital, school, smartphone, wifi, tv, package, recycle, hourglass, clock, bell, message-circle, lightbulb], hint: "Aperçu des icônes sur lucide.dev" }
+                  - { label: Intitulé, name: nom, widget: string, hint: "Ex : On te trouve un artisan" }
+                  - { label: Phrase préremplie au clic, name: exemple, widget: string }
                   - { label: Importance (1 à 5), name: etoiles, widget: number, value_type: int, min: 1, max: 5 }
                   - label: Qui s'en occupe
                     name: type
@@ -49,10 +52,6 @@ collections:
                       - { label: Agent IA, value: ia }
                       - { label: IA + assistant humain, value: h }
                       - { label: IA + Flemmeur sur place, value: f }
-                  - label: Tâches proposées
-                    name: taches
-                    widget: list
-                    field: { label: Tâche, name: tache, widget: string }
                   - label: Mots-clés pour reconnaître une demande
                     name: mots_cles
                     widget: list

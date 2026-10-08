@@ -103,3 +103,12 @@ a.full { display: block; }
 .ok { margin: 8px 0 0; font-size: 14px; font-weight: 700; color: #1f7a47; }
 .account .pseudo-form .row button { width: auto; flex: 0 0 auto; margin: 0; padding-left: 18px; padding-right: 18px; }
 .pseudo-form label { margin-top: 18px; }
+
+/* Précisions et pièces jointes d'une demande (espace et page équipe) */
+.pieces-box { margin: 12px 0; padding: 12px 14px; border-radius: 14px; background: var(--soft, #f6f5ff); display: grid; gap: 6px; }
+.pieces-box b { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; }
+.precisions-txt { margin: 0 0 6px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.pieces { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.pieces li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.pieces a { overflow-wrap: anywhere; }
+.pieces audio { max-width: 100%; }

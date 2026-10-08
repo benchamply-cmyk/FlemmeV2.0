@@ -97,15 +97,23 @@ addEventListener('popstate', () => show(location.hash.slice(1) || 'home', false)
 /* ---------- 4. Saisie de la demande ---------- */
 
 const taskInput = $('#task');
-const setCounter = () => { $('#counter').textContent = taskInput.value.length + '/280'; };
 const saveDraft = () => safe(() => SS.setItem('flemmeDraft', taskInput.value));
 
-taskInput.addEventListener('input', () => { setCounter(); saveDraft(); });
+taskInput.addEventListener('input', saveDraft);
 $('#flemmeForm').addEventListener('submit', e => {
   e.preventDefault(); // on ne recharge pas la page : on passe à l'écran suivant
+  // Un enregistrement en cours est d'abord arrêté, puis joint à la demande.
+  if (recorder) { afterVoice = () => $('#flemmeForm').requestSubmit(); recorder.stop(); return; }
   task = taskInput.value.trim();
-  if (!task) return;
-  buildOffer();
+  if (!task && !voiceFile) {
+    homeVoiceMsg.textContent = 'Écris ta flemme ou laisse un message vocal.';
+    taskInput.focus();
+    return;
+  }
+  if (task) return buildOffer();
+  task = 'Message vocal';
+  buildOffer(null);
+  $('#summary').textContent = 'Demande en message vocal';
 });
 
 /* ---------- 5. Catégories ---------- */
@@ -121,19 +129,89 @@ function keywordRegex(words) {
 // Liste à plat de toutes les sous-catégories, triées par importance (étoiles).
 const CATS = (FL.categories.groupes || [])
   .flatMap(g => (g.sous || []).map(c => ({
-    id: c.id, e: c.emoji, n: c.nom, s: c.etoiles || 3, re: keywordRegex(c.mots_cles),
+    id: c.id, n: c.nom, s: c.etoiles || 3, re: keywordRegex(c.mots_cles),
   })))
   .sort((a, b) => b.s - a.s);
 const byId = id => CATS.find(c => c.id === id);
 
-// Ordre de détection dans le texte libre : les catégories les plus précises d'abord
-// (« résilier mon abonnement » doit tomber dans Abonnements avant Administratif).
-const DETECT = ['abos', 'demenag', 'retours', 'factures', 'voyages', 'voiture', 'cadeaux', 'courses', 'repas', 'compar', 'eco', 'emails', 'travail', 'maison', 'tel', 'orga', 'appels', 'rdv', 'admin', 'recherche'];
+// Ordre de détection dans le texte libre : les résultats les plus précis d'abord
+// (« vendre sur Vinted » avant « estimer un prix », « dermatologue » avant « médecin »,
+// les résumés avant « synthèse », « recherche » en tout dernier car très large). Ceux absents de la liste passent après.
+const DETECT = ['location', 'leasing', 'resiliation', 'vinted', 'leboncoin', 'estimation', 'politique', 'specialiste', 'rdvbanque', 'rdvadmin', 'actu', 'livre', 'film', 'histoire', 'synthese', 'serviceclient', 'devis', 'menage', 'jardinier', 'demenagement', 'cuisinier', 'artisan', 'vols', 'trains', 'hotels', 'activites', 'itineraire', 'programme', 'voiture', 'cadeau', 'prix', 'langue', 'prof', 'fiches', 'devoirs', 'cours', 'informatique', 'sav', 'reclamation', 'assurances', 'banque', 'documents', 'formulaires', 'medecin', 'recherche'];
 const ORDER = [...DETECT.filter(byId), ...CATS.map(c => c.id).filter(i => !DETECT.includes(i))];
 
 /* ---------- 6. Exemples et proposition ---------- */
 
-$$('[data-example]').forEach(b => b.addEventListener('click', () => { taskInput.value = b.dataset.example; setCounter(); saveDraft(); taskInput.focus(); }));
+// Un clic sur une section ou un service mène directement au formulaire de demande (#offer),
+// avec ce choix comme besoin et comme catégorie.
+function startOffer(label, cat) {
+  task = label;
+  buildOffer(cat);
+  buzz();
+}
+const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text) n.textContent = text; return n; };
+// Icône au trait (sprite icons.svg, icônes Lucide) : monochrome, prend la couleur du texte.
+const SVGNS = 'http://www.w3.org/2000/svg';
+function icon(name) {
+  const svg = document.createElementNS(SVGNS, 'svg'), use = document.createElementNS(SVGNS, 'use');
+  svg.setAttribute('class', 'ico');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('aria-hidden', 'true');
+  use.setAttribute('href', 'icons.svg#i-' + (name || 'sparkles'));
+  svg.append(use);
+  return svg;
+}
+const ideaButton = (cls, iconName, label, onClick) => {
+  const b = el('button', cls);
+  b.type = 'button';
+  b.append(icon(iconName), el('span', '', label));
+  b.addEventListener('click', onClick);
+  return b;
+};
+
+// Les 7 résultats concrets (content/categories.json) : une carte chacun. Le détail des
+// services s'ouvre en menu déroulant au survol de la souris ou au clic (au toucher sur mobile).
+const cats = [];
+const closeCats = except => cats.forEach(c => { if (c !== except) { c.classList.remove('open'); c.querySelector('.cat-toggle').setAttribute('aria-expanded', 'false'); } });
+(FL.categories.groupes || []).forEach((g, i) => {
+  const groupCat = { n: g.nom };
+  const card = el('div', 'cat');
+  // La carte entière mène au formulaire ; la flèche ouvre le détail (utile sur mobile).
+  const head = el('button', 'cat-head');
+  head.type = 'button';
+  head.append(icon(g.icone), el('span', 'cat-title', g.nom));
+  if (g.accroche) head.append(el('span', 'cat-tag', g.accroche));
+  head.addEventListener('click', () => startOffer(g.nom, groupCat));
+  const toggle = el('button', 'cat-toggle');
+  toggle.type = 'button';
+  toggle.append(icon('chevron-down'));
+  toggle.setAttribute('aria-expanded', 'false');
+  toggle.setAttribute('aria-controls', 'catMenu' + i);
+  toggle.setAttribute('aria-label', 'Voir le détail : ' + g.nom);
+  const menu = el('div', 'cat-menu');
+  menu.id = 'catMenu' + i;
+  const list = el('ul', '');
+  const item = (iconName, label, onClick) => { const li = el('li', ''); li.append(ideaButton('svc-item', iconName, label, onClick)); list.append(li); };
+  (g.sous || []).forEach(c => item(c.icone, c.nom, () => startOffer(c.nom, byId(c.id))));
+  // Service « Autre » ajouté automatiquement à chaque section.
+  item('plus', 'Autre', () => startOffer('Autre demande', groupCat));
+  menu.append(list);
+  if (g.resultat) { const r = el('p', 'svc-result'); r.append(el('b', '', 'Résultat livré : '), document.createTextNode(g.resultat)); menu.append(r); }
+  const top = el('div', 'cat-top');
+  top.append(head, toggle);
+  card.append(top, menu);
+  toggle.addEventListener('click', () => {
+    const open = !card.classList.contains('open');
+    closeCats(card);
+    card.classList.toggle('open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+  });
+  card.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') closeCats(); });
+  cats.push(card);
+  $('#catGrid').append(card);
+});
+document.addEventListener('click', e => { if (!e.target.closest('.cat')) closeCats(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCats(); });
 $$('[data-focus-task]').forEach(b => b.addEventListener('click', () => { taskInput.scrollIntoView({ behavior: 'smooth', block: 'center' }); taskInput.focus({ preventScroll: true }); }));
 $('#ambassadorBtn').addEventListener('click', () => { $('#missionForm input[name=ambassadeur]').checked = true; taskInput.scrollIntoView({ behavior: 'smooth', block: 'center' }); taskInput.focus({ preventScroll: true }); });
 
@@ -142,10 +220,11 @@ function classify(text) {
   return { cat: byId(ORDER.find(id => { const x = byId(id); return x.re && x.re.test(text); })) };
 }
 
-function buildOffer() {
-  offer = classify(task);
+// `cat` est fourni quand on vient d'une section ou d'un service ; sinon on le déduit du texte libre.
+function buildOffer(cat) {
+  offer = { cat: cat !== undefined ? cat : classify(task).cat };
   $('#summary').textContent = task;
-  $('#mLabel').textContent = 'Ton besoin' + (offer.cat ? ' · ' + offer.cat.e + ' ' + offer.cat.n : '');
+  $('#mLabel').textContent = 'Ton besoin' + (offer.cat && offer.cat.n !== task ? ' · ' + offer.cat.n : '');
   show('offer');
 }
 
@@ -160,18 +239,21 @@ const isContact = v => isEmail(v) || v.replace(/\D/g, '').length >= 8;
 
 // Envoie un formulaire comme le ferait le navigateur, mais sans quitter la page.
 // Pendant l'envoi, le bouton est désactivé pour éviter les doubles clics.
-async function sendForm(form, errBox, onSuccess) {
+// `extra(data)` peut compléter les données envoyées (ex. : le message vocal enregistré).
+async function sendForm(form, errBox, onSuccess, extra) {
   const btn = form.querySelector('button[type=submit]');
   const label = btn.textContent;
   errBox.hidden = true;
   btn.disabled = true;
   btn.textContent = 'Envoi…';
   try {
-    const r = await fetch(FORM_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams(new FormData(form)).toString(),
-    });
+    const data = new FormData(form);
+    if (extra) extra(data);
+    // Avec des fichiers (enctype multipart), le FormData part tel quel : le navigateur
+    // choisit lui-même l'en-tête Content-Type.
+    const r = await fetch(FORM_URL, form.enctype === 'multipart/form-data'
+      ? { method: 'POST', body: data }
+      : { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(data).toString() });
     if (!r.ok) throw new Error(r.status);
     onSuccess();
     buzz('ok');
@@ -184,12 +266,112 @@ async function sendForm(form, errBox, onSuccess) {
 }
 const showError = (box, msg) => { box.textContent = msg; box.hidden = false; };
 
+/* ---------- 7 bis. Pièces jointes, message vocal et dictée ---------- */
+
+// Netlify Forms accepte un fichier par champ et 8 Mo par envoi : 3 champs « fichier »
+// (le 2e et le 3e apparaissent à la demande) et un champ « vocal ».
+const MAX_UPLOAD = 8 * 1024 * 1024;
+const slots = $$('.file-slot');
+let voiceFile = null;
+const chosenFiles = () => $$('#missionForm input[type=file]:not([name=vocal])').map(i => i.files[0]).filter(Boolean);
+$('#addFile').addEventListener('click', e => {
+  const next = slots.find(s => s.hidden);
+  if (next) { next.hidden = false; next.querySelector('input').focus(); }
+  if (!slots.some(s => s.hidden)) e.currentTarget.hidden = true;
+});
+function resetAttachments() {
+  slots.forEach((s, i) => { s.hidden = i > 0; });
+  $('#addFile').hidden = false;
+  clearVoice();
+}
+
+// Message vocal : enregistré dans le navigateur (MediaRecorder), 3 minutes au plus.
+// On peut l'enregistrer dès l'accueil (à la place du texte) ou dans le formulaire :
+// c'est le même message, joint à la demande et réécoutable dans le formulaire.
+const voiceBtn = $('#voiceBtn'), voiceTimer = $('#voiceTimer'), voiceAudio = $('#voiceAudio');
+const homeVoiceBtn = $('#homeVoiceBtn'), homeVoiceMsg = $('#homeVoiceMsg');
+const VOICE_UI = {
+  form: { btn: voiceBtn, out: voiceTimer, idle: 'Enregistrer un message vocal' },
+  home: { btn: homeVoiceBtn, out: homeVoiceMsg, idle: 'Message vocal' },
+};
+let recorder = null, voiceTick = null, afterVoice = null;
+const VOICE_MAX = 180;
+const mmss = t => Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0');
+const setLabel = (btn, txt) => { btn.querySelector('span').textContent = txt; };
+function clearVoice() {
+  voiceFile = null;
+  if (voiceAudio.src) { URL.revokeObjectURL(voiceAudio.src); voiceAudio.removeAttribute('src'); }
+  $('#voicePreview').hidden = true;
+  voiceBtn.hidden = false;
+  setLabel(homeVoiceBtn, VOICE_UI.home.idle);
+  homeVoiceMsg.textContent = '';
+}
+async function startVoice(where) {
+  const ui = VOICE_UI[where];
+  let stream;
+  try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
+  catch (e) {
+    const txt = 'Impossible d’accéder au micro. Vérifie l’autorisation de ton navigateur.';
+    if (where === 'home') homeVoiceMsg.textContent = txt; else showError($('#err'), txt);
+    return;
+  }
+  const chunks = [];
+  let t = 0;
+  recorder = new MediaRecorder(stream);
+  recorder.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+  recorder.onstop = () => {
+    stream.getTracks().forEach(tr => tr.stop());
+    clearInterval(voiceTick);
+    ui.btn.classList.remove('rec');
+    ui.btn.setAttribute('aria-pressed', 'false');
+    recorder = null;
+    if (where === 'form') { voiceTimer.hidden = true; setLabel(voiceBtn, ui.idle); }
+    if (chunks.length) {
+      const type = chunks[0].type || 'audio/webm';
+      const ext = type.includes('mp4') ? 'm4a' : type.includes('ogg') ? 'ogg' : 'webm';
+      clearVoice();
+      voiceFile = new File(chunks, 'message-vocal.' + ext, { type });
+      voiceAudio.src = URL.createObjectURL(voiceFile);
+      $('#voicePreview').hidden = false;
+      voiceBtn.hidden = true;
+      setLabel(homeVoiceBtn, 'Réenregistrer');
+      homeVoiceMsg.textContent = 'Message vocal de ' + mmss(Math.max(t, 1)) + ' enregistré. Il sera joint à ta demande.';
+    } else if (where === 'home') { setLabel(homeVoiceBtn, ui.idle); homeVoiceMsg.textContent = ''; }
+    const next = afterVoice; afterVoice = null;
+    if (next) next();
+  };
+  recorder.start();
+  ui.btn.classList.add('rec');
+  ui.btn.setAttribute('aria-pressed', 'true');
+  setLabel(ui.btn, 'Arrêter l’enregistrement');
+  ui.out.textContent = 'Enregistrement… 0:00 / ' + mmss(VOICE_MAX);
+  ui.out.hidden = false;
+  voiceTick = setInterval(() => {
+    t += 1;
+    ui.out.textContent = 'Enregistrement… ' + mmss(t) + ' / ' + mmss(VOICE_MAX);
+    if (t >= VOICE_MAX) recorder.stop();
+  }, 1000);
+}
+if (window.MediaRecorder && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  $('#voiceBox').hidden = false;
+  homeVoiceBtn.hidden = false;
+  voiceBtn.addEventListener('click', () => { if (recorder) recorder.stop(); else startVoice('form'); });
+  homeVoiceBtn.addEventListener('click', () => { if (recorder) recorder.stop(); else startVoice('home'); });
+  $('#voiceDel').addEventListener('click', () => { clearVoice(); voiceBtn.focus(); });
+}
+
 $('#missionForm').addEventListener('submit', e => {
   e.preventDefault();
   const f = e.target, err = $('#err');
   if (!isContact(f.elements.contact.value.trim())) {
     showError(err, 'Indique une adresse e-mail ou un numéro de téléphone valide.');
     f.elements.contact.focus();
+    return;
+  }
+  if (recorder) { showError(err, 'Arrête d’abord l’enregistrement du message vocal.'); voiceBtn.focus(); return; }
+  const files = chosenFiles();
+  if (files.reduce((t, x) => t + x.size, 0) + (voiceFile ? voiceFile.size : 0) > MAX_UPLOAD) {
+    showError(err, 'Tes fichiers dépassent 8 Mo au total. Retire-en un ou envoie des versions plus légères.');
     return;
   }
   const contact = f.elements.contact.value.trim();
@@ -202,17 +384,23 @@ $('#missionForm').addEventListener('submit', e => {
   const copy = {
     ref: n, besoin: task, email: isEmail(contact) ? contact.toLowerCase() : null,
     categorie: f.elements.category.value || null, echeance: f.elements.echeance.value || null,
-    aide_attendue: f.elements.aide_attendue.value.trim() || null, frequence: f.elements.frequence.value || null,
+    precisions: f.elements.precisions.value.trim() || null,
+    pieces_jointes: files.length, vocal: !!voiceFile,
     ambassadeur: f.elements.ambassadeur.checked,
   };
+  // Copie des fichiers dans l'espace (Supabase Storage), sous la référence de la demande.
+  const uploads = files.map((file, i) => ({ chemin: n + '/' + (i + 1) + '-' + safeName(file.name), file }));
+  if (voiceFile) uploads.push({ chemin: n + '/' + voiceFile.name, file: voiceFile });
+  copy.fichiers = uploads.map(u => u.chemin);
+  const voice = voiceFile;
   sendForm(f, err, () => {
     ref = n;
-    trackRequest(copy);
-    f.reset();
+    trackRequest(copy, uploads);
+    f.reset(); resetAttachments();
     safe(() => SS.removeItem('flemmeDraft'));
     $('#missionRef').textContent = 'Demande ' + ref + ' · Nous te recontacterons pour te dire si nous pouvons t’aider.';
     show('tracking');
-  });
+  }, data => { if (voice) data.set('vocal', voice); });
 });
 
 $('#facForm').addEventListener('submit', e => {
@@ -229,13 +417,33 @@ $('#facForm').addEventListener('submit', e => {
 
 // Enregistre la demande pour qu'elle apparaisse dans l'espace, puis propose de la suivre.
 // Netlify Forms reste la source principale : un échec ici n'empêche rien.
-function trackRequest(copy) {
+// Nom de fichier sans accents ni caractères spéciaux, pour un chemin de stockage sûr.
+const safeName = name => (name || 'fichier').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  .replace(/[^A-Za-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '').slice(-60) || 'fichier';
+
+function trackRequest(copy, uploads = []) {
   const box = $('#trackBox');
   box.hidden = true;
   if (!window.SB || !SB.ready) return;
   const s = SB.current();
   if (!s && !copy.email) return; // contact par téléphone : rien à rattacher à un compte
-  SB.deposer(copy).then(() => {
+  // Si la base n'a pas encore les colonnes du formulaire enrichi (script
+  // supabase/formulaire-enrichi.sql pas encore exécuté), on réessaie sans les fichiers,
+  // puis avec les anciens champs.
+  const sansFichiers = Object.assign({}, copy);
+  delete sansFichiers.fichiers;
+  SB.deposer(copy).catch(() => {
+    uploads = []; // sans le compartiment de stockage, les fichiers restent dans Netlify Forms
+    return SB.deposer(sansFichiers);
+  }).catch(() => {
+    const old = Object.assign({}, copy, { besoin: copy.besoin.slice(0, 280), aide_attendue: copy.precisions ? copy.precisions.slice(0, 600) : null });
+    delete old.precisions; delete old.pieces_jointes; delete old.vocal; delete old.fichiers;
+    return SB.deposer(old);
+  }).then(() =>
+    // Fichiers copiés un par un, avant d'afficher le lien vers l'espace (quitter la page
+    // couperait l'envoi). Un fichier refusé n'empêche rien : il reste reçu via Netlify Forms.
+    uploads.reduce((p, u) => p.then(() => SB.envoyerFichier(u.chemin, u.file).catch(e => console.warn('Fichier non copié', u.chemin, e))), Promise.resolve())
+  ).then(() => {
     const link = $('#trackLink');
     if (s) {
       $('#trackTxt').textContent = 'Retrouve cette demande et son avancement dans ton espace.';
@@ -258,8 +466,7 @@ if (window.SB && SB.ready) {
 // Remet tout à zéro pour une nouvelle demande.
 function resetApp() {
   task = ''; ref = ''; offer = null;
-  taskInput.value = ''; $('#missionForm').reset();
-  setCounter();
+  taskInput.value = ''; $('#missionForm').reset(); resetAttachments();
   safe(() => SS.removeItem('flemmeDraft'));
   show('home');
 }
@@ -268,7 +475,7 @@ function resetApp() {
 
 (() => {
   const A = FL.accueil || {};
-  if (A.badge) $('.badge').textContent = A.badge;
+  if (A.accroche) $('#heroLead').textContent = A.accroche;
   // Textes grisés du champ : le premier s'affiche, puis ils défilent toutes les 3 s
   // tant que le champ est vide (sauf si l'utilisateur a demandé moins d'animations).
   const hints = (A.placeholders || []).filter(Boolean);
@@ -288,7 +495,7 @@ function resetApp() {
 /* ---------- 10. Démarrage ---------- */
 
 const draft = safe(() => SS.getItem('flemmeDraft'));
-if (draft) { taskInput.value = draft; setCounter(); }
+if (draft) taskInput.value = draft;
 
 // Un lien direct vers flemme.org/#facilitateur ouvre le formulaire Facilitateur.
 const start = location.hash === '#facilitateur' ? 'facilitateur' : 'home';

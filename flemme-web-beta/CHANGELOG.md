@@ -60,6 +60,41 @@ Attention : ces ZIP contiennent encore flemme.fr, le jaune, la grille à plat et
 - Nettoyage : champs en double retirés du formulaire (when, pref), écran « précisions », catégories cliquables, phrases défilantes et blocs TOI / NOUS / GO supprimés du code et de /admin.
 - Titre : espace insécable avant « ? » rétablie ; barre de progression sur 2 étapes.
 
+## Résultats concrets à la place des catégories (8 oct. 2026)
+- Accueil en trois parties : « T’as la flemme de quoi ? » avec le champ libre, 8 cartes « Les flemmes du moment » qui préremplissent la demande, puis « Et toi, t’as la flemme de quoi d’autre ? » (proposer une flemme, devenir ambassadeur).
+- « Voir tout ce qu’on peut faire pour toi » dévoile les 7 groupes de résultats (45 au total), chacun avec son accroche et son « Résultat livré ». Un clic préremplit la demande.
+- Sections retirées de l’accueil : « Le principe est simple », « On commence petit », « Et demain ? », « Pourquoi on fait ça ? », dernier appel.
+- content/categories.json et content/accueil.json restructurés (modifiables dans /admin) ; mots-clés et ordre de détection mis à jour.
+
+## Les flemmes du moment en 7 cartes (8 oct. 2026)
+- Annulation des changements du formulaire (accès direct, description détaillée, pièces jointes).
+- « Les flemmes du moment » et « Voilà toutes les corvées dont on peut te débarrasser » regroupés en une seule section : les 7 résultats concrets en cartes.
+- Le détail des services s’ouvre en menu déroulant au survol de la souris ou au clic (au toucher sur mobile), avec le « Résultat livré ». Un service cliqué préremplit la demande.
+
+## Accès direct au formulaire et service « Autre » (8 oct. 2026)
+- Un clic sur une section ou un service mène directement au formulaire de demande (#offer), avec ce choix comme besoin et comme catégorie.
+- La flèche de chaque carte ouvre le détail (indispensable sur mobile) ; sur ordinateur, le survol l’ouvre aussi.
+- Service « Autre » ajouté automatiquement à la fin de chaque section (« Autre demande », rangée dans la section).
+
+## Icônes et formulaire enrichi (8 oct. 2026)
+- Icônes au trait monochromes (Lucide, licence ISC) à la place des emojis, dans le fichier icons.svg ; l’icône de chaque section et service se choisit dans /admin.
+- « Pour quand ? » : Aucune urgence, Cette année, Ce mois-ci, Cette semaine, Aujourd’hui, Urgent, délai dépassé.
+- Champ « Précisions » visible ; la fréquence et « Quel résultat te serait utile ? » sont retirés du formulaire.
+- Pièces jointes (3 fichiers) et message vocal (3 min), 8 Mo au total, reçus dans Netlify Forms.
+- Dictée vocale sur le grand champ et sur « Précisions » (navigateurs compatibles) ; micro autorisé dans _headers.
+- Plus de limite de caractères. Script Supabase à exécuter : supabase/formulaire-enrichi.sql.
+
+## Corrections (8 oct. 2026)
+- Dictée : une seule à la fois, sessions courtes relancées automatiquement (plus fiable sur mobile), message affiché en cas de refus du micro ou d’erreur.
+- « Suivre ma demande » : si la base Supabase n’a pas encore les nouvelles colonnes, la demande est enregistrée avec les anciens champs (précisions dans « aide attendue ») et le bouton réapparaît.
+
+## Pièces jointes visibles dans les espaces (8 oct. 2026)
+- Fichiers et message vocal copiés dans le stockage Supabase privé « pieces-jointes » après l’enregistrement de la demande.
+- Espace perso et espace équipe : précisions, liens vers les fichiers et lecteur du message vocal (liens temporaires d’une heure).
+- Script Supabase à exécuter : supabase/formulaire-enrichi.sql (colonne fichiers, compartiment et règles d’accès). Les demandes envoyées avant ne sont pas rattrapées.
+- Limite : la suppression du compte n’efface pas encore les fichiers stockés.
+- Dictée retirée (trop peu fiable, notamment dans Safari) et remplacée sur l’accueil par un bouton « Message vocal » : l’enregistrement est joint à la demande et réécoutable dans le formulaire. On peut envoyer une demande avec seulement un message vocal.
+
 ## Reste à faire
 - Application : compiler et tester sur de vrais téléphones (Xcode, Android Studio).
 - Compléter les passages [...] des mentions légales et de la confidentialité, retirer le noindex.

@@ -281,3 +281,77 @@ footer b { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-size:
   .ask, .card { box-shadow: 8px 8px 0 var(--violet); }
   .ambassador-panel { box-shadow: 8px 8px 0 var(--ink); }
 }
+
+/* ---------- Les flemmes du moment : les 7 résultats concrets ---------- */
+#heroLead { margin-bottom: 28px; }
+.ideas { margin: 48px 0 24px; }
+.ideas-title { font-size: clamp(28px, 4vw, 44px); font-weight: 800; letter-spacing: -.04em; margin: 6px 0 20px; }
+.promise { font-size: 18px; font-weight: 700; margin: 0 0 22px; }
+.ico { width: 1em; height: 1em; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.cat-head > .ico { font-size: 30px; }
+
+/* Les 7 résultats concrets : cartes avec menu déroulant (survol ou clic) */
+.cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
+.cat { position: relative; display: flex; flex-direction: column; }
+.cat-head { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; width: 100%; min-height: 150px; text-align: left; font: inherit; color: var(--ink); padding: 18px 18px 40px; border: 3px solid var(--ink); border-radius: 22px; background: #fff; cursor: pointer; box-shadow: 5px 5px 0 var(--ink); transition: background .12s; }
+.cat-top { position: relative; flex: 1; display: flex; }
+.cat-top .cat-head { flex: 1; }
+.cat-toggle { position: absolute; right: 10px; bottom: 10px; width: 36px; height: 36px; font: inherit; font-size: 16px; color: var(--ink); background: var(--soft); border: 2px solid var(--ink); border-radius: 50%; cursor: pointer; transition: transform .15s; }
+.cat.open .cat-toggle { transform: rotate(180deg); }
+.cat-title { font-size: 19px; font-weight: 800; letter-spacing: -.02em; line-height: 1.15; }
+.cat-tag { font-size: 14px; font-style: italic; color: var(--muted); line-height: 1.35; }
+.cat.open .cat-head { background: var(--acid); }
+.cat-menu { display: none; position: absolute; z-index: 20; top: calc(100% + 6px); left: 0; width: max(100%, 340px); max-width: calc(100vw - 32px); background: #fff; border: 3px solid var(--ink); border-radius: 20px; padding: 14px; box-shadow: 8px 8px 0 var(--violet); }
+.cat.open .cat-menu { display: block; }
+/* Pont invisible entre la carte et le menu : la souris peut y descendre sans le fermer */
+.cat-menu::before { content: ""; position: absolute; left: 0; right: 0; top: -12px; height: 12px; }
+.cat-menu ul { list-style: none; padding: 0; margin: 0 0 12px; display: grid; gap: 6px; }
+.svc-item { display: flex; gap: 10px; align-items: center; width: 100%; text-align: left; font: inherit; font-size: 15px; font-weight: 600; line-height: 1.25; color: var(--ink); background: var(--soft); border: 2px solid transparent; border-radius: 12px; padding: 9px 11px; cursor: pointer; }
+.svc-item:hover, .svc-item:focus-visible { border-color: var(--ink); background: var(--acid); }
+.svc-item .ico { font-size: 20px; }
+.cat-toggle .ico { font-size: 18px; vertical-align: middle; }
+.svc-result { margin: 0; font-size: 14px; line-height: 1.5; color: var(--muted); border-top: 2px dashed var(--ink); padding-top: 10px; }
+.svc-result b { color: var(--violet); }
+.cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+/* Ouverture au survol avec une souris */
+@media (hover: hover) and (pointer: fine) {
+  .cat:hover .cat-menu { display: block; }
+  .cat:hover .cat-head { background: var(--acid); }
+  .cat:hover .cat-toggle { transform: rotate(180deg); }
+}
+/* Les cartes de droite ouvrent leur menu vers la gauche pour rester dans l'écran */
+@media (min-width: 900px) { .cat:nth-child(4n) .cat-menu { left: auto; right: 0; } }
+/* Sur mobile, le menu s'ouvre dans le flux, sous la carte */
+@media (max-width: 600px) {
+  .cat-head { min-height: 0; }
+  .cat-menu { position: static; width: auto; max-width: none; margin-top: 8px; box-shadow: 5px 5px 0 var(--violet); }
+}
+@media (prefers-reduced-motion: reduce) { .cat-head, .cat-toggle { transition: none; } }
+
+/* ---------- Formulaire : dictée, précisions, message vocal, pièces jointes ---------- */
+.tool-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 8px 14px; font: inherit; font-size: 15px; font-weight: 700; color: var(--ink); background: #fff; border: 2px solid var(--ink); border-radius: 999px; cursor: pointer; }
+.tool-btn .ico { font-size: 18px; }
+.tool-btn:hover { background: var(--acid); }
+.tool-btn.rec { background: var(--orange); }
+.tool-btn.rec .ico { animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .35; } }
+.ask-bottom { gap: 10px; }
+.ask-bottom .tool-btn { margin-right: auto; }
+#precisions { min-height: 130px; }
+.voice, .files { margin-top: 18px; display: grid; gap: 8px; justify-items: start; }
+.files-title { font-weight: 700; font-size: 15px; }
+.voice-timer { font-family: var(--mono); font-size: 14px; color: var(--muted); }
+.voice-preview { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; width: 100%; }
+.voice-preview audio { flex: 1 1 220px; max-width: 100%; }
+.file-slot { display: block; width: 100%; margin: 0; }
+.file-slot input { width: 100%; font: inherit; font-size: 15px; padding: 10px; border: 2px dashed var(--ink); border-radius: 14px; background: var(--soft); }
+.files .micro { margin: 0; }
+@media (prefers-reduced-motion: reduce) { .tool-btn.rec .ico { animation: none; } }
+.ask-bottom .primary { margin-left: auto; }
+.ask-bottom .tool-btn { font-family: "Bricolage Grotesque", system-ui, sans-serif; }
+.voice-msg { font-size: 13px; color: var(--muted); }
+.voice-msg:empty { display: none; }
+.ask-bottom { flex-wrap: wrap; }
+@media (max-width: 600px) {
+  .ask-bottom .voice-msg { order: 3; flex-basis: 100%; padding-bottom: 6px; }
+}

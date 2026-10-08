@@ -36,6 +36,7 @@ function renderDemande(d) {
   top.append(el('span', 'ref', d.ref + ' · ' + date(d.created_at)), el('span', 'pill pill-' + d.statut, LABEL[d.statut] || d.statut));
   li.append(top, el('p', 'besoin', d.besoin));
   if (d.categorie || d.echeance) li.append(el('p', 'meta', [d.categorie, d.echeance].filter(Boolean).join(' · ')));
+  li.append(SB.blocPieces(d));
 
   if (d.message) {
     const m = el('div', 'team-msg');
