@@ -290,14 +290,16 @@ footer b { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-size:
 .emo { font-size: 26px; line-height: 1; }
 
 /* Les 7 résultats concrets : cartes avec menu déroulant (survol ou clic) */
-.cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; align-items: start; }
-.cat { position: relative; }
-.cat-head { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; width: 100%; min-height: 150px; text-align: left; font: inherit; color: var(--ink); padding: 18px; border: 3px solid var(--ink); border-radius: 22px; background: #fff; cursor: pointer; box-shadow: 5px 5px 0 var(--ink); transition: background .12s; }
-.cat-head::after { content: "▾"; font-size: 16px; margin-top: auto; align-self: flex-end; transition: transform .15s; }
+.cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
+.cat { position: relative; display: flex; flex-direction: column; }
+.cat-head { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; width: 100%; min-height: 150px; text-align: left; font: inherit; color: var(--ink); padding: 18px 18px 40px; border: 3px solid var(--ink); border-radius: 22px; background: #fff; cursor: pointer; box-shadow: 5px 5px 0 var(--ink); transition: background .12s; }
+.cat-top { position: relative; flex: 1; display: flex; }
+.cat-top .cat-head { flex: 1; }
+.cat-toggle { position: absolute; right: 10px; bottom: 10px; width: 36px; height: 36px; font: inherit; font-size: 16px; color: var(--ink); background: var(--soft); border: 2px solid var(--ink); border-radius: 50%; cursor: pointer; transition: transform .15s; }
+.cat.open .cat-toggle { transform: rotate(180deg); }
 .cat-title { font-size: 19px; font-weight: 800; letter-spacing: -.02em; line-height: 1.15; }
 .cat-tag { font-size: 14px; font-style: italic; color: var(--muted); line-height: 1.35; }
 .cat.open .cat-head { background: var(--acid); }
-.cat.open .cat-head::after { transform: rotate(180deg); }
 .cat-menu { display: none; position: absolute; z-index: 20; top: calc(100% + 6px); left: 0; width: max(100%, 340px); max-width: calc(100vw - 32px); background: #fff; border: 3px solid var(--ink); border-radius: 20px; padding: 14px; box-shadow: 8px 8px 0 var(--violet); }
 .cat.open .cat-menu { display: block; }
 /* Pont invisible entre la carte et le menu : la souris peut y descendre sans le fermer */
@@ -313,7 +315,7 @@ footer b { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-size:
 @media (hover: hover) and (pointer: fine) {
   .cat:hover .cat-menu { display: block; }
   .cat:hover .cat-head { background: var(--acid); }
-  .cat:hover .cat-head::after { transform: rotate(180deg); }
+  .cat:hover .cat-toggle { transform: rotate(180deg); }
 }
 /* Les cartes de droite ouvrent leur menu vers la gauche pour rester dans l'écran */
 @media (min-width: 900px) { .cat:nth-child(4n) .cat-menu { left: auto; right: 0; } }
@@ -322,4 +324,4 @@ footer b { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-size:
   .cat-head { min-height: 0; }
   .cat-menu { position: static; width: auto; max-width: none; margin-top: 8px; box-shadow: 5px 5px 0 var(--violet); }
 }
-@media (prefers-reduced-motion: reduce) { .cat-head, .cat-head::after { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .cat-head, .cat-toggle { transition: none; } }

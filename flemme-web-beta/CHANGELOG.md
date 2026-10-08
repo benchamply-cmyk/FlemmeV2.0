@@ -71,6 +71,11 @@ Attention : ces ZIP contiennent encore flemme.fr, le jaune, la grille à plat et
 - « Les flemmes du moment » et « Voilà toutes les corvées dont on peut te débarrasser » regroupés en une seule section : les 7 résultats concrets en cartes.
 - Le détail des services s’ouvre en menu déroulant au survol de la souris ou au clic (au toucher sur mobile), avec le « Résultat livré ». Un service cliqué préremplit la demande.
 
+## Accès direct au formulaire et service « Autre » (8 oct. 2026)
+- Un clic sur une section ou un service mène directement au formulaire de demande (#offer), avec ce choix comme besoin et comme catégorie.
+- La flèche de chaque carte ouvre le détail (indispensable sur mobile) ; sur ordinateur, le survol l’ouvre aussi.
+- Service « Autre » ajouté automatiquement à la fin de chaque section (« Autre demande », rangée dans la section).
+
 ## Reste à faire
 - Application : compiler et tester sur de vrais téléphones (Xcode, Android Studio).
 - Compléter les passages [...] des mentions légales et de la confidentialité, retirer le noindex.

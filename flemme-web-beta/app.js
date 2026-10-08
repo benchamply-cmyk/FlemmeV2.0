@@ -134,46 +134,57 @@ const ORDER = [...DETECT.filter(byId), ...CATS.map(c => c.id).filter(i => !DETEC
 
 /* ---------- 6. Exemples et proposition ---------- */
 
-// Une carte ou un service cliqué préremplit le champ avec une phrase d'exemple, à compléter.
-function prefill(text) {
-  taskInput.value = text; setCounter(); saveDraft();
-  taskInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  taskInput.focus({ preventScroll: true });
+// Un clic sur une section ou un service mène directement au formulaire de demande (#offer),
+// avec ce choix comme besoin et comme catégorie.
+function startOffer(label, cat) {
+  task = label;
+  buildOffer(cat);
   buzz();
 }
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text) n.textContent = text; return n; };
-const ideaButton = (cls, emoji, label, example) => {
+const ideaButton = (cls, emoji, label, onClick) => {
   const b = el('button', cls);
   b.type = 'button';
   b.append(el('span', 'emo', emoji), el('span', '', label));
-  b.addEventListener('click', () => prefill(example || label));
+  b.addEventListener('click', onClick);
   return b;
 };
 
 // Les 7 résultats concrets (content/categories.json) : une carte chacun. Le détail des
 // services s'ouvre en menu déroulant au survol de la souris ou au clic (au toucher sur mobile).
 const cats = [];
-const closeCats = except => cats.forEach(c => { if (c !== except) { c.classList.remove('open'); c.firstChild.setAttribute('aria-expanded', 'false'); } });
+const closeCats = except => cats.forEach(c => { if (c !== except) { c.classList.remove('open'); c.querySelector('.cat-toggle').setAttribute('aria-expanded', 'false'); } });
 (FL.categories.groupes || []).forEach((g, i) => {
+  const groupCat = { e: g.emoji, n: g.nom };
   const card = el('div', 'cat');
+  // La carte entière mène au formulaire ; la flèche ouvre le détail (utile sur mobile).
   const head = el('button', 'cat-head');
   head.type = 'button';
-  head.setAttribute('aria-expanded', 'false');
-  head.setAttribute('aria-controls', 'catMenu' + i);
   head.append(el('span', 'emo', g.emoji), el('span', 'cat-title', g.nom));
   if (g.accroche) head.append(el('span', 'cat-tag', g.accroche));
+  head.addEventListener('click', () => startOffer(g.nom, groupCat));
+  const toggle = el('button', 'cat-toggle', '▾');
+  toggle.type = 'button';
+  toggle.setAttribute('aria-expanded', 'false');
+  toggle.setAttribute('aria-controls', 'catMenu' + i);
+  toggle.setAttribute('aria-label', 'Voir le détail : ' + g.nom);
   const menu = el('div', 'cat-menu');
   menu.id = 'catMenu' + i;
   const list = el('ul', '');
-  (g.sous || []).forEach(c => { const li = el('li', ''); li.append(ideaButton('svc-item', c.emoji, c.nom, c.exemple)); list.append(li); });
+  const item = (emoji, label, onClick) => { const li = el('li', ''); li.append(ideaButton('svc-item', emoji, label, onClick)); list.append(li); };
+  (g.sous || []).forEach(c => item(c.emoji, c.nom, () => startOffer(c.nom, byId(c.id))));
+  // Service « Autre » ajouté automatiquement à chaque section.
+  item('✨', 'Autre', () => startOffer('Autre demande', groupCat));
   menu.append(list);
   if (g.resultat) { const r = el('p', 'svc-result'); r.append(el('b', '', 'Résultat livré : '), document.createTextNode(g.resultat)); menu.append(r); }
-  card.append(head, menu);
-  head.addEventListener('click', () => {
+  const top = el('div', 'cat-top');
+  top.append(head, toggle);
+  card.append(top, menu);
+  toggle.addEventListener('click', () => {
     const open = !card.classList.contains('open');
     closeCats(card);
     card.classList.toggle('open', open);
-    head.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-expanded', String(open));
   });
   card.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') closeCats(); });
   cats.push(card);
@@ -189,10 +200,11 @@ function classify(text) {
   return { cat: byId(ORDER.find(id => { const x = byId(id); return x.re && x.re.test(text); })) };
 }
 
-function buildOffer() {
-  offer = classify(task);
+// `cat` est fourni quand on vient d'une section ou d'un service ; sinon on le déduit du texte libre.
+function buildOffer(cat) {
+  offer = { cat: cat !== undefined ? cat : classify(task).cat };
   $('#summary').textContent = task;
-  $('#mLabel').textContent = 'Ton besoin' + (offer.cat ? ' · ' + offer.cat.e + ' ' + offer.cat.n : '');
+  $('#mLabel').textContent = 'Ton besoin' + (offer.cat && offer.cat.n !== task ? ' · ' + offer.cat.e + ' ' + offer.cat.n : '');
   show('offer');
 }
 
