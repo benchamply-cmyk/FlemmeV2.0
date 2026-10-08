@@ -60,6 +60,10 @@ Attention : ces ZIP contiennent encore flemme.fr, le jaune, la grille à plat et
 - Nettoyage : champs en double retirés du formulaire (when, pref), écran « précisions », catégories cliquables, phrases défilantes et blocs TOI / NOUS / GO supprimés du code et de /admin.
 - Titre : espace insécable avant « ? » rétablie ; barre de progression sur 2 étapes.
 
+## Catégories de services (8 oct. 2026)
+- Nouvelles catégories basées sur ce que Flemme sait faire : Travaux & services à domicile, Rendez-vous, Administratif, Achat & vente, Voyages, Culture & actualité, Éducation (36 sous-catégories).
+- Mots-clés et ordre de détection mis à jour ; les anciennes catégories (Emails, Courses, Repas, Travail, Organisation…) sont retirées.
+
 ## Reste à faire
 - Application : compiler et tester sur de vrais téléphones (Xcode, Android Studio).
 - Compléter les passages [...] des mentions légales et de la confidentialité, retirer le noindex.

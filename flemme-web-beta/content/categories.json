@@ -1,65 +1,264 @@
 {
   "groupes": [
     {
-      "id": "contact",
-      "emoji": "📞",
-      "nom": "Contacts & rendez-vous",
+      "id": "travaux",
+      "emoji": "🛠️",
+      "nom": "Travaux & services à domicile",
       "sous": [
         {
-          "id": "appels",
-          "emoji": "📞",
-          "nom": "Appels",
+          "id": "peinture",
+          "emoji": "🎨",
+          "nom": "Peinture",
           "etoiles": 5,
-          "type": "h",
+          "type": "f",
           "taches": [
-            "Prendre un RDV",
-            "Appeler un SAV",
-            "Demander un devis",
-            "Réserver"
+            "Repeindre une pièce",
+            "Rafraîchir une façade",
+            "Trouver un peintre"
           ],
           "mots_cles": [
-            "appel",
-            "téléphon",
-            "sav(?![a-zà-ÿ])",
-            "devis"
+            "peint",
+            "repein"
           ]
         },
         {
-          "id": "rdv",
-          "emoji": "📅",
-          "nom": "Rendez-vous",
+          "id": "maconnerie",
+          "emoji": "🧱",
+          "nom": "Maçonnerie",
+          "etoiles": 5,
+          "type": "f",
+          "taches": [
+            "Monter un mur",
+            "Couler une dalle",
+            "Poser du carrelage",
+            "Trouver un maçon"
+          ],
+          "mots_cles": [
+            "maçon",
+            "maconn",
+            "murs?(?![a-zà-ÿ])",
+            "dalle",
+            "carrelage"
+          ]
+        },
+        {
+          "id": "plomberie",
+          "emoji": "🚰",
+          "nom": "Plomberie",
+          "etoiles": 5,
+          "type": "f",
+          "taches": [
+            "Réparer une fuite",
+            "Changer un robinet",
+            "Déboucher",
+            "Trouver un plombier"
+          ],
+          "mots_cles": [
+            "plomb",
+            "fuite",
+            "robinet",
+            "chauffe-eau",
+            "débouch"
+          ]
+        },
+        {
+          "id": "electricite",
+          "emoji": "💡",
+          "nom": "Électricité",
+          "etoiles": 5,
+          "type": "f",
+          "taches": [
+            "Installer une prise",
+            "Réparer une panne",
+            "Poser un luminaire",
+            "Trouver un électricien"
+          ],
+          "mots_cles": [
+            "électric",
+            "electric",
+            "disjonct",
+            "luminaire"
+          ]
+        },
+        {
+          "id": "chef",
+          "emoji": "👨‍🍳",
+          "nom": "Chef à domicile",
+          "etoiles": 4,
+          "type": "f",
+          "taches": [
+            "Repas à domicile",
+            "Préparer un dîner",
+            "Organiser un buffet"
+          ],
+          "mots_cles": [
+            "cuisinier",
+            "chefs?(?![a-zà-ÿ])",
+            "traiteur",
+            "cuisine",
+            "buffet"
+          ]
+        },
+        {
+          "id": "menage",
+          "emoji": "🧹",
+          "nom": "Ménage",
+          "etoiles": 5,
+          "type": "f",
+          "taches": [
+            "Ménage régulier",
+            "Grand nettoyage",
+            "Repassage"
+          ],
+          "mots_cles": [
+            "ménage",
+            "menage",
+            "nettoy",
+            "repass"
+          ]
+        },
+        {
+          "id": "jardinage",
+          "emoji": "🌿",
+          "nom": "Jardinage",
+          "etoiles": 5,
+          "type": "f",
+          "taches": [
+            "Tondre la pelouse",
+            "Tailler une haie",
+            "Entretenir le jardin"
+          ],
+          "mots_cles": [
+            "jardin",
+            "tondre",
+            "tonte",
+            "haies?(?![a-zà-ÿ])",
+            "pelouse"
+          ]
+        },
+        {
+          "id": "demenagement",
+          "emoji": "📦",
+          "nom": "Déménagement",
+          "etoiles": 5,
+          "type": "f",
+          "taches": [
+            "Trouver des déménageurs",
+            "Faire les cartons",
+            "Transférer les contrats"
+          ],
+          "mots_cles": [
+            "déménag",
+            "demenag",
+            "cartons?(?![a-zà-ÿ])"
+          ]
+        },
+        {
+          "id": "devis",
+          "emoji": "⚖️",
+          "nom": "Comparer des devis",
           "etoiles": 5,
           "type": "h",
           "taches": [
-            "Médecin",
-            "Coiffeur",
-            "Garage",
-            "Contrôle technique",
-            "Administratif"
+            "Demander des devis",
+            "Comparer les devis",
+            "Choisir un artisan"
           ],
           "mots_cles": [
-            "rendez",
-            "rdv",
+            "devis",
+            "artisan",
+            "prestataire"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rdv",
+      "emoji": "📅",
+      "nom": "Rendez-vous",
+      "sous": [
+        {
+          "id": "medecin",
+          "emoji": "🩺",
+          "nom": "Médecin & santé",
+          "etoiles": 5,
+          "type": "h",
+          "taches": [
+            "Prendre RDV chez le médecin",
+            "Dentiste",
+            "Spécialiste",
+            "Kiné"
+          ],
+          "mots_cles": [
             "médecin",
-            "coiffeur",
-            "dentiste"
+            "medecin",
+            "docteur",
+            "dentiste",
+            "kiné",
+            "kine(?![a-zà-ÿ])",
+            "ophtalm",
+            "doctolib",
+            "santé",
+            "rendez",
+            "rdv"
           ]
         },
         {
-          "id": "emails",
-          "emoji": "📧",
-          "nom": "Emails",
+          "id": "mairie",
+          "emoji": "🏛️",
+          "nom": "Mairie",
           "etoiles": 5,
-          "type": "ia",
+          "type": "h",
           "taches": [
-            "Répondre à un mail",
-            "Relancer quelqu’un",
-            "Écrire une réclamation"
+            "Carte d’identité",
+            "Passeport",
+            "État civil",
+            "Inscription"
           ],
           "mots_cles": [
-            "mail",
-            "courriel",
-            "relanc"
+            "mairie",
+            "passeport",
+            "identité",
+            "état civil",
+            "etat civil"
+          ]
+        },
+        {
+          "id": "cpam",
+          "emoji": "🩹",
+          "nom": "CPAM",
+          "etoiles": 5,
+          "type": "h",
+          "taches": [
+            "Carte Vitale",
+            "Remboursement de soins",
+            "Attestation de droits"
+          ],
+          "mots_cles": [
+            "cpam",
+            "ameli",
+            "sécu(?![a-zà-ÿ])",
+            "secu(?![a-zà-ÿ])",
+            "carte vitale"
+          ]
+        },
+        {
+          "id": "francetravail",
+          "emoji": "🧑‍💼",
+          "nom": "France Travail",
+          "etoiles": 5,
+          "type": "h",
+          "taches": [
+            "Inscription",
+            "Actualisation",
+            "Rendez-vous conseiller"
+          ],
+          "mots_cles": [
+            "france travail",
+            "pôle emploi",
+            "pole emploi",
+            "chômage",
+            "chomage"
           ]
         }
       ]
@@ -67,93 +266,125 @@
     {
       "id": "admin",
       "emoji": "🧾",
-      "nom": "Administratif & argent",
+      "nom": "Administratif",
       "sous": [
         {
-          "id": "admin",
-          "emoji": "🧾",
-          "nom": "Administratif",
+          "id": "documents",
+          "emoji": "📄",
+          "nom": "Documents & démarches",
           "etoiles": 5,
           "type": "h",
           "taches": [
             "Remplir un formulaire",
             "Envoyer un justificatif",
-            "Faire une réclamation"
+            "Suivre un dossier"
           ],
           "mots_cles": [
             "formulaire",
             "justificatif",
             "administr",
-            "dossier"
+            "dossier",
+            "démarche",
+            "demarche",
+            "papiers",
+            "document"
           ]
         },
         {
-          "id": "factures",
-          "emoji": "💰",
-          "nom": "Factures",
-          "etoiles": 4,
-          "type": "h",
-          "taches": [
-            "Vérifier une facture",
-            "Payer une facture",
-            "Contester un prélèvement",
-            "Demander un remboursement"
-          ],
-          "mots_cles": [
-            "factur",
-            "prélèvement",
-            "rembours"
-          ]
-        },
-        {
-          "id": "abos",
-          "emoji": "🔄",
-          "nom": "Abonnements",
+          "id": "sav",
+          "emoji": "📢",
+          "nom": "Réclamations & SAV",
           "etoiles": 5,
           "type": "h",
           "taches": [
+            "Écrire une réclamation",
+            "Contacter un SAV",
+            "Demander un remboursement"
+          ],
+          "mots_cles": [
+            "sav(?![a-zà-ÿ])",
+            "réclam",
+            "reclam",
+            "rembours",
+            "litige"
+          ]
+        },
+        {
+          "id": "operateurs",
+          "emoji": "📱",
+          "nom": "Opérateurs (box, mobile)",
+          "etoiles": 5,
+          "type": "h",
+          "taches": [
+            "Changer de forfait",
+            "Signaler une panne",
+            "Comparer les offres"
+          ],
+          "mots_cles": [
+            "opérateur",
+            "operateur",
+            "box(?![a-zà-ÿ])",
+            "forfait",
+            "sfr(?![a-zà-ÿ])",
+            "bouygues",
+            "free(?![a-zà-ÿ])",
+            "fibre"
+          ]
+        },
+        {
+          "id": "banque",
+          "emoji": "🏦",
+          "nom": "Banque",
+          "etoiles": 5,
+          "type": "h",
+          "taches": [
+            "Ouvrir un compte",
+            "Contester un prélèvement",
+            "Demander un prêt"
+          ],
+          "mots_cles": [
+            "banque",
+            "bancaire",
+            "virement",
+            "prélèvement",
+            "prêts?(?![a-zà-ÿ])",
+            "crédit",
+            "credit"
+          ]
+        },
+        {
+          "id": "assurance",
+          "emoji": "🛡️",
+          "nom": "Assurances",
+          "etoiles": 5,
+          "type": "h",
+          "taches": [
+            "Déclarer un sinistre",
+            "Comparer des assurances",
+            "Changer de mutuelle"
+          ],
+          "mots_cles": [
+            "assur",
+            "sinistre",
+            "mutuelle"
+          ]
+        },
+        {
+          "id": "resiliation",
+          "emoji": "✂️",
+          "nom": "Résiliations",
+          "etoiles": 5,
+          "type": "h",
+          "taches": [
+            "Résilier un abonnement",
             "Résilier la salle de sport",
-            "Résilier une assurance",
-            "Résilier Internet",
             "Résilier un streaming"
           ],
           "mots_cles": [
             "résili",
+            "resili",
             "abonnement",
             "désabonn"
-          ]
-        },
-        {
-          "id": "eco",
-          "emoji": "💶",
-          "nom": "Économies",
-          "etoiles": 5,
-          "type": "ia",
-          "taches": [
-            "Chercher les abonnements inutiles",
-            "Réduire les dépenses"
-          ],
-          "mots_cles": [
-            "économ",
-            "dépenses"
-          ]
-        },
-        {
-          "id": "demenag",
-          "emoji": "🏠",
-          "nom": "Déménagement",
-          "etoiles": 5,
-          "type": "h",
-          "taches": [
-            "Changer d’adresse",
-            "Transférer les contrats",
-            "Internet",
-            "Électricité"
-          ],
-          "mots_cles": [
-            "déménag",
-            "changement d’adresse",
-            "changer d’adresse"
           ]
         }
       ]
@@ -161,42 +392,26 @@
     {
       "id": "achats",
       "emoji": "🛍️",
-      "nom": "Recherche & achats",
+      "nom": "Achat & vente",
       "sous": [
         {
-          "id": "recherche",
-          "emoji": "🔎",
-          "nom": "Recherche",
+          "id": "vehicules",
+          "emoji": "🚗",
+          "nom": "Véhicules",
           "etoiles": 5,
-          "type": "ia",
+          "type": "h",
           "taches": [
-            "Trouver un artisan",
-            "Trouver un médecin",
-            "Trouver un restaurant",
-            "Trouver un billet",
-            "Trouver un hôtel",
-            "Trouver un produit"
+            "Trouver une voiture",
+            "Comparer des leasings",
+            "Vendre son véhicule"
           ],
           "mots_cles": [
-            "trouv",
-            "cherch"
-          ]
-        },
-        {
-          "id": "compar",
-          "emoji": "⚖️",
-          "nom": "Comparaison",
-          "etoiles": 5,
-          "type": "ia",
-          "taches": [
-            "Comparer des assurances",
-            "Comparer des forfaits",
-            "Comparer l’énergie",
-            "Comparer des banques",
-            "Comparer des offres Internet"
-          ],
-          "mots_cles": [
-            "compar"
+            "voiture",
+            "véhicule",
+            "vehicule",
+            "motos?(?![a-zà-ÿ])",
+            "scooter",
+            "leasing"
           ]
         },
         {
@@ -207,7 +422,6 @@
           "type": "ia",
           "taches": [
             "Trouver une idée",
-            "Comparer des cadeaux",
             "Commander",
             "Penser à la date"
           ],
@@ -217,197 +431,302 @@
           ]
         },
         {
-          "id": "retours",
-          "emoji": "📦",
-          "nom": "Retours",
+          "id": "annonces",
+          "emoji": "🏷️",
+          "nom": "Petites annonces (Leboncoin, Vinted)",
           "etoiles": 5,
           "type": "h",
           "taches": [
-            "Retourner un colis",
-            "Imprimer une étiquette",
-            "Réclamer un remboursement"
+            "Créer une annonce",
+            "Répondre aux acheteurs",
+            "Gérer les envois"
           ],
           "mots_cles": [
-            "retour",
-            "colis",
-            "étiquette"
+            "leboncoin",
+            "bon coin",
+            "vinted",
+            "annonce",
+            "revendre",
+            "vendre(?![a-zà-ÿ])"
           ]
         }
       ]
     },
     {
-      "id": "quotidien",
-      "emoji": "🏠",
-      "nom": "Maison & quotidien",
+      "id": "voyages",
+      "emoji": "✈️",
+      "nom": "Voyages",
       "sous": [
         {
-          "id": "maison",
-          "emoji": "🧹",
-          "nom": "Maison",
-          "etoiles": 4,
-          "type": "h",
+          "id": "vols",
+          "emoji": "🛫",
+          "nom": "Vols",
+          "etoiles": 5,
+          "type": "ia",
           "taches": [
-            "Trouver une femme de ménage",
-            "Trouver un plombier",
-            "Trouver un jardinier",
-            "Trouver un déménageur"
+            "Trouver un vol",
+            "Comparer les prix",
+            "Enregistrement"
           ],
           "mots_cles": [
-            "ménage",
-            "plombier",
-            "jardin",
-            "électricien",
-            "artisan"
+            "vols?(?![a-zà-ÿ])",
+            "avion",
+            "aéroport",
+            "aeroport"
           ]
         },
         {
-          "id": "courses",
-          "emoji": "🛒",
-          "nom": "Courses",
+          "id": "trains",
+          "emoji": "🚆",
+          "nom": "Trains",
+          "etoiles": 5,
+          "type": "ia",
+          "taches": [
+            "Trouver un billet",
+            "Comparer les horaires"
+          ],
+          "mots_cles": [
+            "sncf",
+            "tgv",
+            "ouigo",
+            "billets? de train",
+            "le train",
+            "un train",
+            "trains(?![a-zà-ÿ])"
+          ]
+        },
+        {
+          "id": "hotels",
+          "emoji": "🏨",
+          "nom": "Hôtels",
+          "etoiles": 5,
+          "type": "ia",
+          "taches": [
+            "Trouver un hôtel",
+            "Comparer les logements"
+          ],
+          "mots_cles": [
+            "hôtel",
+            "hotel",
+            "airbnb",
+            "hébergement",
+            "hebergement"
+          ]
+        },
+        {
+          "id": "activites",
+          "emoji": "🎡",
+          "nom": "Activités",
           "etoiles": 4,
           "type": "ia",
           "taches": [
-            "Faire la liste",
-            "Trouver les produits",
-            "Préparer une commande"
-          ],
-          "mots_cles": [
-            "course",
-            "supermarché"
-          ]
-        },
-        {
-          "id": "repas",
-          "emoji": "🍝",
-          "nom": "Repas",
-          "etoiles": 4,
-          "type": "ia",
-          "taches": [
-            "Trouver quoi manger",
-            "Faire un menu",
-            "Commander à manger"
-          ],
-          "mots_cles": [
-            "repas",
-            "menu",
-            "manger",
-            "dîner"
-          ]
-        }
-      ]
-    },
-    {
-      "id": "mobilite",
-      "emoji": "🚗",
-      "nom": "Voiture & voyages",
-      "sous": [
-        {
-          "id": "voiture",
-          "emoji": "🚗",
-          "nom": "Voiture",
-          "etoiles": 5,
-          "type": "h",
-          "taches": [
-            "Garage",
-            "Devis",
-            "Assurance auto",
-            "Entretien",
-            "Contrôle technique"
-          ],
-          "mots_cles": [
-            "voiture",
-            "garage",
-            "contrôle technique",
-            "pneu",
-            "vidange",
-            "assurance auto"
-          ]
-        },
-        {
-          "id": "voyages",
-          "emoji": "✈️",
-          "nom": "Voyages",
-          "etoiles": 5,
-          "type": "h",
-          "taches": [
-            "Chercher des billets",
-            "Chercher un hôtel",
-            "Louer une voiture",
+            "Trouver quoi faire",
+            "Réserver une activité",
             "Préparer un itinéraire"
           ],
           "mots_cles": [
+            "activité",
+            "activite",
+            "week-end",
+            "weekend",
+            "excursion",
             "voyage",
-            "billet",
-            "hôtel",
             "vacances",
             "itinéraire"
+          ]
+        },
+        {
+          "id": "location",
+          "emoji": "🚙",
+          "nom": "Location de voiture",
+          "etoiles": 5,
+          "type": "ia",
+          "taches": [
+            "Louer une voiture",
+            "Comparer les loueurs"
+          ],
+          "mots_cles": [
+            "location de voiture",
+            "louer une voiture",
+            "loueur"
           ]
         }
       ]
     },
     {
-      "id": "pro",
-      "emoji": "💼",
-      "nom": "Travail & organisation",
+      "id": "culture",
+      "emoji": "📚",
+      "nom": "Culture & actualité",
       "sous": [
         {
-          "id": "travail",
-          "emoji": "💼",
-          "nom": "Travail",
-          "etoiles": 5,
-          "type": "ia",
-          "taches": [
-            "Écrire un CV",
-            "Faire des candidatures",
-            "Relancer",
-            "S’organiser",
-            "Rédiger un compte rendu"
-          ],
-          "mots_cles": [
-            "cv(?![a-zà-ÿ])",
-            "candidature",
-            "entretien",
-            "compte rendu"
-          ]
-        },
-        {
-          "id": "orga",
-          "emoji": "📝",
-          "nom": "Organisation",
+          "id": "actu",
+          "emoji": "📰",
+          "nom": "Actualités",
           "etoiles": 4,
           "type": "ia",
           "taches": [
-            "To-do list",
-            "Rappels",
-            "Planning",
-            "Classement"
+            "Résumer l’actualité",
+            "Trouver des sources fiables"
           ],
           "mots_cles": [
-            "to-do",
-            "todo",
-            "rappel",
-            "planning",
-            "classer",
-            "classement"
+            "actu",
+            "nouvelles",
+            "informations",
+            "sources"
           ]
         },
         {
-          "id": "tel",
-          "emoji": "📱",
-          "nom": "Téléphone",
-          "etoiles": 3,
+          "id": "politique",
+          "emoji": "🗳️",
+          "nom": "Programmes politiques (résumés neutres)",
+          "etoiles": 4,
           "type": "ia",
           "taches": [
-            "Trier les photos",
-            "Trier les fichiers",
-            "Trier les mails",
-            "Se désabonner des newsletters"
+            "Résumer un programme",
+            "Comparer des programmes"
           ],
           "mots_cles": [
-            "photo",
-            "fichier",
-            "newsletter",
-            "trier"
+            "politique",
+            "programme",
+            "élection",
+            "election",
+            "candidats?(?![a-zà-ÿ])"
+          ]
+        },
+        {
+          "id": "litterature",
+          "emoji": "📖",
+          "nom": "Littérature",
+          "etoiles": 4,
+          "type": "ia",
+          "taches": [
+            "Résumer un livre",
+            "Trouver un livre"
+          ],
+          "mots_cles": [
+            "livres?(?![a-zà-ÿ])",
+            "romans?(?![a-zà-ÿ])",
+            "littéra",
+            "littera",
+            "résumé"
+          ]
+        },
+        {
+          "id": "histoire",
+          "emoji": "🏺",
+          "nom": "Histoire",
+          "etoiles": 4,
+          "type": "ia",
+          "taches": [
+            "Expliquer un fait historique"
+          ],
+          "mots_cles": [
+            "histoire",
+            "historique"
+          ]
+        },
+        {
+          "id": "art",
+          "emoji": "🎬",
+          "nom": "Art & cinéma",
+          "etoiles": 4,
+          "type": "ia",
+          "taches": [
+            "Découvrir un artiste",
+            "Trouver un film",
+            "Expliquer une œuvre"
+          ],
+          "mots_cles": [
+            "art(?![a-zà-ÿ])",
+            "artiste",
+            "musée",
+            "musee",
+            "films?(?![a-zà-ÿ])",
+            "cinéma",
+            "cinema",
+            "série"
+          ]
+        },
+        {
+          "id": "culturegen",
+          "emoji": "🧠",
+          "nom": "Culture générale",
+          "etoiles": 4,
+          "type": "ia",
+          "taches": [
+            "Répondre à une question",
+            "Préparer un quiz"
+          ],
+          "mots_cles": [
+            "culture",
+            "quiz"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "education",
+      "emoji": "🎓",
+      "nom": "Éducation",
+      "sous": [
+        {
+          "id": "devoirs",
+          "emoji": "✏️",
+          "nom": "Aide aux devoirs",
+          "etoiles": 5,
+          "type": "ia",
+          "taches": [
+            "Expliquer un exercice",
+            "Réviser un contrôle"
+          ],
+          "mots_cles": [
+            "devoirs(?![a-zà-ÿ])",
+            "exercices?(?![a-zà-ÿ])",
+            "école",
+            "ecole",
+            "collège",
+            "college",
+            "lycée",
+            "lycee",
+            "révis",
+            "revis"
+          ]
+        },
+        {
+          "id": "cours",
+          "emoji": "👩‍🏫",
+          "nom": "Cours particuliers",
+          "etoiles": 5,
+          "type": "f",
+          "taches": [
+            "Trouver un professeur",
+            "Soutien scolaire"
+          ],
+          "mots_cles": [
+            "cours particuliers?",
+            "profs?(?![a-zà-ÿ])",
+            "professeur",
+            "soutien scolaire"
+          ]
+        },
+        {
+          "id": "langues",
+          "emoji": "🌍",
+          "nom": "Langues",
+          "etoiles": 5,
+          "type": "ia",
+          "taches": [
+            "Apprendre une langue",
+            "Traduire un texte"
+          ],
+          "mots_cles": [
+            "langue",
+            "anglais",
+            "espagnol",
+            "allemand",
+            "italien",
+            "chinois",
+            "tradu"
           ]
         }
       ]

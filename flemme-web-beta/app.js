@@ -127,8 +127,9 @@ const CATS = (FL.categories.groupes || [])
 const byId = id => CATS.find(c => c.id === id);
 
 // Ordre de détection dans le texte libre : les catégories les plus précises d'abord
-// (« résilier mon abonnement » doit tomber dans Abonnements avant Administratif).
-const DETECT = ['abos', 'demenag', 'retours', 'factures', 'voyages', 'voiture', 'cadeaux', 'courses', 'repas', 'compar', 'eco', 'emails', 'travail', 'maison', 'tel', 'orga', 'appels', 'rdv', 'admin', 'recherche'];
+// (« résilier ma box » doit tomber dans Résiliations avant Opérateurs, « location de voiture »
+// avant Véhicules). Les catégories absentes de cette liste passent après, par importance.
+const DETECT = ['location', 'resiliation', 'operateurs', 'francetravail', 'cpam', 'mairie', 'politique', 'annonces', 'vols', 'trains', 'hotels', 'cours', 'devoirs', 'langues', 'plomberie', 'electricite', 'maconnerie', 'peinture', 'jardinage', 'menage', 'demenagement', 'chef', 'vehicules', 'cadeaux', 'banque', 'assurance', 'sav', 'histoire', 'litterature', 'art', 'actu', 'activites', 'medecin', 'devis', 'documents', 'culturegen'];
 const ORDER = [...DETECT.filter(byId), ...CATS.map(c => c.id).filter(i => !DETECT.includes(i))];
 
 /* ---------- 6. Exemples et proposition ---------- */
