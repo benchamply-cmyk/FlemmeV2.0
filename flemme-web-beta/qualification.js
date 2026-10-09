@@ -83,6 +83,10 @@
     catch (e) {error(e.message || 'Connexion interrompue. Réessaie.');}
     finally {lock(false);}
   });
+  function clearView() {
+    el('qualLog').replaceChildren();el('qualResult').textContent='';el('qualMessage').value='';
+    el('qualSummary').hidden=true;el('qualReview').hidden=true;el('qualApproved').checked=false;
+  }
   async function discard() {
     if (session) {
       try {await api('/conversations/' + session.id,'DELETE');}
@@ -91,7 +95,7 @@
     session = null;state = null;pendingMessage = null;store(null);generation++;
     el('qualChat').hidden = true;el('qualStart').hidden = false;
     el('qualConsent').disabled = false;el('qualConsent').checked = false;
-    el('qualMessage').value = '';error('');
+    clearView();error('');
   }
   el('qualSkip').addEventListener('click', async () => {
     if (busy) return;lock(true);
@@ -144,10 +148,10 @@
         return {id:session.id,reference:confirmed.reference};
       } finally {lock(false);}
     },
-    sent() {session=null;state=null;store(null);generation++;},
+    sent() {session=null;state=null;store(null);generation++;clearView();},
     reset() {
       session=null;state=null;pendingMessage=null;store(null);generation++;
-      el('qualChat').hidden = true;el('qualStart').hidden = false;el('qualConsent').disabled = false;el('qualConsent').checked = false;error('');
+      el('qualChat').hidden = true;el('qualStart').hidden = false;el('qualConsent').disabled = false;el('qualConsent').checked = false;clearView();error('');
     },
   };
 })();

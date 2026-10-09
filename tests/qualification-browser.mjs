@@ -63,7 +63,7 @@ try {
   await page.locator('#task').fill('<img src=x onerror=alert(1)>');
   await page.locator('#flemmeForm button[type=submit]').click();
   await page.locator('#qualConsent').check();await page.locator('#qualStart').click();
-  await page.waitForFunction(()=>document.querySelectorAll('.qual-message').length>=3);
+  await page.waitForFunction(()=>sessionStorage.getItem('flemmeQualification')!==null && document.querySelectorAll('.qual-message').length>=3 && !document.getElementById('qualSend').disabled);
   assert.equal(await page.locator('#qualLog img').count(),0);
   const second=await page.evaluate(()=>JSON.parse(sessionStorage.getItem('flemmeQualification')));
   await page.locator('#qualSkip').click();
