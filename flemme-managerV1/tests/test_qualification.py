@@ -232,3 +232,12 @@ def test_real_executor_adapter_without_network(monkeypatch):
         return SimpleNamespace(final_output="Préparation à relire.")
     monkeypatch.setattr(executors.Runner,"run",run)
     assert asyncio.run(executors.prepare("writer",{"permissions":{"external_actions":False}})) == "Préparation à relire."
+
+
+def test_worker_loads_server_settings_and_rejects_unsafe_origins(monkeypatch):
+    from flemme_manager import worker
+    monkeypatch.setattr(settings,"executor_key","test-worker")
+    monkeypatch.setattr(settings,"openai_api_key","test-openai")
+    for base in ("http://remote.example", "http://127.0.0.1:8000@remote.example", "https://api.example/path", "https://api.example?token=secret"):
+        with pytest.raises(ValueError):
+            asyncio.run(worker.run_once(base,"search"))

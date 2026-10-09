@@ -1,16 +1,21 @@
 """Run one authorized preparation step; never poll or start automatically on deploy."""
 import argparse
 import asyncio
-import os
+from urllib.parse import urlparse
 import httpx
 from flemme_manager.agents.executors import prepare
+from flemme_manager.settings import settings
 
 async def run_once(base, name):
-    key = os.environ.get("FLEMME_EXECUTOR_KEY")
-    if not key or not os.environ.get("OPENAI_API_KEY"):
+    key = settings.executor_key
+    if not key or not settings.openai_api_key:
         raise RuntimeError("Worker configuration missing")
-    if not (base.startswith("https://") or base.startswith("http://127.0.0.1:")):
-        raise ValueError("HTTPS API required")
+    url = urlparse(base)
+    if (url.username or url.password or url.query or url.fragment or url.path not in ("", "/")
+            or not url.hostname or (url.scheme != "https" and not (url.scheme == "http" and url.hostname == "127.0.0.1"))):
+        raise ValueError("HTTPS API origin required")
+    if url.port is not None and not 1 <= url.port <= 65535:
+        raise ValueError("Invalid API port")
     async with httpx.AsyncClient(base_url=base, headers={"X-Flemme-Executor-Key": key}, timeout=80) as client:
         response = await client.post("/api/executor/claim/" + name)
         response.raise_for_status()
