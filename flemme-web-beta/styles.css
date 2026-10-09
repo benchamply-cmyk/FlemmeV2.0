@@ -366,3 +366,11 @@ footer b { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-size:
   .brigade-panel { padding: 24px 20px; box-shadow: 8px 8px 0 var(--violet); }
   .recruit-link { display: none; }
 }
+
+/* Qualification: normal document flow, keyboard controls and safe text rendering. */
+.qualification{margin:24px 0;padding:18px;border:1px solid #cbd5cb;border-radius:16px}
+.qualification h3{margin:0 0 10px}.qual-log{max-height:350px;overflow:auto;margin:16px 0}
+.qual-message{white-space:pre-wrap;overflow-wrap:anywhere;padding:12px;border-radius:12px;margin:10px 0;background:#eef7ef}
+.qual-message[data-role="user"]{background:#f1f1ec}
+#qualResult{white-space:pre-wrap;overflow-wrap:anywhere}
+#qualChat button{margin-top:10px}.qualification [hidden]{display:none}

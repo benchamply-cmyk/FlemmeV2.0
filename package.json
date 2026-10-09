@@ -1,0 +1,10 @@
+{
+  "name": "flemme-qualification-tests",
+  "private": true,
+  "packageManager": "pnpm@11.25.0",
+  "scripts": {
+    "test": "node --test tests/qualification-proxy.test.mjs",
+    "test:browser": "node tests/qualification-browser.mjs"
+  },
+  "devDependencies": {"playwright": "1.62.1"}
+}

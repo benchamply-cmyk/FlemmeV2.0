@@ -94,3 +94,11 @@ Avec « Masquer mon adresse e-mail », Apple transmet une adresse relais (`…@p
 - Ne jamais mettre la clé `service_role` / `secret` dans le site ni dans Netlify.
 - Réglages Supabase conseillés : Authentication > Attack Protection (CAPTCHA Turnstile ou hCaptcha si des inscriptions abusives apparaissent ; demande alors d'ajouter le widget au site), Authentication > Rate Limits (laisser les valeurs par défaut), activer la double authentification sur le compte Supabase de l'équipe, et choisir une région Europe pour l'hébergement.
 - Limite connue : n'importe qui peut déposer une demande en indiquant l'e-mail d'un tiers, qui la verrait alors dans son espace. Personne ne peut en revanche lire les demandes d'autrui.
+
+## Assistant de qualification facultatif
+
+Le widget de #offer utilise un proxy Netlify et l’API FastAPI de flemme-managerV1.
+Il est masqué tant que QUALIFICATION_ENABLED n’est pas true. Le formulaire actuel reste
+le recours manuel. Voir [configuration, validations humaines et tests](../docs/qualification.md).
+Les secrets OpenAI et opérateur restent sur le serveur API. Ne pas activer la production
+sans validation explicite.

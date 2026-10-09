@@ -1,0 +1,37 @@
+name: Qualification checks
+on:
+  pull_request:
+  push:
+    branches: [feature/qualification-chatbot]
+permissions:
+  contents: read
+jobs:
+  qualification:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: pnpm/action-setup@v4
+      - run: pip install uv
+      - run: uv sync --project flemme-managerV1 --frozen --extra dev
+      - run: uv run --project flemme-managerV1 pytest flemme-managerV1/tests
+      - run: node --test tests/qualification-proxy.test.mjs
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - name: Browser integration (fake model, real API and persistence)
+        run: |
+          FLEMME_DATABASE_PATH="$RUNNER_TEMP/e2e.sqlite3" PYTHONPATH=tests \
+            uv run --project flemme-managerV1 uvicorn e2e_app:app --port 8765 > "$RUNNER_TEMP/e2e.log" 2>&1 &
+          api_pid=$!
+          trap 'kill "$api_pid"' EXIT
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8765/health > /dev/null; then break; fi
+            sleep 1
+          done
+          pnpm run test:browser

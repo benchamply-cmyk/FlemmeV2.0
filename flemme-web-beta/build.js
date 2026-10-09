@@ -7,5 +7,5 @@ const r=f=>JSON.parse(fs.readFileSync('content/'+f+'.json','utf8'));
 // Sans adresse ni clé, l'espace reste masqué.
 const sb=r('supabase');
 const supabase={url:(process.env.SUPABASE_URL||sb.url||'').trim().replace(/\/+$/,''),cle:(process.env.SUPABASE_ANON_KEY||sb.cle||'').trim()};
-fs.writeFileSync('content.js','window.FLEMME='+JSON.stringify({accueil:r('accueil'),categories:r('categories'),contact:r('contact'),supabase})+';\n');
+fs.writeFileSync('content.js','window.FLEMME='+JSON.stringify({accueil:r('accueil'),categories:r('categories'),contact:r('contact'),supabase,qualification:{enabled:process.env.QUALIFICATION_ENABLED === 'true'}})+';\n');
 console.log('content.js généré'+(supabase.url&&supabase.cle?' (espace personnel activé)':' (espace personnel désactivé : '+(supabase.url?'':'SUPABASE_URL ')+(supabase.cle?'':'SUPABASE_ANON_KEY ')+'manquant)'));

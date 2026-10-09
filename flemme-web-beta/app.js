@@ -223,6 +223,7 @@ function classify(text) {
 function buildOffer(cat) {
   offer = { cat: cat !== undefined ? cat : classify(task).cat };
   $('#summary').textContent = task;
+  window.FlemmeQualification?.setTask(task);
   $('#mLabel').textContent = 'Ton besoin' + (offer.cat && offer.cat.n !== task ? ' · ' + offer.cat.n : '');
   show('offer');
 }
@@ -359,7 +360,7 @@ if (window.MediaRecorder && navigator.mediaDevices && navigator.mediaDevices.get
   $('#voiceDel').addEventListener('click', () => { clearVoice(); voiceBtn.focus(); });
 }
 
-$('#missionForm').addEventListener('submit', e => {
+$('#missionForm').addEventListener('submit', async e => {
   e.preventDefault();
   const f = e.target, err = $('#err');
   if (!isContact(f.elements.contact.value.trim())) {
@@ -374,7 +375,11 @@ $('#missionForm').addEventListener('submit', e => {
     return;
   }
   const contact = f.elements.contact.value.trim();
-  const n = genRef();
+  let n = genRef();
+  try {
+    const qualification = await window.FlemmeQualification?.finalize(f, n);
+    if (qualification) { n = qualification.reference; f.elements.qualification_id.value = qualification.id; }
+  } catch (error) { showError(err, error.message); return; }
   // On recopie le parcours dans les champs cachés pour le recevoir avec la demande.
   f.elements.task.value = task;
   f.elements.ref.value = n;
@@ -394,6 +399,7 @@ $('#missionForm').addEventListener('submit', e => {
   const voice = voiceFile;
   sendForm(f, err, () => {
     ref = n;
+    window.FlemmeQualification?.sent();
     trackRequest(copy, uploads);
     f.reset(); resetAttachments();
     safe(() => SS.removeItem('flemmeDraft'));
@@ -456,6 +462,7 @@ if (window.SB && SB.ready) {
 
 // Remet tout à zéro pour une nouvelle demande.
 function resetApp() {
+  window.FlemmeQualification?.reset();
   task = ''; ref = ''; offer = null;
   taskInput.value = ''; $('#missionForm').reset(); resetAttachments();
   safe(() => SS.removeItem('flemmeDraft'));
