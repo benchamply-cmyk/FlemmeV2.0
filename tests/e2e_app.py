@@ -34,7 +34,7 @@ async def local_proxy(request, call_next):
 
 @app.get('/content.js')
 def content():
-    return Response((ROOT/'flemme-web-beta/content.js').read_text()+'\nwindow.FLEMME.qualification={enabled:true};',media_type='application/javascript')
+    return Response((ROOT/'flemme-web-beta/content.js').read_text()+'\nwindow.FLEMME.supabase={url:"",cle:""}; window.FLEMME.qualification={enabled:true};',media_type='application/javascript')
 
 @app.post('/')
 async def form(request: Request):
