@@ -4,6 +4,8 @@
 // Changer V (flemme-v5 → flemme-v6…) force les visiteurs à repartir de zéro.
 const V = 'flemme-v3.9-gestionadmin';
 const FILES = ['./', 'index.html', 'styles.css', 'app.js', 'sb.js', 'espace.html', 'espace.js', 'espace.css', 'content.js', 'icons.svg', 'manifest.webmanifest', 'icon-192.png', 'favicon.ico'];
+const V = 'flemme-v3.9-beta-assistant';
+const FILES = ['./', 'index.html', 'styles.css', 'app.js', 'sb.js', 'espace.html', 'espace.js', 'espace.css', 'assistant.js', 'assistant.css', 'content.js', 'icons.svg', 'manifest.webmanifest', 'icon-192.png', 'favicon.ico'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(V).then(c => c.addAll(FILES)));

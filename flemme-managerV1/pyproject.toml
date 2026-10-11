@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "flemme-manager"
+version = "0.1.0"
+description = "Backend Python pour Flemme Manager V1"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "openai-agents>=0.2.0",
+    "pydantic>=2.10",
+    "python-dotenv>=1.0",
+    "uvicorn[standard]>=0.34",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["flemme_manager*"]
+
+[tool.setuptools.package-data]
+flemme_manager = ["prompts/*.txt"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
