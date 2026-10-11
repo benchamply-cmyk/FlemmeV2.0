@@ -342,7 +342,7 @@ function renderMissionLink(d) {
   const button = el('button','secondary','Associer une mission à cette demande'); button.type = 'submit';
   const result = el('p'); result.setAttribute('role','status');
   const qualify = el('button','primary','Qualifier cette demande avec le Manager'); qualify.type='button';
-  const info = el('p',null,'Qualification interne par IA, facturée sur votre compte API. Aucun message n’est envoyé au client. Les pièces jointes ne sont pas analysées par cette version.');
+  const info = el('p',null,'Le texte de la demande et ses précisions sont transmis à OpenAI pour une qualification interne, facturée sur votre compte API. Aucun message n’est envoyé au client. Les pièces jointes ne sont pas analysées par cette version.');
   qualify.addEventListener('click',async () => {
     qualify.disabled=true; result.textContent='Qualification en cours…';
     try {

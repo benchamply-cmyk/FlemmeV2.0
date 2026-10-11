@@ -63,6 +63,18 @@ test('native listing uses owner RLS and supports pagination',async()=>{
   global.fetch=async url=>url.endsWith('est_admin')?reply(true):reply(url.endsWith('offset=0')?Array.from({length:100},()=>({mission_id:id})):[]);
   const data=await (await handler(request('missions'))).json();assert.equal(data.backend,'netlify');assert.equal(data.total,100);
 });
+test('provider diagnostics distinguish credit and key without exposing raw errors',async()=>{
+  for(const [status,code,expected] of [[401,'invalid_api_key',/refuse la clé/],[403,'permission_denied',/permissions/],[429,'insufficient_quota',/crédit disponible/],[429,'rate_limit_exceeded',/limite de requêtes/]]) {
+    global.fetch=async url=>{
+      if(url.endsWith('est_admin'))return reply(true);
+      if(url.endsWith('manager_reserver'))return reply({mission_id:id,job_id:id,request_text:'test'});
+      if(url.includes('api.openai.com'))return reply({error:{code,message:'SECRET-RAW-ERROR'}},status);
+      return reply({state:'waiting_information'});
+    };
+    const response=await handler(request('qualifier:'+id,{}));assert.equal(response.status,502);
+    const text=await response.text();assert.match(text,expected);assert.ok(!text.includes('SECRET-RAW-ERROR'));
+  }
+});
 test('revision conflicts and unavailable migration have useful statuses',async()=>{
   global.fetch=async url=>url.endsWith('est_admin')?reply(true):reply({code:'40001'},400);
   assert.equal((await handler(request('mission:'+id,{state:'blocked',note:'Vérifier',expected_revision:1}))).status,409);
