@@ -4,6 +4,7 @@ import handler from '../netlify/functions/gestionadmin.mjs';
 import {validateQualification} from '../netlify/lib/manager.mjs';
 process.env.SUPABASE_URL='https://test.supabase.co';process.env.SUPABASE_ANON_KEY='public';
 delete process.env.FLEMME_MANAGER_URL;delete process.env.FLEMME_MANAGER_TOKEN;
+delete process.env.GESTION_ADMIN_KEY_OPENAI;
 const id='12345678-1234-1234-1234-123456789abc';
 const request=(resource,body)=>new Request('https://flemme.org/api/gestionadmin?resource='+resource,{method:body?'POST':'GET',headers:{Authorization:'Bearer owner','Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
 const reply=(body,status=200)=>new Response(JSON.stringify(body),{status});
@@ -58,6 +59,18 @@ test('AI refusal or incomplete output records failure, no auto retry',async()=>{
     failed=JSON.parse(options.body).erreur;return reply({state:'waiting_information'});
   };
   assert.equal((await handler(request('qualifier:'+id,{}))).status,502);assert.equal(ai,1);assert.equal(failed,true);
+});
+test('dedicated admin key takes precedence over a platform-injected key',async()=>{
+  process.env.GESTION_ADMIN_KEY_OPENAI='dedicated-test';
+  let called=false;
+  global.fetch=async (url,options)=>{
+    if(url.endsWith('est_admin'))return reply(true);
+    if(url.endsWith('manager_reserver'))return reply({mission_id:id,job_id:id,request_text:'test'});
+    if(url.includes('api.openai.com')) {called=true;assert.equal(options.headers.Authorization,'Bearer dedicated-test');return reply({status:'completed',output:[{content:[{type:'output_text',text:JSON.stringify(qualified)}]}]});}
+    return reply({state:'qualified'});
+  };
+  try { assert.equal((await handler(request('qualifier:'+id,{}))).status,200);assert.equal(called,true); }
+  finally {delete process.env.GESTION_ADMIN_KEY_OPENAI;}
 });
 test('native listing uses owner RLS and supports pagination',async()=>{
   global.fetch=async url=>url.endsWith('est_admin')?reply(true):reply(url.endsWith('offset=0')?Array.from({length:100},()=>({mission_id:id})):[]);

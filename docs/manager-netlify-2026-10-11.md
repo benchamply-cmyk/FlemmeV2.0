@@ -1,5 +1,7 @@
 # Manager sur Netlify — 11 octobre 2026
 
+Actualisation : la clé dédiée enregistrée sur Netlify s'appelle `GESTION_ADMIN_KEY_OPENAI`. Le Manager la lit en priorité ; `OPENAI_API_KEY` reste compatible en son absence. Aucun secret n'est copié ni affiché. Les deux variables doivent être disponibles dans le contexte concerné si elles sont utilisées.
+
 Décision : héberger la qualification sur le site Netlify existant. Aucun serveur Python supplémentaire. Les fichiers Python et leur mémoire SQLite restent conservés ; cette version n'importe pas leurs anciennes missions et ne remplace pas leurs règles de production.
 
 ## Activation
@@ -27,3 +29,7 @@ Tests hors ligne : identité, identifiants, clé manquante, réservation concurr
 - [OpenAI Responses](https://platform.openai.com/docs/api-reference/responses) : sortie structurée, `store:false` et réponse vérifiée avant stockage.
 - [Supabase fonctions](https://supabase.com/docs/guides/database/functions) : transactions et contrôle d'identité dans la base.
 - Code conservé : `flemme-managerV1/src/flemme_manager/schemas.py`, `services/qualification_rules.py`, `services/mission_service.py`.
+
+## Vérification réelle du 11 octobre 2026
+
+L'administrateur confirme `manager-netlify.sql` exécuté sans erreur. La prévisualisation Netlify au commit `8526234` est déployée avec succès. Le centre lit le stockage privé et a créé une mission liée à la demande `FL-RG8FJ`, dont le besoin est « fff ». Deux tentatives de qualification sont conservées, sans modification de la demande ni message client. Le diagnostic de la seconde tentative indique un refus OpenAI de la clé (HTTP 401). Une clé acceptée dans `OPENAI_API_KEY`, suivie d'une reconstruction, reste nécessaire pour valider la qualification réelle. Les 16 tests hors ligne passent. Aucune publication en production n'a été réalisée.
