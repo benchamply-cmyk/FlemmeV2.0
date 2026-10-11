@@ -1,0 +1,29 @@
+<!doctype html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#57d68d"><meta name="robots" content="noindex,nofollow"><title>Gestion admin — Flemme</title><link rel="icon" href="favicon.ico" sizes="any"><link rel="stylesheet" href="../styles.css"><link rel="stylesheet" href="../espace.css"><link rel="stylesheet" href="../equipe.css"><link rel="stylesheet" href="../gestionadmin.css"></head><body>
+<header><a class="logo" href="./">FLEMME<span>.</span></a><span class="beta-tag">DÉMO · DONNÉES FICTIVES</span></header>
+<noscript><p class="nojs">Cette page a besoin de JavaScript.</p></noscript>
+<main class="card-screen espace equipe">
+
+<section id="off" hidden><div class="card"><div class="eyebrow">Gestion admin</div><h2>Supabase n’est pas configuré.</h2><p>Voir le README du site.</p></div></section>
+
+<section id="guest" hidden><div class="card"><div class="eyebrow">Gestion admin</div><h2>Connecte-toi d’abord.</h2><p>Connecte-toi avec le compte propriétaire de Flemme pour ouvrir le centre de contrôle.</p><form id="adminLogin"><label for="adminEmail">E-mail</label><input id="adminEmail" type="email" autocomplete="username" required><label for="adminPassword">Mot de passe</label><input id="adminPassword" type="password" autocomplete="current-password" required><button class="primary full" type="submit">Se connecter</button><p id="loginError" class="err" role="alert" hidden></p></form><a class="secondary full btn-link" href="espace.html">Connexion par lien ou récupération du mot de passe →</a></div></section>
+
+<section id="denied" hidden><div class="card"><div class="eyebrow">Gestion admin</div><h2>Accès réservé à l’administrateur.</h2><p>Ce compte (<b id="deniedWho"></b>) n’est pas le compte administrateur autorisé.</p><a class="secondary full btn-link" href="espace.html">Retour à mon espace</a></div></section>
+
+<section id="board" hidden>
+<div class="space-head"><div><div class="eyebrow">Gestion admin</div><h2>Centre de contrôle</h2><p class="who">Connecté avec <b id="who"></b></p></div><div class="space-actions"><button type="button" class="secondary" id="refresh">Actualiser</button><a class="secondary btn-link" href="espace.html">Mon espace</a><button class="secondary" id="adminLogout" type="button">Se déconnecter</button></div></div>
+<nav class="admin-nav" aria-label="Sections du centre de contrôle">
+<button type="button" data-view="demandes" aria-pressed="true">Demandes</button>
+<button type="button" data-view="brigade" aria-pressed="false">Brigade</button>
+<button type="button" data-view="ambassadeurs" aria-pressed="false">Ambassadeurs</button>
+<button type="button" data-view="agents" aria-pressed="false">Agents et missions</button>
+<button type="button" data-view="journal" aria-pressed="false">Journal admin</button></nav>
+<section id="requests"><div class="stats" id="stats"></div>
+<div class="filters"><label class="sr" for="filter">Filtrer</label><select id="filter"><option value="">Toutes les demandes</option><option value="repondre">À répondre</option><option value="recue">Reçues</option><option value="en_etude">À l’étude</option><option value="acceptee">Acceptées</option><option value="en_cours">En cours</option><option value="terminee">Terminées</option><option value="refusee">Refusées</option></select><label class="sr" for="search">Rechercher</label><input id="search" type="search" placeholder="Rechercher : référence, e-mail, texte…"></div>
+<p class="err" id="listErr" role="alert" hidden></p>
+<p class="loading" id="loading">Chargement…</p>
+<p class="loading" id="none" hidden>Aucune demande ne correspond.</p>
+<ol id="list" class="demandes"></ol>
+</section><section id="adminPanel" aria-live="polite" hidden></section>
+</section>
+
+</main><script src="gestionadmin-fixture.js" defer></script><script src="../gestionadmin.js" defer></script></body></html>

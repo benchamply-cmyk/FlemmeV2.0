@@ -14,6 +14,11 @@
   status = 404
   force = true
 
+# Centre administrateur, même domaine.
+[[redirects]]
+  from = "/gestionadmin"
+  to = "/gestionadmin.html"
+  status = 200
 # Les dépendances des fonctions ne sont pas à servir comme des pages.
 [[redirects]]
   from = "/node_modules/*"

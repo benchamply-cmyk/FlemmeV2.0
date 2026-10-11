@@ -29,3 +29,9 @@
   Cache-Control: no-cache
 /content.js
   Cache-Control: no-cache
+
+/gestionadmin*
+  Cache-Control: no-store
+  X-Robots-Tag: noindex, nofollow
+  Referrer-Policy: no-referrer
+  Content-Security-Policy: default-src 'self'; img-src 'self' data:; media-src 'self' blob: https://*.supabase.co; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'; connect-src 'self' https://*.supabase.co; form-action 'self'; base-uri 'self'; frame-ancestors 'none'
