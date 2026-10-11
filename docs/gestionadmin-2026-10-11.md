@@ -49,3 +49,9 @@ Sans ces réglages, les services concernés sont affichés indisponibles. La pro
 - [Netlify API : formulaires et pagination](https://docs.netlify.com/api-and-cli-guides/api-guides/get-started-with-api/).
 - [Supabase : fonctions de base de données](https://supabase.com/docs/guides/database/functions), [gestion des comptes](https://supabase.com/docs/guides/auth/managing-user-data).
 - Référence de suivi fournie : [FLEMME-6](https://benchp.atlassian.net/browse/FLEMME-6). Documentation de référence : [Confluence Flemme](https://benchp.atlassian.net/wiki/spaces/DCHPLY/pages/131097). Aucune synchronisation continue.
+
+## Actualisation du 11 octobre 2026, après configuration
+
+Les sections précédentes décrivent la proposition initiale. Depuis, l'administrateur confirme l'exécution sans erreur de `gestionadmin.sql`, et les demandes et candidatures réelles ont été consultées sur la prévisualisation Netlify. Correction : `SITE_ID` est une variable réservée fournie automatiquement ; ne pas tenter de la créer.
+
+Le Manager dispose maintenant d'un adaptateur de qualification Netlify, sans serveur Python externe : voir `docs/manager-netlify-2026-10-11.md`. Il exige une nouvelle migration `supabase/manager-netlify.sql`. La clé OpenAI a été ajoutée selon l'administrateur ; sa validité n'a pas été testée. Quinze tests hors ligne passent. Les quatre spécialistes et les anciennes missions SQLite ne sont pas raccordés à cet adaptateur. La production reste distincte de la prévisualisation.

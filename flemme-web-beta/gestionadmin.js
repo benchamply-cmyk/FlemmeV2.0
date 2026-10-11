@@ -276,8 +276,10 @@ async function loadPanel() {
         const card = el('li', 'card'); card.append(el('h3', null, requests[0].email || 'Contact dans le formulaire'), el('p', null, 'Demandes : ' + requests.map(d => d.ref).join(', ')), renderAdminNote('ambassadeur:' + key, latest('ambassadeur:' + key))); list.append(card);
       });
     } else if (view === 'agents') {
-      title = 'Agents et missions'; explanation = 'Manager qualifie ; Search, Compare, Writer et Quality produisent et contrôlent les livrables. Les commandes modifient l’état de la mission. Une exécution déjà lancée n’est pas interrompue par le blocage.';
       const missions = await ADMIN.service('missions');
+      title = 'Agents et missions'; explanation = missions.backend === 'netlify'
+        ? 'Manager Netlify qualifie les demandes à votre initiative. Les résultats restent internes. Search, Compare, Writer et Quality ne sont pas encore raccordés à cette version. Le blocage conserve un résultat déjà en cours de génération sans reprendre le traitement.'
+        : 'Manager qualifie ; Search, Compare, Writer et Quality produisent et contrôlent les livrables. Les commandes modifient l’état de la mission. Une exécution déjà lancée n’est pas interrompue par le blocage.';
       for (const mission of missions.items) list.append(renderMission(mission));
     } else {
       title = 'Journal administrateur'; explanation = 'Historique des décisions internes, modifications et réponses. Les actions Manager sont également historisées dans chaque mission.';
@@ -292,7 +294,7 @@ async function loadPanel() {
     const message = el('p', 'err', msgOf(error)); message.setAttribute('role', 'alert'); target.replaceChildren(message);
   }
 }
-const MISSION_LABELS = {qualified:'Qualifiée',waiting_information:'Informations attendues',human_required:'Intervention humaine',out_of_catalog:'Hors catalogue',in_progress:'En cours',blocked:'Bloquée',completed:'Terminée',cancelled:'Annulée'};
+const MISSION_LABELS = {qualifying:'Qualification en cours',qualified:'Qualifiée',waiting_information:'Informations attendues',human_required:'Intervention humaine',out_of_catalog:'Hors catalogue',in_progress:'En cours',blocked:'Bloquée',completed:'Terminée',cancelled:'Annulée'};
 function renderMission(mission) {
   const card = el('li', 'card');
   card.append(el('h3', null, 'Mission ' + mission.mission_id), el('p', null, (MISSION_LABELS[mission.state] || 'À qualifier') + ' · ' + mission.delivery_count + ' livrable(s) · révision ' + mission.revision));
@@ -306,7 +308,7 @@ function renderMission(mission) {
       result.append(el('summary', null, 'Qualification, agents, résultats et historique'), renderMissionSnapshot(snapshot));
       const form = el('form', 'admin-note'), select = el('select'), note = el('textarea');
       select.setAttribute('aria-label', 'État de la mission');
-      const allowed = {qualified:['blocked','in_progress'],human_required:['blocked','in_progress'],in_progress:['blocked','completed'],blocked:['in_progress']};
+      const allowed = {qualifying:['blocked'],qualified:['blocked','in_progress'],human_required:['blocked','in_progress'],in_progress:['blocked','completed'],blocked:snapshot.job_id?[]:['in_progress']};
       [['blocked','Bloquer la mission'],['in_progress','Reprendre le traitement'],['completed','Marquer la mission terminée']].filter(([v]) => (allowed[snapshot.state] || []).includes(v)).forEach(([v,t]) => { const o = el('option', null, t); o.value = v; select.append(o); });
       note.required = true; note.maxLength = 2000; note.setAttribute('aria-label', 'Motif de la commande'); note.placeholder = 'Motif obligatoire, conservé dans l’historique';
       const btn = el('button', 'primary', 'Appliquer la commande'); btn.type = 'submit'; const status = el('p'); status.setAttribute('role','status');
@@ -339,7 +341,17 @@ function renderMissionLink(d) {
   input.pattern = '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}';
   const button = el('button','secondary','Associer une mission à cette demande'); button.type = 'submit';
   const result = el('p'); result.setAttribute('role','status');
-  form.append(input,button,result);
+  const qualify = el('button','primary','Qualifier cette demande avec le Manager'); qualify.type='button';
+  const info = el('p',null,'Qualification interne par IA, facturée sur votre compte API. Aucun message n’est envoyé au client. Les pièces jointes ne sont pas analysées par cette version.');
+  qualify.addEventListener('click',async () => {
+    qualify.disabled=true; result.textContent='Qualification en cours…';
+    try {
+      const mission=await ADMIN.service('qualifier:'+d.id,{method:'POST',body:{}});
+      result.textContent='Mission '+mission.mission_id+' · '+MISSION_LABELS[mission.state]+'. Résultat disponible dans Agents et missions.';
+    } catch(error) {result.textContent=msgOf(error); if([401,403].includes(error.status)) await start();}
+    finally {qualify.disabled=false;}
+  });
+  form.append(qualify,info,input,button,result);
   ADMIN.liens(d.id).then(links => {
     if(links.length) result.textContent = 'Missions associées : ' + links.map(x => x.mission_id).join(', ');
   }).catch(error => { result.textContent = msgOf(error); });
@@ -360,6 +372,10 @@ function renderMissionSnapshot(snapshot) {
   if (!(snapshot.turns || []).length) box.append(el('p',null,'Aucun brief enregistré.'));
   (snapshot.turns || []).forEach(turn => {
     box.append(el('p','admin-detail',turn.request_text), el('p','admin-detail',turn.assessment?.user_response?.message || 'Qualification enregistrée.'));
+    if(turn.assessment?.workflow) box.append(el('p',null,'Workflow : '+turn.assessment.workflow));
+    (turn.assessment?.missing_information||[]).forEach(item=>box.append(el('p',null,'À préciser : '+(typeof item==='string'?item:item.name))));
+    (turn.assessment?.qualification_questions||[]).forEach(item=>box.append(el('p',null,typeof item==='string'?item:item.question)));
+    (turn.treatment_blockers||[]).forEach(item=>box.append(el('p',null,item)));
   });
   box.append(el('h3',null,'Résultats des agents'));
   if (!(snapshot.deliveries || []).length) box.append(el('p',null,'Aucun livrable enregistré.'));

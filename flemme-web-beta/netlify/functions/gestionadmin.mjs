@@ -1,4 +1,5 @@
 // Server-side gateway. Tokens never leave this function. 2026-10-11.
+import { managerNative } from '../lib/manager.mjs';
 const json = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: {
   'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'Vary': 'Authorization',
   'X-Content-Type-Options': 'nosniff'
@@ -24,7 +25,7 @@ export default async req => {
     if (resource === 'brigade') {
       if (req.method !== 'GET') return json({ message: 'Méthode refusée.' }, 405);
       const token = process.env.NETLIFY_ADMIN_TOKEN, site = process.env.SITE_ID;
-      if (!token || !site) return json({ message: 'Les candidatures ne sont pas raccordées : configurer NETLIFY_ADMIN_TOKEN et SITE_ID.' }, 503);
+      if (!token || !site) return json({ message: 'Les candidatures ne sont pas raccordées : configurer NETLIFY_ADMIN_TOKEN. SITE_ID est fourni automatiquement par Netlify.' }, 503);
       const headers = { Authorization: 'Bearer ' + token };
       const formsResponse = await upstream('https://api.netlify.com/api/v1/sites/' + encodeURIComponent(site) + '/forms', { headers });
       if (!formsResponse.ok) return json({ message: 'Lecture des formulaires indisponible.' }, 502);
@@ -39,9 +40,12 @@ export default async req => {
       }
       return json({ items: rows.map(r => ({ id: r.id, created_at: r.created_at, data: r.data })) });
     }
-    if (resource === 'missions' || resource?.startsWith('mission:')) {
+    if (resource === 'missions' || resource?.startsWith('mission:') || resource?.startsWith('qualifier:')) {
       const base = process.env.FLEMME_MANAGER_URL?.replace(/\/+$/, ''), token = process.env.FLEMME_MANAGER_TOKEN;
-      if (!base || !token) return json({ message: 'Manager non raccordé : configurer FLEMME_MANAGER_URL et FLEMME_MANAGER_TOKEN.' }, 503);
+      if(resource !== 'missions' && !UUID.test(resource.slice(resource.startsWith('qualifier:')?10:8))) return json({message:'Mission ou demande invalide.'},400);
+      if(!base && !token) return managerNative(req,resource,{sb,key,authorization},json);
+      if (!base || !token) return json({ message: 'Configuration du Manager externe incomplète.' }, 503);
+      if(resource.startsWith('qualifier:')) return json({message:'Qualification depuis une demande disponible avec le Manager Netlify.'},422);
       if (new URL(base).protocol !== 'https:') return json({ message: 'Le Manager doit être raccordé en HTTPS.' }, 503);
       let path = '/api/v2/conversations'; let body;
       if (resource === 'missions') {
