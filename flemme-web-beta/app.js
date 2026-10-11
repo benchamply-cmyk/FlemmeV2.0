@@ -462,6 +462,18 @@ function resetApp() {
   show('home');
 }
 
+// Assistant IA (assistant.js) : recopie la demande préparée dans le formulaire #offer.
+// L'utilisateur relit, complète son contact et envoie lui-même.
+window.flemmePrefill = d => {
+  task = (d.besoin || '').trim();
+  if (!task) return;
+  taskInput.value = task; saveDraft();
+  buildOffer(d.categorie_id ? byId(d.categorie_id) || null : undefined);
+  const when = $('#betaWhen');
+  if ([...when.options].some(o => o.value === d.echeance)) when.value = d.echeance;
+  if (d.precisions) $('#precisions').value = d.precisions;
+};
+
 /* ---------- 9. Textes modifiables depuis /admin ---------- */
 
 (() => {

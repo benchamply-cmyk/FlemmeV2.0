@@ -1,0 +1,8 @@
+{
+  "name": "flemme-web-beta",
+  "private": true,
+  "description": "Dépendances des fonctions Netlify (netlify/functions). Le site lui-même n'en a pas besoin.",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.132.1"
+  }
+}
