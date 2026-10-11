@@ -40,12 +40,12 @@ export default async req => {
       }
       return json({ items: rows.map(r => ({ id: r.id, created_at: r.created_at, data: r.data })) });
     }
-    if (resource === 'missions' || resource?.startsWith('mission:') || resource?.startsWith('qualifier:')) {
+    if (resource === 'missions' || resource?.startsWith('mission:') || resource?.startsWith('qualifier:') || resource?.startsWith('livrer:')) {
       const base = process.env.FLEMME_MANAGER_URL?.replace(/\/+$/, ''), token = process.env.FLEMME_MANAGER_TOKEN;
-      if(resource !== 'missions' && !UUID.test(resource.slice(resource.startsWith('qualifier:')?10:8))) return json({message:'Mission ou demande invalide.'},400);
+      if(resource !== 'missions' && !UUID.test(resource.slice(resource.startsWith('qualifier:')?10:resource.startsWith('livrer:')?7:8))) return json({message:'Mission ou demande invalide.'},400);
       if(!base && !token) return managerNative(req,resource,{sb,key,authorization},json);
       if (!base || !token) return json({ message: 'Configuration du Manager externe incomplète.' }, 503);
-      if(resource.startsWith('qualifier:')) return json({message:'Qualification depuis une demande disponible avec le Manager Netlify.'},422);
+      if(resource.startsWith('qualifier:')||resource.startsWith('livrer:')) return json({message:'Qualification depuis une demande disponible avec le Manager Netlify.'},422);
       if (new URL(base).protocol !== 'https:') return json({ message: 'Le Manager doit être raccordé en HTTPS.' }, 503);
       let path = '/api/v2/conversations'; let body;
       if (resource === 'missions') {
