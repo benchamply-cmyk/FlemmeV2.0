@@ -25,7 +25,7 @@ function budgetValid(b) {
   enumValue(b.operator,['lt','lte'],'Plafond');if(b.operator==='lt'&&cents(b.amount)===0n) fail('Plafond strictement inférieur à zéro impossible.');
 }
 export function validateInput(workflow,input,now=new Date()) {
-  if(!KIND[workflow]) fail('Workflow hors catalogue.');
+  if(!Object.hasOwn(KIND,workflow)) fail('Workflow hors catalogue.');
   keys(input,['facts','sources']);const f=input.facts;keys(f,factFields);
   if(!text(f.objective,500)) fail('Objectif concret requis.');
   enumValue(f.requested_action,['prepare','compare'],'Action préparatoire',true);
@@ -109,7 +109,7 @@ export function compare(selected,input) {
     if(f.dates){check('travel_start',f.dates.start,s.travel_start);check('travel_end',f.dates.end,s.travel_end);}
     if(!optional(f.max_upfront_payment)){const ok=!optional(s.upfront_payment)&&s.currency===b.currency&&s.tax_basis===b.tax_basis?cents(s.upfront_payment)<=cents(f.max_upfront_payment):null;matches.upfront_payment=ok;tests.push(ok);if(ok===null)unknowns.push('Apport, devise ou taxes non confirmés.');}
     const feature_matches={},features=Object.fromEntries(Object.entries(s.features||{}).map(([k,v])=>[normalized(k),v]));
-    for(const feature of f.required_features){const v=features[normalized(feature)]??null;feature_matches[feature]=v;tests.push(v);if(v===null)unknowns.push('Critère non confirmé : '+feature);}
+    for(const feature of f.required_features){const name=normalized(feature),v=Object.hasOwn(features,name)?features[name]:null;feature_matches[feature]=v;tests.push(v);if(v===null)unknowns.push('Critère non confirmé : '+feature);}
     candidates.push({source_id:id,within_budget,feature_matches,context_matches:matches,meets_supplied_constraints:tests.includes(false)?false:tests.includes(null)||!tests.length?null:true,unknowns});
     if(comparable){const key=[s.currency,s.price_basis,s.tax_basis].join('/');if(!groups.has(key))groups.set(key,[]);groups.get(key).push(s);}else warnings.push(id+' : prix ou base de comparaison incomplets.');
     if(!s.inclusions?.length)warnings.push(id+' : prestations incluses non documentées.');

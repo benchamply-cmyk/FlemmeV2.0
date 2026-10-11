@@ -89,3 +89,5 @@ test('retry after lost response is idempotent even with PostgreSQL key ordering'
   assert.equal((await handler(request())).status,200);assert.equal(writes,0);
   f.facts.objective='Autre objectif';assert.equal((await handler(request(f))).status,409);
 });
+
+test('criterion names inherited from JavaScript prototypes remain unknown',()=>{const f=fixture();f.facts.required_features=['constructor','__proto__'];const c=produce('comparer_devis',f,now).result.comparison.candidates[0];assert.equal(c.meets_supplied_constraints,null);assert.equal(c.feature_matches.constructor,null);assert.throws(()=>produce('constructor',f,now),/hors catalogue/);});

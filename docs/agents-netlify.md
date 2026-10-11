@@ -20,6 +20,6 @@ Les rapports, sources et contraintes sont conservés dans Supabase, uniquement l
 
 ## Validation
 
-30 tests Node couvrent la qualification et les contrôles existants, les quatre workflows, les centimes, les devises et taxes, les montants invalides, les inconnues, la provenance, les URL dangereuses, les dates, la qualité, les missions bloquées et les relances idempotentes. Le contrôle concurrent final utilise le verrou de ligne et la révision dans la fonction Supabase ; son exécution réelle doit être vérifiée après application de la migration.
+31 tests Node couvrent la qualification et les contrôles existants, les quatre workflows, les centimes, les devises et taxes, les montants invalides, les inconnues, la provenance, les URL dangereuses, les dates, la qualité, les missions bloquées et les relances idempotentes. Le contrôle concurrent final utilise le verrou de ligne et la révision dans la fonction Supabase ; son exécution réelle doit être vérifiée après application de la migration.
 
 Les sources déclarées demeurent non vérifiées. Le port ne raccorde pas la mémoire conversationnelle V2 Python ni la recherche web autonome. Ces évolutions restent distinctes de ce raccordement.
