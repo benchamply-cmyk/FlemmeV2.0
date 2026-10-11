@@ -23,3 +23,7 @@ Les rapports, sources et contraintes sont conservés dans Supabase, uniquement l
 32 tests Node couvrent la qualification et les contrôles existants, les quatre workflows, les centimes, les devises et taxes, les montants invalides, les inconnues, la provenance, les URL dangereuses, les dates, la qualité, les missions bloquées et les relances idempotentes. Le contrôle concurrent final utilise le verrou de ligne et la révision dans la fonction Supabase ; son exécution réelle doit être vérifiée après application de la migration.
 
 Les sources déclarées demeurent non vérifiées. Le port ne raccorde pas la mémoire conversationnelle V2 Python ni la recherche web autonome. Ces évolutions restent distinctes de ce raccordement.
+
+## Vérification réelle du 11 octobre 2026
+
+Sur la prévisualisation Netlify de la PR 18, le compte propriétaire a créé la demande fictive autorisée FL-F4Z2P. Mission 55f95f0d-1207-4df1-adca-c66dafc33246 : quatre spécialistes exécutés, contrôle qualité réussi, rapport enregistré puis relu depuis Supabase, écart exact de 220 EUR entre 980 et 1200 EUR. Le blocage a retiré l’action de production tout en conservant le rapport ; la reprise puis la clôture ont conservé l’historique. Aucun message client ni action externe n’a été exécuté par les spécialistes.

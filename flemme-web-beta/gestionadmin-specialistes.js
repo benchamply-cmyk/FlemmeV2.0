@@ -115,6 +115,7 @@ function renderSpecialistForm(snapshot) {
       const serialized = JSON.stringify(input);
       if(!pending||pending.serialized!==serialized)pending = {serialized,id:crypto.randomUUID()};
       const result = await ADMIN.service('livrer:'+snapshot.mission_id,{method:'POST',body:{expected_revision:snapshot.revision,request_id:pending.id,input}});
+      box.dispatchEvent(new CustomEvent('mission-updated',{bubbles:true,detail:result}));
       output.replaceChildren(renderMissionSnapshot(result)); status.textContent = 'Rapport enregistré dans l’historique privé. Validez-le avant toute utilisation. Rechargez la mission pour la prochaine commande.';
       form.querySelectorAll('input,select,textarea,button').forEach(n=>n.disabled = true);
     } catch(error) { status.textContent = error.message; submit.disabled = false; }
