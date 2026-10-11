@@ -20,7 +20,7 @@ function mail(titre, lignes, bouton) {
   return `<div style="font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#11120e;max-width:520px">
 <p style="font-size:20px;font-weight:800;margin:0 0 12px">${titre}</p>
 ${lignes.filter(([, v]) => v).map(([k, v]) => `<p style="margin:0 0 6px"><b>${esc(k)} :</b> ${esc(v).replace(/\n/g, '<br>')}</p>`).join('')}
-<p style="margin:20px 0"><a href="${SITE}/equipe.html" style="background:#11120e;color:#fff;text-decoration:none;font-weight:800;padding:12px 20px;border-radius:12px">${bouton}</a></p>
+<p style="margin:20px 0"><a href="${SITE}/gestionadmin" style="background:#11120e;color:#fff;text-decoration:none;font-weight:800;padding:12px 20px;border-radius:12px">${bouton}</a></p>
 <p style="font-size:12px;color:#74786a">Alerte automatique de flemme.org</p></div>`;
 }
 
@@ -35,11 +35,11 @@ export function alerte(p) {
       ['Précisions', r.precisions], ['Fréquence', r.frequence], ['Aide attendue', r.aide_attendue],
       ['Pièces jointes', r.pieces_jointes ? r.pieces_jointes + ' fichier(s) dans Netlify Forms' : ''],
       ['Message vocal', r.vocal ? 'Oui, dans Netlify Forms' : ''], ['Contact', r.email || 'téléphone (voir Netlify Forms)'],
-    ], 'Ouvrir la page équipe'),
+    ], 'Ouvrir Gestion admin'),
   };
   if (p.table === 'messages' && r.auteur === 'client') return {
     subject: 'Nouveau message d’un client',
-    html: mail('Un client t’a écrit', [['Message', r.texte]], 'Répondre depuis la page équipe'),
+    html: mail('Un client t’a écrit', [['Message', r.texte]], 'Répondre depuis Gestion admin'),
   };
   return null;
 }
