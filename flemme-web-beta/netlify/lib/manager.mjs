@@ -1,4 +1,6 @@
+import {produce} from './specialists.mjs';
 // Netlify qualification adapter. Owner JWT and Supabase RLS; no service-role key.
+const stable=value=>Array.isArray(value)?value.map(stable):value&&typeof value==='object'?Object.fromEntries(Object.keys(value).sort().map(k=>[k,stable(value[k])])):value;
 const workflows = ['comparer_devis','trouver_prestataire','rechercher_produit','organiser_voyage','other'];
 const actions = ['prepare','compare','contact','book','buy','send','unknown'];
 const schema = {
@@ -29,7 +31,7 @@ export async function managerNative(req, resource, {sb,key,authorization}, json)
     if (!response.ok) {
       const data = await response.json().catch(()=>({}));
       const status = data.code === '40001' ? 409 : data.code === 'P0002' ? 404 : data.code === '22023' ? 422 : response.status===401?401:response.status===403?403:503;
-      throw Object.assign(new Error(status===503?'Stockage Manager indisponible : appliquer supabase/manager-netlify.sql.':status===409?'Mission déjà en cours ou modifiée : rechargez.':'Opération Manager refusée.'),{status});
+      throw Object.assign(new Error(status===503?(path==='rpc/manager_livrer'?'Stockage des rapports indisponible : appliquer supabase/manager-specialistes.sql.':'Stockage Manager indisponible : appliquer supabase/manager-netlify.sql.'):status===409?'Mission déjà en cours ou modifiée : rechargez.':'Opération Manager refusée.'),{status});
     }
     return response.json();
   }
@@ -39,10 +41,25 @@ export async function managerNative(req, resource, {sb,key,authorization}, json)
       const items=[];
       for(let offset=0;;offset+=100) {
         const batch=await db('manager_missions?select=*&order=created_at.desc,mission_id.desc&limit=100&offset='+offset);
-        items.push(...batch.map(m=>({...m,deliveries:[],delivery_count:0})));
+        items.push(...batch.map(m=>({...m,deliveries:m.deliveries||[],delivery_count:(m.deliveries||[]).length})));
         if(batch.length<100) break;
       }
-      return json({items,total:items.length,backend:'netlify',capabilities:['qualification','history','state_control']});
+      return json({items,total:items.length,backend:'netlify',capabilities:['qualification','history','state_control','provided_source_specialists']});
+    }
+    if(resource.startsWith('livrer:')) {
+      if(req.method!=='POST')return json({message:'Méthode refusée.'},405);
+      const raw=await req.text();if(raw.length>120000)return json({message:'Sources trop volumineuses.'},413);
+      let body;try{body=JSON.parse(raw);}catch{return json({message:'Données invalides.'},400);}
+      if(!body||Object.keys(body).some(k=>!['expected_revision','request_id','input'].includes(k))||!Number.isInteger(body.expected_revision)||body.expected_revision<0||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(body.request_id||''))return json({message:'Commande invalide.'},400);
+      const id=resource.slice(7),rows=await db('manager_missions?select=*&mission_id=eq.'+id),m=rows[0];
+      if(!m)return json({message:'Mission introuvable.'},404);
+      const previous=(m.deliveries||[]).find(d=>d.request_id===body.request_id);
+      if(previous){if(JSON.stringify(stable(previous.input))!==JSON.stringify(stable(body.input)))return json({message:'Identifiant de traitement déjà utilisé pour d’autres sources.'},409);return json({...m,delivery_count:m.deliveries.length});}
+      const turn=m.turns?.at(-1),a=turn?.assessment;
+      if(m.revision!==body.expected_revision||m.job_id||!['qualified','in_progress'].includes(m.state))return json({message:'Mission modifiée, bloquée ou non qualifiée. Rechargez avant de traiter.'},409);
+      if(turn?.failed!==false||turn.state!=='qualified'||!a?.objective?.trim()||a.human_intervention_required!==false||!['prepare','compare'].includes(a.requested_action)||!Array.isArray(a.missing_information)||a.missing_information.length)return json({message:'Qualification complète et préparatoire requise.'},422);
+      const delivery=produce(a.workflow,body.input);
+      return json(await db('rpc/manager_livrer',{mission:id,version_attendue:body.expected_revision,requete:body.request_id,donnees:delivery.input,resultat:delivery.result}));
     }
     if(resource.startsWith('qualifier:')) {
       if(req.method!=='POST') return json({message:'Méthode refusée.'},405);
@@ -85,6 +102,6 @@ export async function managerNative(req, resource, {sb,key,authorization}, json)
       return json(await db('rpc/manager_commander',{mission:id,nouvel_etat:body.state,motif:body.note,version_attendue:body.expected_revision}));
     }
     const items=await db('manager_missions?select=*&mission_id=eq.'+id);
-    return items.length?json({...items[0],deliveries:[],delivery_count:0}):json({message:'Mission introuvable.'},404);
+    return items.length?json({...items[0],deliveries:items[0].deliveries||[],delivery_count:(items[0].deliveries||[]).length}):json({message:'Mission introuvable.'},404);
   } catch(error) { return json({message:error.status?error.message:'Manager indisponible. Rechargez avant de relancer.'},error.status||502); }
 }

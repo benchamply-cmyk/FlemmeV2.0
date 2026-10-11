@@ -278,7 +278,7 @@ async function loadPanel() {
     } else if (view === 'agents') {
       const missions = await ADMIN.service('missions');
       title = 'Agents et missions'; explanation = missions.backend === 'netlify'
-        ? 'Manager Netlify qualifie les demandes à votre initiative. Les résultats restent internes. Search, Compare, Writer et Quality ne sont pas encore raccordés à cette version. Le blocage conserve un résultat déjà en cours de génération sans reprendre le traitement.'
+        ? 'Manager qualifie ; Search, Compare, Writer et Quality analysent les sources que vous fournissez. Les rapports restent privés et attendent votre validation. Aucune recherche web ni action externe automatique. Le blocage interdit un nouveau rapport.'
         : 'Manager qualifie ; Search, Compare, Writer et Quality produisent et contrôlent les livrables. Les commandes modifient l’état de la mission. Une exécution déjà lancée n’est pas interrompue par le blocage.';
       for (const mission of missions.items) list.append(renderMission(mission));
     } else {
@@ -321,7 +321,7 @@ function renderMission(mission) {
           status.textContent = 'État enregistré. Rechargez la mission pour la prochaine commande.'; form.querySelectorAll('select,textarea').forEach(x => x.disabled = true);
         } catch(error) { status.textContent = msgOf(error); if ([401,403].includes(error.status)) await start(); else btn.disabled = false; }
       });
-      detail.replaceChildren(result,form);
+      detail.replaceChildren(result,renderSpecialistForm(snapshot),form);
     } catch(error) { detail.replaceChildren(el('p','err',msgOf(error))); if ([401,403].includes(error.status)) await start(); }
     finally { open.disabled = false; }
   });
