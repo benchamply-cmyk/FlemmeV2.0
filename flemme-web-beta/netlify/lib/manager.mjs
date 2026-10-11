@@ -12,11 +12,11 @@ const schema = {
 };
 export function validateQualification(value) {
   if (!value || Object.keys(value).length !== 7 || !workflows.includes(value.workflow) || !actions.includes(value.requested_action) || typeof value.immediate_danger !== 'boolean' ||
-      ['objective','summary'].some(k=>typeof value[k] !== 'string' || !value[k].trim() || value[k].length>2000) ||
+      ['objective','summary'].some(k=>typeof value[k] !== 'string' || (k==='summary' && !value[k].trim()) || value[k].length>2000) ||
       ['missing_information','questions'].some(k=>!Array.isArray(value[k]) || value[k].length>8 || value[k].some(v=>typeof v!=='string'||!v.trim()||v.length>500))) throw new Error('Invalid qualification');
   // This adapter only prepares a brief. It never treats AI readiness as permission to execute.
   const state = value.immediate_danger || ['contact','book','buy','send'].includes(value.requested_action) ? 'human_required' :
-    value.workflow === 'other' ? 'out_of_catalog' : value.missing_information.length || value.requested_action === 'unknown' ? 'waiting_information' : 'qualified';
+    !value.objective.trim() ? 'waiting_information' : value.workflow === 'other' ? 'out_of_catalog' : value.missing_information.length || value.requested_action === 'unknown' ? 'waiting_information' : 'qualified';
   return {state, assessment:{workflow:value.workflow,objective:value.objective,requested_action:value.requested_action,
     missing_information:value.missing_information,qualification_questions:value.questions,
     human_intervention_required:state==='human_required',user_response:{message:value.summary}},
@@ -67,8 +67,9 @@ export async function managerNative(req, resource, {sb,key,authorization}, json)
           throw Object.assign(new Error(message),{safe:true});
         }
         const data=await response.json();
-        if(data.status!=='completed') throw new Error('Incomplete response');
+        if(data.status!=='completed') throw Object.assign(new Error('OpenAI a retourné une réponse incomplète. Aucun résultat validé.'),{safe:true});
         const output=(data.output||[]).flatMap(v=>v.content||[]).filter(v=>v.type==='output_text').map(v=>v.text).join('');
+        if(!output) throw Object.assign(new Error('OpenAI n’a pas retourné de texte de qualification exploitable.'),{safe:true});
         result={...validateQualification(JSON.parse(output)),request_text:job.request_text,model:process.env.OPENAI_MODEL||'gpt-4.1-mini'};
       } catch(error) {
         const message=error.safe?error.message:'Réponse IA absente, incomplète ou invalide. Aucun résultat de qualification validé.';
