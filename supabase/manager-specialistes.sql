@@ -18,15 +18,15 @@ begin
     if precedent->'input' is distinct from donnees then raise exception 'Identifiant réutilisé' using errcode='40001'; end if;
     return to_jsonb(m)||jsonb_build_object('delivery_count',jsonb_array_length(m.deliveries));
   end if;
-  if m.revision<>version_attendue or m.job_id is not null or m.state not in ('qualified','in_progress') then
+  if m.revision<>version_attendue or m.job_id is not null or m.state not in ('qualified','in_progress','waiting_information') then
     raise exception 'Mission modifiée ou état incompatible' using errcode='40001';
   end if;
   dernier:=m.turns->-1; a:=dernier->'assessment';
-  if (dernier->>'failed') is distinct from 'false' or (dernier->>'state') is distinct from 'qualified'
+  if (dernier->>'failed') is distinct from 'false' or coalesce(dernier->>'state','') not in ('qualified','waiting_information')
     or (a->>'human_intervention_required') is distinct from 'false'
     or coalesce(a->>'requested_action','') not in ('prepare','compare')
     or coalesce(trim(a->>'objective'),'')=''
-    or (a->'missing_information') is distinct from '[]'::jsonb
+    or jsonb_typeof(a->'missing_information') is distinct from 'array'
     or coalesce(a->>'workflow','') not in ('comparer_devis','trouver_prestataire','rechercher_produit','organiser_voyage') then
     raise exception 'Qualification préparatoire complète requise' using errcode='22023';
   end if;
@@ -39,6 +39,7 @@ begin
     raise exception 'Livrable invalide' using errcode='22023';
   end if;
   update public.manager_missions set state='in_progress',revision=revision+1,
+    turns=case when dernier->>'state'='waiting_information' then turns||jsonb_build_array(jsonb_build_object('state','qualified','failed',false,'created_at',now(),'source','admin_confirmed_constraints','request_text','Contraintes préparatoires confirmées par l’administrateur dans le formulaire des spécialistes','assessment',jsonb_build_object('workflow',a->>'workflow','objective',donnees#>>'{facts,objective}','requested_action',donnees#>>'{facts,requested_action}','human_intervention_required',false,'missing_information','[]'::jsonb,'qualification_questions','[]'::jsonb,'user_response',jsonb_build_object('message','Informations métier obligatoires validées. Les inconnues restantes sont indiquées dans le rapport privé.')))) else turns end,
     deliveries=deliveries||jsonb_build_array(jsonb_build_object('request_id',requete,'created_at',now(),'input',donnees,'result',resultat,'user_id',auth.uid())),
     events=events||jsonb_build_array(jsonb_build_object('kind','specialists_delivery','state','in_progress','note','Search, Compare, Writer et Quality : rapport privé à valider par l’administrateur','created_at',now(),'user_id',auth.uid()))
     where mission_id=mission returning * into m;

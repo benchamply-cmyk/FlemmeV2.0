@@ -6,10 +6,11 @@ function renderSpecialistForm(snapshot) {
   add('h3', 'Préparer un rapport avec les quatre spécialistes');
   add('p', 'Search sélectionne vos sources, Compare calcule les écarts, Writer rédige et Quality contrôle. Les liens ne sont pas consultés. Le rapport reste privé : aucune réponse au client, prise de contact, réservation ou achat.');
   const turn = snapshot.turns?.at(-1), a = turn?.assessment;
-  if (!['qualified','in_progress'].includes(snapshot.state) || snapshot.job_id || turn?.failed !== false || turn.state !== 'qualified' || a?.human_intervention_required !== false) {
+  if (!['qualified','in_progress','waiting_information'].includes(snapshot.state) || snapshot.job_id || turn?.failed !== false || !['qualified','waiting_information'].includes(turn.state) || a?.human_intervention_required !== false) {
     add('p', 'Terminez la qualification et levez les blocages avant de préparer un rapport.'); return box;
   }
   const kind = {comparer_devis:'quote',trouver_prestataire:'provider',rechercher_produit:'product',organiser_voyage:'travel'}[a.workflow];
+  if (!['prepare','compare'].includes(a.requested_action)) { add('p','Clarifiez d’abord l’action attendue avec le Manager.'); return box; }
   if (!kind) { add('p','Ce type de mission ne dispose pas de spécialistes.'); return box; }
   const form = document.createElement('form'); box.append(form);
   const controls = {}, sourceControls = [];
@@ -32,6 +33,8 @@ function renderSpecialistForm(snapshot) {
   const moneyField = (parent,target,name,label) => { const n = field(parent,target,name,label); n.inputMode = 'decimal'; n.pattern = '(?:0|[1-9][0-9]{0,9})(?:[.,][0-9]{1,2})?'; return n; };
   field(form,controls,'objective','Objectif confirmé','text',true).value = a.objective || '';
   field(form,controls,'required_features','Critères indispensables (un par ligne ; laisser vide si aucun)','textarea');
+  add('p','Confirmez les informations nécessaires à ce rapport préparatoire. Les questions précédentes restent dans l’historique ; les autres détails absents seront signalés dans le rapport.');
+  field(form,controls,'confirmed','Je valide ces contraintes pour un rapport préparatoire uniquement','checkbox',true);
   const danger = field(form,controls,'danger','Je confirme l’absence de danger immédiat','checkbox',true);
   moneyField(form,controls,'budget_amount','Plafond du budget (facultatif selon la mission)');
   field(form,controls,'budget_currency','Devise du budget','text',false,currencies);
@@ -95,7 +98,7 @@ function renderSpecialistForm(snapshot) {
     e.preventDefault(); submit.disabled = true; status.textContent = 'Sélection, comparaison, rédaction et contrôle…';
     try {
       const v = read(controls),facts = {...v,requested_action:'compare',immediate_danger:!danger.checked,required_features:lines(v.required_features||'')};
-      delete facts.danger; delete facts.budget_amount; delete facts.budget_currency; delete facts.budget_basis; delete facts.budget_tax;
+      delete facts.danger; delete facts.confirmed; delete facts.budget_amount; delete facts.budget_currency; delete facts.budget_basis; delete facts.budget_tax;
       if(v.budget_amount)facts.budget = {amount:decimal(v.budget_amount),currency:v.budget_currency,basis:v.budget_basis,tax_basis:v.budget_tax,operator:'lte'};
       if(v.max_upfront_payment)facts.max_upfront_payment = decimal(v.max_upfront_payment);
       delete facts.travel_start; delete facts.travel_end;

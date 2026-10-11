@@ -91,3 +91,5 @@ test('retry after lost response is idempotent even with PostgreSQL key ordering'
 });
 
 test('criterion names inherited from JavaScript prototypes remain unknown',()=>{const f=fixture();f.facts.required_features=['constructor','__proto__'];const c=produce('comparer_devis',f,now).result.comparison.candidates[0];assert.equal(c.meets_supplied_constraints,null);assert.equal(c.feature_matches.constructor,null);assert.throws(()=>produce('constructor',f,now),/hors catalogue/);});
+
+test('waiting-information mission requires the same complete structured business input',async()=>{let writes=0;const m=mission();m.state='waiting_information';m.turns[0].state='waiting_information';m.turns[0].assessment.missing_information=['Détails des devis'];global.fetch=async(url,opts)=>url.endsWith('est_admin')?reply(true):url.includes('manager_missions?')?reply([m]):(writes++,reply({...m,revision:4}));assert.equal((await handler(request())).status,200);const f=fixture();delete f.facts.comparison_subject;assert.equal((await handler(request(f))).status,422);assert.equal(writes,1);});

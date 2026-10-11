@@ -56,8 +56,8 @@ export async function managerNative(req, resource, {sb,key,authorization}, json)
       const previous=(m.deliveries||[]).find(d=>d.request_id===body.request_id);
       if(previous){if(JSON.stringify(stable(previous.input))!==JSON.stringify(stable(body.input)))return json({message:'Identifiant de traitement déjà utilisé pour d’autres sources.'},409);return json({...m,delivery_count:m.deliveries.length});}
       const turn=m.turns?.at(-1),a=turn?.assessment;
-      if(m.revision!==body.expected_revision||m.job_id||!['qualified','in_progress'].includes(m.state))return json({message:'Mission modifiée, bloquée ou non qualifiée. Rechargez avant de traiter.'},409);
-      if(turn?.failed!==false||turn.state!=='qualified'||!a?.objective?.trim()||a.human_intervention_required!==false||!['prepare','compare'].includes(a.requested_action)||!Array.isArray(a.missing_information)||a.missing_information.length)return json({message:'Qualification complète et préparatoire requise.'},422);
+      if(m.revision!==body.expected_revision||m.job_id||!['qualified','in_progress','waiting_information'].includes(m.state))return json({message:'Mission modifiée, bloquée ou non qualifiée. Rechargez avant de traiter.'},409);
+      if(turn?.failed!==false||!['qualified','waiting_information'].includes(turn.state)||!a?.objective?.trim()||a.human_intervention_required!==false||!['prepare','compare'].includes(a.requested_action)||!Array.isArray(a.missing_information))return json({message:'Qualification complète et préparatoire requise.'},422);
       const delivery=produce(a.workflow,body.input);
       return json(await db('rpc/manager_livrer',{mission:id,version_attendue:body.expected_revision,requete:body.request_id,donnees:delivery.input,resultat:delivery.result}));
     }
