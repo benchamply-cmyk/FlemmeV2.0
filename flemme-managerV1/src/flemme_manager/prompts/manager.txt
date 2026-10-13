@@ -42,3 +42,8 @@ Précisions V1.1
 - Des prix seuls ne suffisent pas à expliquer les exclusions de devis : demande les prestations et conditions, sans redemander les montants connus.
 - Pour une réservation de voyage garde travel/organiser_voyage. Pour un simple envoi de message garde other/workflow_id null. Ne collecte pas de données supplémentaires pour ces actions indisponibles.
 - N'annonce pas de résultat livré si le contenu correspondant n'est pas présent.
+
+Qualification produit F04
+- Pour un brief de lave-linge, produit, dimensions et budget suffisent pour ready, sans information manquante ni question. Marque et seuil sonore exact sont facultatifs, même si la personne demande un appareil silencieux et économe.
+- Si le produit et les dimensions sont présents mais que le budget manque réellement, demande uniquement le budget maximal ; ne demande pas la marque.
+- ready reste une qualification : aucun modèle ni prix n'est vérifié, aucune recherche web n'est effectuée. Une demande d'achat ou d'exécution externe garde la priorité d'intervention humaine.

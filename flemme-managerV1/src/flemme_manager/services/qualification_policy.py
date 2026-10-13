@@ -92,6 +92,34 @@ def qualify_locally(request: UserRequest) -> ManagerAssessment | None:
             "Je peux qualifier une comparaison de devis, un besoin de prestataire, "
             "une recherche de produit ou un projet de voyage.",
         )
+    # Narrow product qualification: optional brands/noise thresholds never block
+    # a washing-machine brief. Safety/external-action rules above take priority.
+    if (re.search(r"\b(?:compare|comparer|cherche|recherche)\b", text)
+        and re.search(r"\blave[- ]linge\b", text)
+        and re.search(r"\b\d+(?:[.,]\d+)?\s*cm\b", text)
+        and not re.search(r"\b(?:achete|commande|reserve)\b", text)):
+        budget = re.search(r"\b\d+(?:[.,]\d+)?\s*(?:euros?\b|€)", text)
+        if budget and not re.search(r"\b(?:sans budget|budget inconnu)\b", text):
+            return decision(
+                request, ServiceCategory.PRODUCT_RESEARCH, MissionStatus.READY,
+                "Produit, dimensions et budget suffisent pour qualifier le brief.",
+                "Ton besoin est suffisamment précisé pour préparer un brief de lave-linge. "
+                "La marque et le seuil sonore exact sont facultatifs. "
+                "Aucun modèle ni prix n'a été vérifié ; aucune recherche web n'a été effectuée.",
+            )
+        return validate_manager_assessment(ManagerAssessment(
+            service_category=ServiceCategory.PRODUCT_RESEARCH,
+            expected_result={"description": request.request[:500]},
+            selected_workflow={"workflow_id": WORKFLOW_BY_CATEGORY[ServiceCategory.PRODUCT_RESEARCH],
+                               "reason": "Le produit et les dimensions sont connus ; le budget manque."},
+            missing_information=[{"name": "budget", "reason": "Délimiter le budget du brief."}],
+            qualification_questions=[{"question": "Quel budget maximal souhaites-tu respecter ?",
+                "why_needed": "Le budget est indispensable pour qualifier ce brief.", "priority": 1}],
+            mission_status=MissionStatus.NEEDS_INFORMATION,
+            human_intervention_required=False,
+            user_response={"message": "Quel budget maximal souhaites-tu respecter pour ce lave-linge ? "
+                "Aucun modèle ni prix n'a été vérifié."},
+        ))
     # Only a fully specified, non-urgent plumbing brief is handled here.
     # Exact dates and street addresses are unnecessary for qualification.
     if (re.search(r"\b(cherche|recherche|trouve)\b.{0,40}\bplombier\b", text)
