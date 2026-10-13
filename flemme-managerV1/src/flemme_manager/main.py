@@ -12,3 +12,8 @@ app.include_router(manager_router)
 # Supabase memory is opt-in and has its own authentication boundary.
 from flemme_manager.routes.memory_v2 import router as memory_v2_router
 app.include_router(memory_v2_router)
+
+# Direct browser calls avoid the Netlify proxy timeout; exact origins only.
+import os
+from flemme_manager.memory.browser_access import configure_browser_access
+configure_browser_access(app, os.getenv("FLEMME_V2_ALLOWED_ORIGINS", ""))
