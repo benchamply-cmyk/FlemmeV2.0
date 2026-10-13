@@ -10,6 +10,7 @@ from flemme_manager.schemas import (
 	validate_manager_assessment,
 )
 from flemme_manager.settings import settings
+from flemme_manager.services.qualification_policy import qualify_locally
 
 MANAGER_INSTRUCTIONS = (
 	files("flemme_manager")
@@ -35,13 +36,16 @@ class ManagerExecutionError(Exception):
 
 
 async def _run_agent(request_text: str) -> ManagerAssessment:
-	result = await Runner.run(manager_agent, request_text)
+	result = await Runner.run(manager_agent, request_text, max_turns=1)
 	if not isinstance(result.final_output, ManagerAssessment):
 		raise ManagerExecutionError("Manager returned an unexpected result")
 	return result.final_output
 
 
 async def analyze_request(request: UserRequest) -> ManagerAssessment:
+	local_assessment = qualify_locally(request)
+	if local_assessment is not None:
+		return local_assessment
 	if not settings.openai_api_key or not settings.openai_api_key.strip():
 		raise ManagerConfigurationError("OpenAI is not configured")
 

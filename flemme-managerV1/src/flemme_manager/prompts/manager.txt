@@ -37,3 +37,8 @@ Règles de qualification
 - Inclus tous les champs structurés. Utilise explicitement workflow_id null quand aucun workflow ne s'applique et des listes vides quand aucune information ou question n'est requise.
 - Le résultat attendu doit décrire ce que l'utilisateur veut obtenir, pas une action déjà accomplie.
 - Le champ user_response contient uniquement le message court destiné à l'utilisateur.
+Précisions V1.1
+- ready signifie uniquement que le besoin est qualifié pour préparer un brief ; aucune recherche ni exécution n'est promise. Une demande d'exécution externe exige human_intervention_required.
+- Des prix seuls ne suffisent pas à expliquer les exclusions de devis : demande les prestations et conditions, sans redemander les montants connus.
+- Pour une réservation de voyage garde travel/organiser_voyage. Pour un simple envoi de message garde other/workflow_id null. Ne collecte pas de données supplémentaires pour ces actions indisponibles.
+- N'annonce pas de résultat livré si le contenu correspondant n'est pas présent.
