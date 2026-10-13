@@ -1,0 +1,7 @@
+# Bilan de validation V2 — 14 octobre 2026
+
+Faits : installation propre réussie avec `uv sync --locked --extra dev` ; 100 tests Python réussis (67 existants + 33 nouveaux), réseau interdit et modèle simulé. Compilation Python et contrôle du diff réussis. 43 assertions PostgreSQL sous PGlite 0.3.14 réussies ; migration appliquée trois fois, dont une fois après insertion d'un historique. Les droits, l'isolation entre propriétaires, les erreurs, les révisions, les répétitions, les transitions et les récupérations sont vérifiés. Aucun fichier existant supprimé, aucun historique remplacé, aucun secret indexé.
+
+Le workflow GitHub Actions ajoute PostgreSQL 16 et un contrôle réel à deux sessions concurrentes (44 assertions attendues). Son résultat doit être consulté sur la PR ; un test local PGlite à une connexion ne prouve pas le comportement à plusieurs connexions. Aucun appel OpenAI réel, aucune migration distante, aucun déploiement ni fusion. Les limites et les réglages restant à réaliser figurent dans `supabase-v2-2026-10-14.md`.
+
+Sources : code et tests de cette branche, exécutés le 14 octobre 2026 ; base main@8cfbe28028c5c9e9e8f0625348a4e05a6bf5adde ; [FLEMME-6](https://benchp.atlassian.net/browse/FLEMME-6) et [Confluence](https://benchp.atlassian.net/wiki/spaces/DCHPLY/pages/131097), consultés le 14 octobre 2026. La page Confluence reste une référence V1 et n'a pas été écrasée.

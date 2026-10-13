@@ -1,0 +1,7 @@
+{
+  "name": "flemme-manager-v2-sql-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {"test": "node memory_v2.mjs"},
+  "devDependencies": {"@electric-sql/pglite": "0.3.14", "pg": "8.13.1"}
+}

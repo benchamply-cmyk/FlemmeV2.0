@@ -1,6 +1,8 @@
 """Manager analysis API route."""
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
+
+from flemme_manager.memory.supabase import protect_legacy_analysis
 
 from flemme_manager.agents.manager import (
     ManagerConfigurationError,
@@ -12,7 +14,8 @@ from flemme_manager.schemas import MissionResponse, UserRequest
 router = APIRouter(prefix="/api/manager", tags=["manager"])
 
 
-@router.post("/analyze", response_model=MissionResponse)
+@router.post("/analyze", response_model=MissionResponse,
+             dependencies=[Depends(protect_legacy_analysis)])
 async def process_mission(request: UserRequest) -> MissionResponse:
     try:
         assessment = await analyze_request(request)
