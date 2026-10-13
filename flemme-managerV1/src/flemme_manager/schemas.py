@@ -1,6 +1,8 @@
 """Pydantic models for manager requests, decisions, and responses."""
 
 from enum import StrEnum
+import re
+import unicodedata
 from typing import Annotated
 
 from pydantic import (
@@ -151,6 +153,31 @@ def validate_manager_assessment(assessment: ManagerAssessment) -> ManagerAssessm
     needs_human = mission_status == MissionStatus.HUMAN_INTERVENTION_REQUIRED
     if assessment.human_intervention_required != needs_human:
         errors.append("Human intervention flag must match the mission status.")
+
+    if needs_human and (assessment.missing_information or assessment.qualification_questions):
+        errors.append("Human intervention must not be delayed by qualification questions.")
+
+    names = [item.name.casefold() for item in assessment.missing_information]
+    questions = [item.question.casefold() for item in assessment.qualification_questions]
+    if len(set(names)) != len(names) or len(set(questions)) != len(questions):
+        errors.append("Missing information and questions must not contain duplicates.")
+
+    priorities = [item.priority for item in assessment.qualification_questions]
+    if priorities != list(range(1, len(priorities) + 1)):
+        errors.append("Questions must have consecutive unique priorities starting at one.")
+
+    # Conservative guard for known unsupported action claims. This is not a
+    # general semantic proof: paraphrases still need a live/manual review.
+    message = "".join(c for c in unicodedata.normalize(
+        "NFKD", assessment.user_response.message.lower()
+    ) if not unicodedata.combining(c)).replace("’", "'")
+    if re.search(
+        r"\bje (?:vais |m'engage a |peux )(?:chercher|rechercher|trouver|appeler|reserver|acheter|envoyer)\b"
+        r"|\bj'ai (?:cherche|recherche|trouve|appele|reserve|achete|envoye)\b"
+        r"|\b(?:message|billet|vol|hotel|rendez-vous) (?:est |a ete )(?:envoye|reserve|confirme)\b",
+        message,
+    ):
+        errors.append("Manager without tools cannot claim or promise external execution.")
 
     if errors:
         raise MissionCoherenceError(" ".join(errors))

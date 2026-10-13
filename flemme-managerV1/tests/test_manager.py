@@ -62,7 +62,7 @@ def make_assessment(
         qualification_questions=list(questions),
         mission_status=status,
         human_intervention_required=human_required,
-        user_response=UserFacingResponse(message="Je m'en occupe après ces précisions."),
+        user_response=UserFacingResponse(message="Je peux préparer un brief à partir de ces informations."),
     )
 
 
@@ -142,8 +142,8 @@ def test_manager_marks_request_outside_catalog(client, stub_agent):
 
 def test_manager_flags_human_intervention(client, stub_agent):
     assessment = make_assessment(
-        category=ServiceCategory.OTHER,
-        workflow_id=None,
+        category=ServiceCategory.TRAVEL,
+        workflow_id=WorkflowId.ORGANISER_VOYAGE,
         status=MissionStatus.HUMAN_INTERVENTION_REQUIRED,
         human_required=True,
     )
@@ -218,7 +218,8 @@ def test_sdk_runner_accepts_structured_output_without_network(monkeypatch):
         status=MissionStatus.READY,
     )
 
-    async def fake_runner(_runner, agent, request_text):
+    async def fake_runner(_runner, agent, request_text, *, max_turns):
+        assert max_turns == 1
         assert agent is manager.manager_agent
         assert request_text == "Compare ces devis."
         return SimpleNamespace(final_output=assessment)
@@ -294,6 +295,7 @@ def test_api_signals_incoherent_model_output_as_invalid(client, monkeypatch):
     async def return_invalid_output(_request_text):
         return invalid_assessment
 
+    monkeypatch.setattr(manager.settings, "openai_api_key", "test-key")
     monkeypatch.setattr(manager, "_run_agent", return_invalid_output)
     response = client.post(
         "/api/manager/analyze",
