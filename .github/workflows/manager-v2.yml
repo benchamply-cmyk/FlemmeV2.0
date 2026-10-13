@@ -1,9 +1,9 @@
 name: Manager V2 tests
 on:
   pull_request:
-    paths: ['flemme-managerV1/**', 'supabase/manager-memory-v2-20261014.sql', '.github/workflows/manager-v2.yml']
+    paths: ['flemme-managerV1/**', 'flemme-web-beta/**', 'supabase/manager-memory-v2-20261014.sql', '.github/workflows/manager-v2.yml']
   push:
-    branches: ['feature/manager-v2-supabase-20261014']
+    branches: ['feature/manager-v2-supabase-20261014', 'feature/manager-v2-activation-20261014']
 permissions:
   contents: read
 jobs:
@@ -49,3 +49,15 @@ jobs:
         working-directory: flemme-managerV1/tests/sql
         env:
           SQL_TEST_DATABASE_URL: postgresql://postgres:isolated-test-only@localhost:5432/manager_v2_test
+
+  website:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test flemme-web-beta/tests/*.test.mjs
+      - run: node --check flemme-web-beta/manager-v2.js
+      - run: node build.js
+        working-directory: flemme-web-beta
