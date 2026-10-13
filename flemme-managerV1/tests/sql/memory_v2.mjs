@@ -5,7 +5,7 @@ import { randomUUID } from 'node:crypto';
 const { PGlite } = process.env.SQL_TEST_DATABASE_URL ? {} : await import(process.env.PGLITE_MODULE || '@electric-sql/pglite');
 let db;
 if (process.env.SQL_TEST_DATABASE_URL) {
-  const { Client } = await import('pg');
+  const { Client } = (await import('pg')).default;
   const client = new Client({connectionString:process.env.SQL_TEST_DATABASE_URL});
   await client.connect();
   db = {query:(...args)=>client.query(...args),exec:sql=>client.query(sql),close:()=>client.end()};
@@ -109,7 +109,7 @@ snap=await command('recover',recoveryCid,recoveryRid,1,{note:'Worker interrupted
 assert.equal(snap.pending_request_id,null); assert.equal(snap.messages.length,1); checks++;
 // Two real PostgreSQL sessions contend for the same revision. One must lose.
 if (process.env.SQL_TEST_DATABASE_URL) {
-  const { Client }=await import('pg');
+  const { Client }=(await import('pg')).default;
   const other=new Client({connectionString:process.env.SQL_TEST_DATABASE_URL});
   await other.connect();
   await other.query("select set_config('request.jwt.claim.sub',$1,false)",[a]);
