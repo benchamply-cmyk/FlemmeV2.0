@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from decimal import Decimal
 from flemme_manager.acquisition_schemas import AcquiredSource, Citation, Fact
 
-NUMBER = r'(\d+(?:[ \u00a0]\d{3})*(?:[,.]\d{1,2})?)'
+NUMBER = r'(?<![\d.,-])(\d+(?:[ \u00a0]\d{3})*(?:[,.]\d{1,2})?)(?![\d.,])'
 PATTERNS = {
     'monthly_price': NUMBER + r'\s*(?:€|euros?|EUR)\s*(?:TTC\s*)?(?:/\s*mois|par mois|mensuels?)',
     'duration_months': r'(\d{1,3})\s*mois\b',

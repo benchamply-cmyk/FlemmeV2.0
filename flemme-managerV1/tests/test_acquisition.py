@@ -149,6 +149,12 @@ def test_tampered_numeric_value_with_real_citation_refused():
     with pytest.raises(ValueError): check_source(source)
 
 
+@pytest.mark.parametrize('price',['1,299.00 EUR/mois','-299 EUR/mois','299,999 EUR/mois'])
+def test_unsupported_number_formats_never_become_partial_prices(price):
+    source=extract('a','offre','web',{1:price})
+    assert source.facts['monthly_price'].value is None
+
+
 @pytest.mark.parametrize('name,data', [('evil.exe',b'x'),('../x.txt',b'x'),('a.pdf',b'fake'),
     ('a.docx',b'fake'),('a.txt',b'x'*1000001)])
 def test_upload_validation(name,data):
