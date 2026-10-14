@@ -58,5 +58,18 @@ export async function testV3(db,actor,v2,a,b) {
  const history=await rpc('list',recoverCid);assert.equal(history.length,2);assert(history[0].recovery);count++;
  await db.exec('reset role');await rejects(()=>db.exec('delete from fm_v3.runs'),'42501');
  await rejects(()=>db.exec('truncate fm_v3.outputs'),'42501');
+ if(process.env.SQL_TEST_DATABASE_URL){
+   const {Client}=(await import('pg')).default;
+   const other=new Client({connectionString:process.env.SQL_TEST_DATABASE_URL});await other.connect();
+   await other.query("select set_config('request.jwt.claim.sub',$1,false)",[a]);await other.query('set role authenticated');
+   await actor(a);const raceCid=randomUUID();await ready(raceCid);
+   const values=id=>['reserve',raceCid,id,2,input];
+   const outcomes=await Promise.allSettled([
+     db.query('select public.fm_v3_delivery_command($1,$2,$3,$4,$5)',values(randomUUID())),
+     other.query('select public.fm_v3_delivery_command($1,$2,$3,$4,$5)',values(randomUUID()))]);
+   assert.equal(outcomes.filter(o=>o.status==='fulfilled').length,1);
+   assert.equal(outcomes.find(o=>o.status==='rejected').reason.code,'PT409');count++;
+   await other.end();
+ }
  return count;
 }
