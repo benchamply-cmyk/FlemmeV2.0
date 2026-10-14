@@ -48,7 +48,7 @@
       if(mode==='web'&&files.length)throw new Error('Choisis le mode documents pour joindre des devis.');
       const documents=[];
       for(const file of files){
-        if(file.size>1000000||!file.size||!/^[-\w .()À-ÿ]+\.(pdf|docx|txt)$/i.test(file.name))throw new Error('Document invalide ou supérieur à 1 Mo.');
+        if(file.size>1000000||!file.size||! /^[\p{L}\p{N}_ .()-]+\.(pdf|docx|txt)$/iu.test(file.name))throw new Error('Document invalide ou supérieur à 1 Mo.');
         const bytes=new Uint8Array(await file.arrayBuffer());let binary='';for(const byte of bytes)binary+=String.fromCharCode(byte);
         documents.push({name:file.name,content_base64:btoa(binary)});
       }
