@@ -130,5 +130,8 @@ await reject(()=>db.exec('delete from fm_v2.events'),'42501');
 await reject(()=>db.exec('truncate fm_v2.messages'),'42501');
 const {testV3}=await import('./specialists_v3.mjs');
 const v3Checks=await testV3(db,actor,command,a,b);
+const {testV4}=await import('./acquisition_v4.mjs');
+const v4Checks=await testV4(db,actor,command,a,b);
+console.log(`${v4Checks} V4 PostgreSQL assertions passed; originals immutable, private and replay preserved.`);
 console.log(`${checks} V2 and ${v3Checks} V3 PostgreSQL assertions passed; migration applied 3 times; histories preserved.`);
 await db.close();

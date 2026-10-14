@@ -27,7 +27,7 @@ class SupabaseMemory:
                     code = response.json().get("code")
                 except (ValueError, AttributeError):
                     code = None
-                status = {"PT404": 404, "PT409": 409, "PT422": 422}.get(code)
+                status = {"PT404": 404, "PT409": 409, "PT422": 422, "PT429": 429}.get(code)
                 if status is None:
                     status = 401 if response.status_code == 401 else 503
                 raise StorageError(status)

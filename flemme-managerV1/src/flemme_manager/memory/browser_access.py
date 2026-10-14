@@ -17,6 +17,6 @@ def configure_browser_access(app, value):
     @app.middleware('http')
     async def private_memory(request, call_next):
         response = await call_next(request)
-        if request.url.path.startswith(('/api/v2/', '/api/v3/')):
+        if request.url.path.startswith(('/api/v2/', '/api/v3/', '/api/v4/')):
             response.headers['Cache-Control'] = 'private, no-store'
         return response

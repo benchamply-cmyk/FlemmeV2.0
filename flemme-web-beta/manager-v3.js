@@ -44,6 +44,7 @@
         await api().recoverDelivery(current.id,{request_id:row.run.id,expected_revision:current.revision,note:'Récupération manuelle de la production interrompue.'});
         window.dispatchEvent(new CustomEvent('flemme:refresh'));show(await api().deliveries(current.id));}));article.append(recover);}
       $('specialistDeliveries').append(article);
+      window.dispatchEvent(new CustomEvent('flemme:delivery-rendered',{detail:{article,row,conversationId:current.id}}));
     });
   }
   window.addEventListener('flemme:conversation',event=>{

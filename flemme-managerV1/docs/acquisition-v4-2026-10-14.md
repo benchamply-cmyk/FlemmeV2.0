@@ -1,0 +1,60 @@
+# Recherche web et analyse documentaire — 14 octobre 2026
+
+## Faits établis en lecture, à 03 h 19 (Europe/Paris)
+
+La branche de travail `feat/web-documents-20261014` part de `main@4eda9ae92cf5925ef8ec7ee4ac8004ded6af1880`, fusion de la PR #24. La recherche des PR ouvertes a retourné une liste vide au début de l'audit. Les branches et contenus précédents restent conservés.
+
+| Élément | Preuve du 14/10/2026 | Limite de la vérification |
+| --- | --- | --- |
+| GitHub V2/V3 | [main](https://github.com/benchamply-cmyk/FlemmeV2.0/commit/4eda9ae92cf5925ef8ec7ee4ac8004ded6af1880), PR #24 fusionnée | Présence du code, pas validation de ses usages réels |
+| Render | Service `flemme-manager-v2-api`, déploiement `dep-db7cv53od1fc73ah3a50`, statut live, même SHA, terminé à 00:42:52 UTC ; déploiement automatique désactivé | Aucun changement ni déclenchement de déploiement |
+| API publique | [health](https://flemme-manager-v2-api.onrender.com/health) HTTP 200 ; [OpenAPI](https://flemme-manager-v2-api.onrender.com/openapi.json) présente V2 et V3 | `/health` ne teste pas Supabase ni OpenAI |
+| Variables V2/V3 effectives | GET V2 conversations et GET V3 livrables sans session répondent 401, et non 503 | Prouve les activation/configuration minimales avant authentification ; ne valide pas les clés ou un parcours authentifié. Aucune lecture de valeur secrète |
+| Netlify | [manager.html](https://flemme.org/manager.html) et [manager-v3.js](https://flemme.org/manager-v3.js) HTTP 200, en-tête Netlify, interface V3 présente ; configuration publique du Manager et URL Supabase présentes | Pas d'accès au tableau de bord Netlify ni à ses variables privées ; SHA du déploiement non établi |
+| Supabase | Projet `yktpabnqkhwcshvjuncs`, ACTIVE_HEALTHY ; migrations `20261013233347/manager_memory_v2_20261014` et `20261014004025/manager_specialists_v3_20261014` ; RLS activée sur les sept tables fm_v2/fm_v3 | Lecture des métadonnées seulement, aucune lecture de messages ou d'offres clients ; aucun test authentifié live |
+| Documentation | [Confluence 131097](https://benchp.atlassian.net/wiki/spaces/DCHPLY/pages/131097), version 2 du 08/10/2026, décrit encore V1 sans mémoire ; [FLEMME-6](https://benchp.atlassian.net/browse/FLEMME-6), statut À faire | Références consultées, aucun contenu remplacé ni message publié |
+
+L'évolution livrée dans cette branche n'est pas activée en production. Les outils web/PDF étaient des points d'extension vides dans main. La nouvelle clé `SEARCH_WEB_FLEMME` a été créée avec le connecteur sécurisé et enregistrée uniquement dans le fichier local ignoré confirmé par l'utilisateur ; aucune valeur ne figure dans le dépôt ou ce rapport. Aucune synchronisation continue n'est ajoutée.
+
+## Décisions et fonctionnement
+
+1. Conserver le chemin V3 sur sources fournies. Ajouter `Search.acquire` pour la découverte web et une route V4 séparée. Le workflow reste issu de la qualification sauvegardée ; une mission de comparaison de devis attend des documents.
+2. Réserver une tentative et ses originaux dans une transaction avant toute dépense ou extraction. Utiliser le journal, les résultats, la récupération explicite et le marquage stale V3 existants. Une répétition achevée renvoie le résultat ; une tentative en cours ne relance pas l'appel. Aucune clôture de mission automatique.
+3. Recherche réelle par Responses API et outil `web_search`, accès live demandé, contexte low, un appel outil maximum, 1500 tokens de sortie, aucun retry SDK, délai 25 s, `store=false`. Le texte du modèle est ignoré : seules les URLs de la liste technique `web_search_call.action.sources` peuvent être lues. Cinq URLs maximum ; les sources refusées restent documentées comme inconnues.
+4. Pages publiques HTTPS seulement : port 443, aucune identité dans l'URL, DNS entièrement public, rejet des adresses locales/privées/transition IPv6, IP épinglée pour la connexion et certificat TLS vérifié sur le nom d'origine. Aucun proxy, redirection, JavaScript ou téléchargement déclenché par une page. Maximum 512 Ko et 20 000 caractères par page ; une page au-delà des limites est refusée, sans prétendre l'avoir lue complètement.
+5. PDF, DOCX et TXT : deux ou trois documents, 1 Mo chacun. Corps JSON limité avant décodage à 4,1 Mo, noms et signatures vérifiés, originaux conservés privés avec empreinte SHA-256. Aucun fichier fourni n'est exécuté ni écrit à un chemin utilisateur. Le parseur est un sous-processus sans credentials : 8 s CPU, 12 s murales, 128 Mio d'espace mémoire sur Linux/Render. macOS ne fournit pas ce plafond mémoire ; taille et délais restent bornés. PDF : maximum 30 pages, actifs/chiffrés/formulaires et pages sans texte exploitable refusés. DOCX : archive maximum 200 entrées/4 Mo décompressés, macros et entités XML refusées ; aucune URL externe ouverte.
+6. Extraction déterministe et prudente : prix mensuel, total, durée, kilométrage, apport/premier loyer et extraits taxes/disponibilité/restrictions/prestations/exclusions/hybride. Chaque valeur connue cite un extrait littéral. Des valeurs distinctes pour un même champ donnent une inconnue. Quality vérifie les extraits et la concordance des montants ; une citation authentique avec un montant altéré est refusée.
+7. `verified` signifie « extrait présent dans le texte lu », pas garantie commerciale. Les offres restent `estimated` ou `unknown` : disponibilité, éligibilité, caractère primaire de la source et validité commerciale ne sont jamais confirmés automatiquement. Une URL d'agrégateur n'est pas transformée en preuve constructeur. Le rapport fournit les liens et la date de consultation, sans inventer trois offres si moins de sources sont lisibles.
+8. Calculs Decimal : prix sous plafond et écarts seulement pour EUR, même base et taxes explicites dans la citation du prix. La durée peut être comparée si explicite ; lieu, caractéristiques, apport maximal et éligibilité restent à confirmer. Pas de classement global de prestations non équivalentes ni de mensualité effective inventée.
+9. Coûts/ressources : deux acquisitions actives globalement ; par utilisateur cinq départs/heure et dix/24 h ; globalement 50/heure et 100/24 h. Délais, sorties et appels bornés ; les reprises n'utilisent pas de nouveau créneau. Ces limites ne constituent pas un plafond monétaire : fixer également une limite de dépenses dans le projet fournisseur. Les documents comptent aussi dans les limites, sans appel modèle documentaire.
+
+Hypothèse à évaluer : une extraction littérale conservatrice offre un premier service utile, malgré une couverture limitée des mises en page et formulations commerciales. Les tests simulés ne prouvent pas la disponibilité actuelle d'un véhicule ni l'exhaustivité de la recherche.
+
+## API, interface et migration
+
+`POST /api/v4/conversations/{uuid}/acquisitions` : `request_id`, `expected_revision`, `mode` (`web` ou `documents`), `query`, `constraints`, `documents` (nom et contenu base64). Session Supabase confirmée obligatoire ; propriétaire et qualification contrôlés avant exécution. FLEMME_V2_ENABLED, FLEMME_V3_ENABLED et FLEMME_ACQUISITION_ENABLED doivent être explicitement activés. Toutes les réponses V4 sont privées et non mises en cache.
+
+`GET /api/v4/conversations/{uuid}/acquisitions/{run_uuid}/documents/{index}` permet au propriétaire de télécharger l'original en pièce jointe (`nosniff`). Les tentatives/résultats se consultent via les routes V3 existantes, y compris échecs et résultats stale. Aucun polling.
+
+L'interface ajoute un formulaire web/documents, plafond facultatif EUR HT/TTC, affichage textuel sûr, liens des sources et téléchargements authentifiés des originaux. Le formulaire V3 précédent reste disponible. PDF : citations des pages physiques. TXT/DOCX : blocs logiques explicitement signalés, aucune fausse pagination.
+
+Migration générée par le CLI : `supabase/migrations/20261014010810_manager_acquisition_v4.sql`. Prérequis : scripts V2/V3 déjà appliqués. Elle crée uniquement fm_v4.originals et deux RPC distinctes, avec RLS, accès propriétaire, refus des écritures directes et triggers d'immutabilité. Le RPC de préparation privilégié est nécessaire pour la transaction avec la réservation V3 ; il contrôle auth.uid(), la confirmation de compte, le propriétaire, les empreintes, le volume, les reprises et les quotas. Le RPC de lecture utilise SECURITY INVOKER. Aucun RPC/tables V2/V3 remplacé, aucune suppression ni écriture de production.
+
+Ne pas lancer `db push` aveuglément : le dépôt historique conserve V2/V3 comme scripts SQL hors du dossier migrations. Vérifier les versions distantes connues, puis appliquer uniquement le script additif V4 après validation humaine de la PR. Ajouter la clé au secret serveur OPENAI_API_KEY par un canal sécurisé, jamais aux variables publiques du site ; FLEMME_SEARCH_MODEL est facultatif (défaut gpt-4.1-mini). Déployer manuellement l'API et le site, puis activer FLEMME_ACQUISITION_ENABLED. Une désactivation de cette variable arrête les nouvelles acquisitions sans toucher aux historiques.
+
+## Validation et limites
+
+Validation locale : 182 tests Python (34 nouveaux), 39 tests JavaScript, 43 assertions SQL V2, 28 V3 et 16 V4 via PGlite. Rejeu de migration avec originaux présents, isolation entre propriétaires, refus des modifications/suppressions, limites horaires, reprises et échecs conservés vérifiés. Compilation et build site vérifiés ; build réalisé dans une copie temporaire pour préserver les fichiers du site.
+
+Parcours HTTP de bout en bout simulés : découverte web avec URL officielle fictive, absence de données inventées, deux documents texte, PDF à deux pages avec citation page 2, refus de scan avec conservation des originaux et extrait précédent. Aucun accès réseau dans les tests Python. Un parcours navigateur simulé est fourni et exécuté en CI : recherche web, deux devis, rendu littéral/XSS, lien et téléchargement authentifié. Son lancement local Chrome a échoué dans le bac à sable macOS ; ne pas présenter ce lancement comme une réussite. Les résultats CI sont à vérifier sur la PR.
+
+Limites fonctionnelles : les pages dynamiques ou redirigées sont refusées, pas d'OCR/Vision ni de lecture des images/tableaux par leur mise en page, DOCX sans pagination physique ; extraction par motifs français/EUR, pas de compréhension sémantique complète. Les petits extraits de prestations/exclusions ne garantissent pas leur exhaustivité. PDF actifs/formulaires sont refusés, y compris certains devis légitimes. Il peut y avoir moins de trois sources ; toutes les sources découvertes ne sont pas des offres primaires. La validité et les restrictions doivent être relues humainement.
+
+Les seules vérifications live ont été des lectures GitHub, Render, métadonnées Supabase, Jira/Confluence et endpoints publics Flemme. Aucun appel de recherche OpenAI payant effectué, aucun compte client utilisé, aucune migration distante appliquée, aucun achat/réservation/envoi. Le contrat Responses API et les limites fournisseur sont vérifiés par documentation et simulations ; compatibilité de la nouvelle clé, quota et recherche commerciale réelle restent à valider avant activation.
+
+## Sources consultées le 14 octobre 2026
+
+- [GitHub main / PR #24](https://github.com/benchamply-cmyk/FlemmeV2.0/pull/24), [service Render](https://dashboard.render.com/web/srv-db7c17q5b2lc73fbs6ng), [Flemme Manager public](https://flemme.org/manager.html), métadonnées Supabase lues via le connecteur.
+- [Suivi FLEMME-6](https://benchp.atlassian.net/browse/FLEMME-6), [documentation Confluence version 2](https://benchp.atlassian.net/wiki/spaces/DCHPLY/pages/131097).
+- [Documentation officielle OpenAI : web_search](https://developers.openai.com/api/docs/guides/tools-web-search), vérification des sources, accès live, gpt-4.1-mini et limites. [Supabase changelog](https://supabase.com/changelog), [changement TLS du 12/10/2026](https://supabase.com/changelog/cbc-tls-ciphers-deprecated), [sécurisation des fonctions](https://supabase.com/docs/guides/database/functions).
+- [pypdf 6.20.1](https://pypi.org/project/pypdf/6.20.1/) : version vérifiée, ajoutée et verrouillée sans mise à niveau globale des autres dépendances.
