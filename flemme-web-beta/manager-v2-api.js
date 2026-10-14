@@ -14,13 +14,22 @@
       if (!response.ok) {
         const messages = {401: 'Reconnecte-toi et vérifie que ton e-mail est confirmé.',
           404: 'Conversation introuvable.', 409: 'La conversation a changé. Actualise-la avant de poursuivre.',
-          422: 'Vérifie les informations saisies.', 502: 'Analyse non aboutie. Actualise pour retrouver ton message.',
+          422: 'Vérifie les informations saisies.', 429: 'La limite d’analyse est atteinte. Réessaie plus tard.', 502: 'Analyse non aboutie. Actualise pour retrouver ton message.',
           503: 'Le Manager est indisponible. Actualise pour vérifier si ton message a été enregistré.'};
         throw Object.assign(new Error(messages[response.status] || 'Le Manager n’a pas pu répondre.'), {status: response.status});
       }
       return response.json();
     }
     return {
+      acquire: (id, body) => call('/conversations/' + encodeURIComponent(id) + '/acquisitions', 'POST', body, '/api/v4'),
+      original: async (id, run, index) => {
+        const account = await session();
+        if (!account) throw Object.assign(new Error('Reconnecte-toi.'), {status:401});
+        const response = await fetcher(url.origin + '/api/v4/conversations/' + encodeURIComponent(id) + '/acquisitions/' + encodeURIComponent(run) + '/documents/' + index,
+          {cache:'no-store',headers:{Authorization:'Bearer '+account.access_token}});
+        if (!response.ok) throw Object.assign(new Error('Document indisponible.'), {status:response.status});
+        return response.blob();
+      },
       deliveries: id => call('/conversations/' + encodeURIComponent(id) + '/deliveries', 'GET', undefined, '/api/v3'),
       produce: (id, body) => call('/conversations/' + encodeURIComponent(id) + '/deliveries', 'POST', body, '/api/v3'),
       recoverDelivery: (id, body) => call('/conversations/' + encodeURIComponent(id) + '/deliveries/recover', 'POST', body, '/api/v3'),

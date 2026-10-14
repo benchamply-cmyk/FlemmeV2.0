@@ -61,3 +61,21 @@ jobs:
       - run: node --check flemme-web-beta/manager-v2.js
       - run: node build.js
         working-directory: flemme-web-beta
+
+  acquisition-browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --prefix /tmp/flemme-e2e --ignore-scripts --no-audit --no-fund playwright@1.62.1
+      - run: node /tmp/flemme-e2e/node_modules/playwright/cli.js install --with-deps chromium
+      - run: node flemme-web-beta/tests/e2e-acquisition.mjs
+        env:
+          PLAYWRIGHT_MODULE: /tmp/flemme-e2e/node_modules/playwright/index.mjs
+          E2E_SCREENSHOT: /tmp/flemme-acquisition-e2e.png
+      - uses: actions/upload-artifact@v4
+        with:
+          name: acquisition-browser-simulated
+          path: /tmp/flemme-acquisition-e2e.png

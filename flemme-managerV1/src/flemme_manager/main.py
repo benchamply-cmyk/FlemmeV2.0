@@ -20,3 +20,6 @@ configure_browser_access(app, os.getenv("FLEMME_V2_ALLOWED_ORIGINS", ""))
 
 from flemme_manager.routes.deliveries_v3 import router as deliveries_v3_router
 app.include_router(deliveries_v3_router)
+
+from flemme_manager.routes.acquisition import router as acquisition_router
+app.include_router(acquisition_router)

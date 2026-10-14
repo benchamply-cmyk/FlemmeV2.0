@@ -5,6 +5,16 @@ import assert from 'node:assert/strict';
 const context={URL,fetch:()=>{throw Error('Live network forbidden');}};
 vm.createContext(context);vm.runInContext(await readFile(new URL('../manager-v2-api.js',import.meta.url),'utf8'),context);
 const create=context.ManagerV2API.createClient;
+test('V4 acquisition and originals use authenticated non cached routes',async()=>{
+ const calls=[];const client=create('https://manager.example',async()=>({access_token:'user-session'}),async(...args)=>{
+  calls.push(args);return{ok:true,json:async()=>({saved:true}),blob:async()=>new Blob(['original'])};});
+ const body={request_id:'id',expected_revision:2,mode:'documents',query:'Comparer',documents:[]};
+ await client.acquire('abc',body);await client.original('abc','run',0);
+ assert.equal(calls[0][0],'https://manager.example/api/v4/conversations/abc/acquisitions');
+ assert.deepEqual(JSON.parse(calls[0][1].body),body);
+ assert.equal(calls[1][0],'https://manager.example/api/v4/conversations/abc/acquisitions/run/documents/0');
+ assert.equal(calls[1][1].headers.Authorization,'Bearer user-session');assert.equal(calls[1][1].cache,'no-store');
+});
 test('No API call without session',async()=>{
  let called=false;const client=create('https://manager.example',async()=>null,async()=>{called=true;});
  await assert.rejects(client.list(),e=>e.status===401);assert.equal(called,false);
