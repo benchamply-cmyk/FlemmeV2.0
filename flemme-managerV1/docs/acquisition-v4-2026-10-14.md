@@ -44,7 +44,7 @@ Ne pas lancer `db push` aveuglément : le dépôt historique conserve V2/V3 comm
 
 ## Validation et limites
 
-Validation locale : 182 tests Python (34 nouveaux), 39 tests JavaScript, 43 assertions SQL V2, 28 V3 et 16 V4 via PGlite. Rejeu de migration avec originaux présents, isolation entre propriétaires, refus des modifications/suppressions, limites horaires, reprises et échecs conservés vérifiés. Compilation et build site vérifiés ; build réalisé dans une copie temporaire pour préserver les fichiers du site.
+Validation locale : 185 tests Python (37 nouveaux), 39 tests JavaScript, 43 assertions SQL V2, 28 V3 et 18 V4 via PGlite. Rejeu de migration avec originaux présents, isolation entre propriétaires, refus des modifications/suppressions, limites horaires et acquisitions concurrentes, reprises et échecs conservés vérifiés. Compilation et build site vérifiés ; build réalisé dans une copie temporaire pour préserver les fichiers du site.
 
 Parcours HTTP de bout en bout simulés : découverte web avec URL officielle fictive, absence de données inventées, deux documents texte, PDF à deux pages avec citation page 2, refus de scan avec conservation des originaux et extrait précédent. Aucun accès réseau dans les tests Python. Un parcours navigateur simulé est fourni et exécuté en CI : recherche web, deux devis, rendu littéral/XSS, lien et téléchargement authentifié. Son lancement local Chrome a échoué dans le bac à sable macOS ; ne pas présenter ce lancement comme une réussite. Les résultats CI sont à vérifier sur la PR.
 

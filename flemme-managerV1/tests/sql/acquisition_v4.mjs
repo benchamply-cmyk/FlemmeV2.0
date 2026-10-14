@@ -13,7 +13,7 @@ export async function testV4(db,actor,v2,a,b){
   const originals=[doc,{...doc,name:'devis2.txt'}];
   const payload={sources:[{id:'acquisition-request',kind:'acquisition_metadata'}],acquisition:{mode:'documents',query:'Comparer',documents:originals.map(({name,sha256})=>({name,sha256}))}};
   async function prepare(c=cid,r=rid,rev=2,p=payload,docs=originals){
-    return (await db.query('select public.fm_v4_prepare($1,$2,$3,$4,$5) as value',[c,r,rev,p,docs])).rows[0].value;
+    return (await db.query('select public.fm_v4_prepare($1,$2,$3,$4,$5) as value',[c,r,rev,p,JSON.stringify(docs)])).rows[0].value;
   }
   async function get(){return (await db.query('select public.fm_v4_originals($1,$2) as value',[cid,rid])).rows[0].value;}
   async function rejects(fn,code){await assert.rejects(fn,e=>e.code===code);checks++;}
@@ -35,6 +35,13 @@ export async function testV4(db,actor,v2,a,b){
   assert.deepEqual(await get(),originals);checks++;
   // Hourly budget persists across conversations; replay consumes no additional slot.
   const web={sources:[{id:'acquisition-request'}],acquisition:{mode:'web',query:'Recherche',documents:[]}};
+  await actor(b);const second=randomUUID(),secondRun=randomUUID();await ready(second);
+  assert.equal((await prepare(second,secondRun,2,web,[])).replayed,false);checks++;
+  await actor(a);const third=randomUUID();await ready(third);
+  await rejects(()=>prepare(third,randomUUID(),2,web,[]),'PT429');
+  await actor(b);await db.query('select public.fm_v3_delivery_command($1,$2,$3,$4,$5)',
+    ['finish',second,secondRun,null,{failure:'execution_error',note:'Simulated completion'}]);
+  await actor(a);
   for(let i=0;i<4;i++){const id=randomUUID(),run=randomUUID();await ready(id);await prepare(id,run,2,web,[]);
     await db.query('select public.fm_v3_delivery_command($1,$2,$3,$4,$5)',
       ['finish',id,run,null,{failure:'execution_error',note:'Simulated completion'}]);}

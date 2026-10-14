@@ -24,10 +24,13 @@ try{
     window.ready=function(workflow){window.dispatchEvent(new CustomEvent('flemme:conversation',{detail:{id:'cid',revision:2,pending_request_id:null,mission:{state:'qualified'},messages:[{assessment:{mission_status:'ready',selected_workflow:{workflow_id:workflow}}}]}}))};</script>
     <script src="manager-v2-api.js"></script><script src="manager-v4.js"></script></body></html>`});
   }
-  if(['manager-v2-api.js','manager-v4.js','manager-v2.css'].includes(url.pathname.slice(1)))return route.fulfill({body:await readFile(new URL('../'+url.pathname.slice(1),import.meta.url))});
+  if(['manager-v2-api.js','manager-v4.js','manager-v2.css'].includes(url.pathname.slice(1)))return route.fulfill({
+    contentType:url.pathname.endsWith('.js')?'application/javascript':'text/css',
+    body:await readFile(new URL('../'+url.pathname.slice(1),import.meta.url))});
   throw new Error('Unexpected browser network request: '+url.pathname);
  });
  await page.goto('https://flemme.test/manager.html');
+ assert.deepEqual(errors,[]);assert.equal(await page.locator('#acquisitionQuery').count(),1);
  await page.evaluate(()=>ready('rechercher_produit'));
  await page.fill('#acquisitionQuery','Trois offres leasing hybride moins de 300 EUR/mois');await page.fill('#acquisitionBudget','300');
  await page.click('#acquisitionSubmit');await page.waitForFunction(()=>document.getElementById('acquisitionNotice').textContent.includes('Résultat enregistré'));

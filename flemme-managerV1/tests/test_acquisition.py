@@ -1,6 +1,7 @@
 import asyncio
 import base64
 import io
+import zipfile
 from types import SimpleNamespace
 from uuid import uuid4
 import pytest
@@ -162,6 +163,29 @@ def test_pdf_pages_are_preserved():
 
 def test_scanned_pdf_refused():
     with pytest.raises(AcquisitionError): asyncio.run(read_document('scan.pdf',pdf([''])))
+
+
+def test_docx_uses_logical_blocks_and_never_fetches_external_links():
+    out=io.BytesIO()
+    with zipfile.ZipFile(out,'w') as archive:
+        archive.writestr('word/document.xml','<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t>Total TTC : 1200 EUR</w:t></w:r></w:p><w:p><w:r><w:t>Exclusions : peinture</w:t></w:r></w:p></w:body></w:document>')
+        archive.writestr('word/_rels/document.xml.rels','<Relationship Target="http://169.254.169.254" TargetMode="External"/>')
+    pages=asyncio.run(read_document('devis.docx',out.getvalue()))
+    assert pages=={1:'Total TTC : 1200 EUR\nExclusions : peinture'}
+
+
+def test_macro_docx_is_refused():
+    out=io.BytesIO()
+    with zipfile.ZipFile(out,'w') as archive:
+        archive.writestr('word/vbaProject.bin',b'not executed')
+        archive.writestr('word/document.xml','<document/>')
+    with pytest.raises(AcquisitionError):asyncio.run(read_document('devis.docx',out.getvalue()))
+
+
+def test_encrypted_pdf_is_refused():
+    writer=PdfWriter();writer.add_blank_page(width=600,height=800);writer.encrypt('simulated-document-password')
+    out=io.BytesIO();writer.write(out)
+    with pytest.raises(AcquisitionError):asyncio.run(read_document('devis.pdf',out.getvalue()))
 
 
 def test_documents_e2e_reserves_originals_and_persists_sourced_report(setup):
