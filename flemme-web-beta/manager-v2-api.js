@@ -3,10 +3,10 @@
   function createClient(base, session, fetcher = fetch) {
     const url = new URL(base);
     if (url.protocol !== 'https:') throw new Error('Adresse du Manager invalide.');
-    async function call(path, method = 'GET', body) {
+    async function call(path, method = 'GET', body, prefix = '/api/v2') {
       const account = await session();
       if (!account) throw Object.assign(new Error('Connecte-toi pour retrouver tes conversations.'), {status: 401});
-      const response = await fetcher(url.origin + '/api/v2' + path, {
+      const response = await fetcher(url.origin + prefix + path, {
         method, cache: 'no-store',
         headers: {Authorization: 'Bearer ' + account.access_token, 'Content-Type': 'application/json'},
         ...(body ? {body: JSON.stringify(body)} : {})
@@ -21,6 +21,9 @@
       return response.json();
     }
     return {
+      deliveries: id => call('/conversations/' + encodeURIComponent(id) + '/deliveries', 'GET', undefined, '/api/v3'),
+      produce: (id, body) => call('/conversations/' + encodeURIComponent(id) + '/deliveries', 'POST', body, '/api/v3'),
+      recoverDelivery: (id, body) => call('/conversations/' + encodeURIComponent(id) + '/deliveries/recover', 'POST', body, '/api/v3'),
       list: (offset = 0) => call('/conversations?limit=100&offset=' + offset),
       create: id => call('/conversations', 'POST', {conversation_id: id}),
       read: id => call('/conversations/' + encodeURIComponent(id)),

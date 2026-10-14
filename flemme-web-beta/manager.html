@@ -10,5 +10,20 @@
 <details><summary>Historique de la mission</summary><ol id="missionEvents"></ol></details>
 <form id="missionUpdate"><label for="eventKind">Ajouter à l’historique</label><select id="eventKind"><option value="action">Action effectuée</option><option value="result">Résultat obtenu</option><option value="status">Changer le statut</option></select><label for="eventState">Nouveau statut, pour un changement de statut</label><select id="eventState"><option value="in_progress">En cours</option><option value="blocked">Bloquée</option><option value="completed">Terminée</option><option value="cancelled">Annulée</option></select><label for="eventNote">Note</label><input id="eventNote" maxlength="300" required><label for="eventResult">Résultat, si tu en ajoutes un</label><textarea id="eventResult" maxlength="5000" rows="3"></textarea><button type="submit">Enregistrer</button></form>
 <button type="button" id="recoverMessage" hidden>Libérer l’analyse interrompue</button>
-<p class="hint">Les actions et résultats ajoutés ici sont tes déclarations. Annuler une mission conserve son historique.</p></section></section></main>
-<script src="content.js" defer></script><script src="sb.js" defer></script><script src="manager-v2-api.js" defer></script><script src="manager-v2.js" defer></script></body></html>
+<p class="hint">Les actions et résultats ajoutés ici sont tes déclarations. Annuler une mission conserve son historique.</p></section>
+<section id="specialistsPanel" hidden><h2>Préparer un livrable</h2><p>Fournis les offres à analyser. Le Manager sélectionne les sources, compare les critères, rédige le rapport et contrôle sa cohérence. Les liens ne sont pas consultés.</p>
+<p id="specialistsNotice" role="status" aria-live="polite"></p>
+<form id="specialistsForm"><div id="specialistSources"></div><button type="button" id="addSpecialistSource">Ajouter une offre</button>
+<fieldset><legend>Critères à vérifier</legend><p>Les critères non renseignés restent non vérifiés, même s’ils figurent dans le brief.</p>
+<label for="deliveryBudget">Budget maximal (facultatif)</label><input id="deliveryBudget" type="number" min="0" step="0.01">
+<label for="deliveryCurrency">Devise du budget</label><select id="deliveryCurrency"><option>EUR</option><option>USD</option><option>GBP</option><option>CHF</option></select>
+<label for="deliveryBasis">Base du budget</label><select id="deliveryBasis"><option value="total">Total</option><option value="per_hour">Par heure</option><option value="per_night">Par nuit</option><option value="per_person">Par personne</option><option value="per_month">Par mois</option></select>
+<label for="deliveryTax">Taxes du budget</label><select id="deliveryTax"><option value="included">Incluses</option><option value="excluded">Exclues</option></select>
+<label for="deliveryLocation">Lieu souhaité (facultatif)</label><input id="deliveryLocation" maxlength="100">
+<label for="deliveryDate">Date souhaitée (facultatif)</label><input id="deliveryDate" type="date">
+<label for="deliveryDuration">Durée en mois (facultatif)</label><input id="deliveryDuration" type="number" min="1" max="120">
+<label for="deliveryUpfront">Apport maximal (facultatif)</label><input id="deliveryUpfront" type="number" min="0" step="0.01">
+</fieldset><button type="submit" id="produceDelivery">Produire le rapport</button></form>
+<button type="button" id="readDeliveries">Voir les livrables enregistrés</button><div id="specialistDeliveries"></div>
+</section></section></main>
+<script src="content.js" defer></script><script src="sb.js" defer></script><script src="manager-v2-api.js" defer></script><script src="manager-v2.js" defer></script><script src="manager-v3.js" defer></script></body></html>

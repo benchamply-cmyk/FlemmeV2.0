@@ -17,3 +17,6 @@ app.include_router(memory_v2_router)
 import os
 from flemme_manager.memory.browser_access import configure_browser_access
 configure_browser_access(app, os.getenv("FLEMME_V2_ALLOWED_ORIGINS", ""))
+
+from flemme_manager.routes.deliveries_v3 import router as deliveries_v3_router
+app.include_router(deliveries_v3_router)
