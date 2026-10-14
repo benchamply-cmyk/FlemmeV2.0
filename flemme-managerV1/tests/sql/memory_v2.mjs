@@ -128,5 +128,7 @@ await db.exec('reset role');
 await reject(()=>db.exec("update fm_v2.messages set content='overwritten'"),'42501');
 await reject(()=>db.exec('delete from fm_v2.events'),'42501');
 await reject(()=>db.exec('truncate fm_v2.messages'),'42501');
-console.log(`${checks} PostgreSQL assertions passed; migration applied 3 times; histories preserved.`);
+const {testV3}=await import('./specialists_v3.mjs');
+const v3Checks=await testV3(db,actor,command,a,b);
+console.log(`${checks} V2 and ${v3Checks} V3 PostgreSQL assertions passed; migration applied 3 times; histories preserved.`);
 await db.close();

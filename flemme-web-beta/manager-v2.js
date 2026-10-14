@@ -26,7 +26,8 @@
     if(snapshot) $('conversationList').value=snapshot.id;
   }
   function render(saved) {
-    snapshot=saved; $('conversationPanel').hidden=false;
+    snapshot=saved;
+    window.dispatchEvent(new CustomEvent('flemme:conversation',{detail:saved})); $('conversationPanel').hidden=false;
     $('missionState').textContent='Mission : '+(labels[saved.mission.state]||saved.mission.state);
     $('conversationMessages').replaceChildren();
     saved.messages.forEach(message => {
@@ -72,5 +73,6 @@
   $('recoverMessage').addEventListener('click',()=>perform(async()=>{
     render(await client.recover(snapshot.id,{request_id:snapshot.pending_request_id,expected_revision:snapshot.revision,note:'Récupération manuelle après interruption.'}));notice('Analyse libérée ; ton message reste conservé.');
   }));
+  window.addEventListener('flemme:refresh',()=>perform(async()=>{if(snapshot)render(await client.read(snapshot.id));await list();}));
   await perform(list);
 })();

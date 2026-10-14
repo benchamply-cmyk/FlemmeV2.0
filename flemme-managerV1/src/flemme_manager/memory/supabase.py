@@ -44,6 +44,15 @@ class SupabaseMemory:
         })
 
 
+    async def delivery_command(self, operation, conversation_id=None, request_id=None,
+                               expected_revision=None, payload=None):
+        return await self.request('POST', '/rest/v1/rpc/fm_v3_delivery_command', {
+            'p_operation': operation, 'p_conversation_id': conversation_id,
+            'p_request_id': request_id, 'p_expected_revision': expected_revision,
+            'p_payload': payload or {},
+        })
+
+
 async def get_memory(authorization: str | None = Header(default=None)):
     if os.getenv("FLEMME_V2_ENABLED", "").lower() != "true":
         raise HTTPException(503, "La mémoire V2 est désactivée.")

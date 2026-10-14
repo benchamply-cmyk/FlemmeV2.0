@@ -28,3 +28,12 @@ test('Provider errors not displayed; conflict requires reload',async()=>{
  await assert.rejects(client.list(),e=>e.status===409 && !e.message.includes('secret') && e.message.includes('Actualise'));
 });
 test('Only HTTPS is accepted',()=>assert.throws(()=>create('http://unsafe.example',async()=>null)));
+
+test('V3 agents share the session but use the separate versioned API',async()=>{
+ const calls=[];const client=create('https://manager.example',async()=>({access_token:'user-session'}),async(...args)=>{calls.push(args);return{ok:true,json:async()=>[]};});
+ const body={request_id:'same-id',expected_revision:4,sources:[],constraints:{}};
+ await client.produce('abc',body);await client.produce('abc',body);await client.deliveries('abc');await client.recoverDelivery('abc',{request_id:'same-id',expected_revision:6,note:'Interrupted'});
+ assert(calls.every(c=>c[0].startsWith('https://manager.example/api/v3/conversations/abc/deliveries')));
+ assert(calls.every(c=>c[1].headers.Authorization==='Bearer user-session'));
+ assert.equal(calls[0][1].body,calls[1][1].body);
+});
