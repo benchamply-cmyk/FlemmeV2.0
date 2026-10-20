@@ -106,3 +106,53 @@ html[data-accent="lagon"] { --acid: #3fb6c8; }
 .vx-swatches button { display: inline-flex; align-items: center; gap: 6px; font: 600 12px system-ui, sans-serif; padding: 5px 9px 5px 5px; border: 1.5px solid #16131f; border-radius: 999px; background: #fff; color: #16131f; cursor: pointer; text-transform: none; letter-spacing: 0; }
 .vx-swatches button[aria-pressed="true"] { background: #16131f; color: #fff; }
 .vx-swatches i { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .25); }
+
+/* ---------- Gamme Glacier : le bleu Glacier décliné en 10 nuances, une par rôle ----------
+   50 #f3f8ff fonds doux · 100 #e6f0ff fond de page · 200 #cfe2ff bordures douces, puces
+   300 #a5ccff accent (Glacier) · 400 #7cb0f7 survol, pastille « en direct » · 500 #5390ea icônes, liens
+   600 #3572d0 focus, étiquettes · 700 #2758a8 « Pas nous. », ombres pleines · 800 #1e4280 · 900 #142c57 encre bleue */
+html[data-accent="gamme"] {
+  --g50: #f3f8ff; --g100: #e6f0ff; --g200: #cfe2ff; --g300: #a5ccff; --g400: #7cb0f7;
+  --g500: #5390ea; --g600: #3572d0; --g700: #2758a8; --g800: #1e4280; --g900: #142c57;
+  --acid: var(--g300); --orange: var(--g300); --violet: var(--g700); --paper: var(--g100); --soft: var(--g50); --ink: #0f1a30; --muted: #3c4a66;
+}
+html[data-accent="gamme"] :focus-visible { outline-color: var(--g600); }
+html[data-accent="gamme"] :is(.eyebrow, .badge, .ambition-status) { color: var(--g600); }
+html[data-accent="gamme"] .cat-head:hover { background: var(--g50); }
+html[data-accent="gamme"] .cat-head > .ico, html[data-accent="gamme"] .cat-head .ico { color: var(--g500); }
+html[data-accent="gamme"] .cat-toggle { background: var(--g100); border-color: var(--g700); }
+html[data-accent="gamme"] .ambition-grid li { background: var(--g50); border-color: var(--g400); }
+html[data-accent="gamme"] .live-dot { background: var(--g400); box-shadow: 0 0 0 0 var(--g400); }
+html[data-accent="gamme"] .vx-chips button { background: var(--g50); border-color: var(--g200); }
+html[data-accent="gamme"] .vx-chips button:hover { background: var(--g200); }
+html[data-accent="gamme"] .secondary:hover { background: var(--g100); }
+html[data-accent="gamme"] .logo span, html[data-accent="gamme"] .ambitions-more { color: var(--g600); }
+html[data-accent="gamme"] .brigade-panel { background: var(--g200); box-shadow: 12px 12px 0 var(--g700); }
+html[data-accent="gamme"] .vx-marquee { background: var(--g900); color: var(--g100); }
+html[data-accent="gamme"] .vx-marquee span::after { color: var(--g300); }
+html[data-accent="gamme"][data-v="affiche"] .ambition-grid li { background: var(--g700); color: #fff; }
+html[data-accent="gamme"][data-v="affiche"] .ambition-status { color: var(--g300); }
+html[data-accent="gamme"][data-v="affiche"] .brigade-panel { background: var(--g900); color: var(--g100); }
+html[data-accent="gamme"][data-v="aere"] .cat-head:hover { background: #fff; }
+/* Sur fond nuit : la gamme s'inverse (fonds 900, textes 100, accents 300 et 200). */
+html[data-accent="gamme"][data-v~="nuit"] {
+  --paper: #0a1427; --soft: var(--g900); --ink: var(--g50); --muted: #a9bddc; --line: #2a4170; --violet: var(--g200);
+}
+html[data-accent="gamme"][data-v~="nuit"] :is(.ask, .cat-head, .live-clock, .card, .ambassador-panel, .capabilities, select, input, textarea) { background: #0f1d36; }
+html[data-accent="gamme"][data-v~="nuit"] :is(.cat-head, .ask) { border-color: var(--g700); }
+html[data-accent="gamme"][data-v~="nuit"] .cat-head:hover { background: #142650; border-color: var(--g400); }
+html[data-accent="gamme"][data-v~="nuit"] .cat-toggle { background: transparent; border-color: var(--g400); }
+html[data-accent="gamme"][data-v~="nuit"] .ambition-grid li { background: #0f1d36; border-color: var(--g600); }
+html[data-accent="gamme"][data-v~="nuit"] :is(.eyebrow, .badge, .ambition-status, .logo span, .ambitions-more) { color: var(--g400); }
+html[data-accent="gamme"][data-v~="nuit"] .brigade-panel { background: var(--g800); color: var(--g50); box-shadow: 12px 12px 0 var(--g300); }
+html[data-accent="gamme"][data-v~="nuit"] .brigade-panel :is(p, .eyebrow) { color: var(--g50); }
+html[data-accent="gamme"][data-v~="nuit"] .vx-chips button { background: transparent; color: var(--g100); border-color: #2a4170; }
+html[data-accent="gamme"][data-v~="nuit"] .vx-marquee { background: var(--g900); }
+html[data-accent="gamme"][data-v="nuit aere"] :is(.ask, .cat-head, .live-clock, .card, .cat-toggle, .ambition-grid li, .secondary, .primary, .ambassador-panel, .brigade-panel) { box-shadow: 0 18px 40px -16px rgba(165, 204, 255, .25); }
+html[data-accent="gamme"][data-v="nuit aere"] :is(.ask, .cat-head) { border-color: #2a4170; }
+
+/* Légende de la gamme dans le panneau */
+.vx-gamme { display: none; grid-template-columns: repeat(10, 1fr); gap: 2px; margin: 6px 0 2px; }
+html[data-accent="gamme"] .vx-gamme { display: grid; }
+.vx-gamme span { height: 22px; border-radius: 4px; position: relative; }
+.vx-gamme span:hover::after { content: attr(data-r); position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%); white-space: nowrap; background: #16131f; color: #fff; font: 11px system-ui, sans-serif; padding: 3px 6px; border-radius: 4px; }

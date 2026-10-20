@@ -13,6 +13,7 @@
   const ACCENTS = {
     vert: ['Vert', '#57d68d'], azur: ['Azur', '#4cc2ff'], electrique: ['Électrique', '#5b8cff'],
     cyan: ['Cyan', '#2fdde8'], lagon: ['Lagon', '#3fb6c8'], glacier: ['Glacier', '#a5ccff'],
+    gamme: ['Gamme Glacier', 'linear-gradient(90deg, #e6f0ff, #a5ccff, #3572d0, #142c57)'],
   };
   const UX = {
     chips: 'Exemples cliquables sous le champ (un clic remplit la demande)',
@@ -45,8 +46,14 @@
     const b = document.createElement('button'), i = document.createElement('i');
     b.type = 'button'; b.dataset.a = a; i.style.background = hex; b.append(i, nom); b.onclick = () => setA(a); sw.append(b);
   }
+  // Gamme Glacier : chaque nuance et son rôle (au survol).
+  const GAMME = [['50', '#f3f8ff', 'fonds doux, cartes au survol'], ['100', '#e6f0ff', 'fond de page'], ['200', '#cfe2ff', 'bordures douces, puces, bloc Brigade'],
+    ['300', '#a5ccff', 'accent : « flemme », bouton principal, bloc Ambassadeurs'], ['400', '#7cb0f7', 'survol, pastille en direct'], ['500', '#5390ea', 'icônes, liens'],
+    ['600', '#3572d0', 'focus, étiquettes, point du logo'], ['700', '#2758a8', '« Pas nous. », ombres pleines'], ['800', '#1e4280', 'bloc Brigade (nuit)'], ['900', '#142c57', 'bandeau défilant, fonds nuit']];
+  const gm = document.createElement('div'); gm.className = 'vx-gamme';
+  for (const [n, hex, role] of GAMME) { const c = document.createElement('span'); c.style.background = hex; c.dataset.r = n + ' · ' + hex + ' · ' + role; c.title = c.dataset.r; gm.append(c); }
   const hA = document.createElement('h4'); hA.textContent = 'Couleur d’accent';
-  body.querySelector('h4').before(hA, sw);
+  body.querySelector('h4').before(hA, sw, gm);
   setA(ACCENTS[store.get('accent')] ? store.get('accent') : 'vert');
   for (const [k, txt] of Object.entries(UX)) {
     const l = document.createElement('label'), c = document.createElement('input');
