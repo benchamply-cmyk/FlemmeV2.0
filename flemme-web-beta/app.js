@@ -537,12 +537,7 @@ function updateHelp() {
 taskInput.addEventListener('input', updateHelp);
 updateHelp();
 
-// Bouton « Confier ma flemme » collant : visible quand le formulaire n'est plus à l'écran.
 if ('IntersectionObserver' in window) {
-  const sticky = $('#stickyCta');
-  new IntersectionObserver(([e]) => sticky.classList.toggle('show', !e.isIntersecting && $('#home').classList.contains('active')))
-    .observe($('#flemmeForm'));
-
   // Menu : souligne la section en cours (Accueil tant que le formulaire est visible).
   const navLinks = $$('.site-nav a[data-section]');
   const mark = id => navLinks.forEach(a => a.classList.toggle('current', a.dataset.section === id));

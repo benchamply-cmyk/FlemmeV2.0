@@ -535,10 +535,4 @@ h1 .fl { transform: none; background: none; padding: 0; color: var(--acid); }
 .steps3 span { color: var(--muted); line-height: 1.45; }
 @media (max-width: 700px) { .steps3 { grid-template-columns: 1fr; } }
 
-/* Bouton collant */
-.sticky-cta { display: none; position: fixed; z-index: 40; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); }
-.sticky-cta.show { display: block; }
-.sticky-cta .primary { white-space: nowrap; box-shadow: var(--glow); }
-/* Sur mobile, au-dessus du bouton « Me faire guider » */
-@media (max-width: 700px) { .sticky-cta { bottom: calc(80px + env(safe-area-inset-bottom, 0px)); } }
 
