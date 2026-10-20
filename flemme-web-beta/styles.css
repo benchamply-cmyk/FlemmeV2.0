@@ -389,3 +389,8 @@ header { height: auto; min-height: 74px; flex-wrap: wrap; gap: 12px 24px; paddin
 
 /* Accroche V4.100 — 20 octobre 2026 */
 .hero h1 .not-us { color: var(--violet); }
+.live-clock { display: inline-flex; align-items: center; gap: 10px; margin: 0 0 18px; padding: 8px 16px; border: 2px solid var(--ink); border-radius: 999px; background: #fff; font: 15px var(--mono); font-variant-numeric: tabular-nums; }
+.live-clock time::first-letter { text-transform: uppercase; }
+.live-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--acid); box-shadow: 0 0 0 0 var(--acid); animation: live-pulse 1.6s infinite; }
+@keyframes live-pulse { 70% { box-shadow: 0 0 0 8px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+@media (prefers-reduced-motion: reduce) { .live-dot { animation: none; } }

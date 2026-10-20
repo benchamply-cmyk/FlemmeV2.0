@@ -111,6 +111,15 @@ addEventListener('popstate', () => {
   else show(id, false);
 });
 
+// Date et heure en direct sous le titre des services disponibles.
+const liveClock = document.getElementById('liveClock');
+if (liveClock) {
+  const fmt = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const tick = () => { const now = new Date(); liveClock.dateTime = now.toISOString(); liveClock.textContent = fmt.format(now).replace(' à ', ' · '); };
+  tick();
+  setInterval(tick, 1000);
+}
+
 /* ---------- 4. Saisie de la demande ---------- */
 
 const taskInput = $('#task');
