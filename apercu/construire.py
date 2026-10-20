@@ -40,5 +40,7 @@ html = re.sub(r'<link rel="(icon|apple-touch-icon|manifest)"[^>]*>', '', html)
 
 html = html.replace('</head>', '<style>\n' + (ici / 'variantes.css').read_text(encoding='utf-8') + '\n</style></head>', 1)
 html = html.replace('</body>', '<script>\n' + (ici / 'variantes.js').read_text(encoding='utf-8') + '\n</script></body>', 1)
+# Titre distinct de l'aperçu de la PR28, qui porte le titre du site.
+html = re.sub(r'<title>[^<]*</title>', '<title>Flemme variantes UI</title>', html, count=1)
 sortie.write_text(html, encoding='utf-8')
 print('aperçu écrit :', sortie, f'({len(html) // 1024} Ko)')
