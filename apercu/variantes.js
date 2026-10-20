@@ -122,7 +122,7 @@
   const help = document.createElement('div'); help.className = 'vx-helper'; help.setAttribute('aria-live', 'polite');
   const bar = document.createElement('i'), hint = document.createElement('span');
   help.append(bar, hint); form.querySelector('.ask-bottom').before(help);
-  const HINTS = [[0, 'Dis-nous ce qui te pèse.'], [25, 'Bien ! Ajoute où, quand ou ton budget.'], [80, 'Parfait, on a de quoi avancer.']];
+  const HINTS = [[0, 'Plus tu es précis, mieux on t’aide.'], [25, 'Bien ! Ajoute où, quand ou ton budget.'], [80, 'Parfait, on a de quoi avancer.']];
   const updHelp = () => {
     const n = task.value.trim().length;
     bar.style.setProperty('--p', Math.min(100, n / 1.2) + '%');
