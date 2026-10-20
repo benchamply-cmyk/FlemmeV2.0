@@ -2,9 +2,7 @@
 // Stratégie « réseau d'abord » : on essaie toujours la version en ligne, et on
 // ne se sert de la copie que si le réseau ne répond pas.
 // Changer V (flemme-v5 → flemme-v6…) force les visiteurs à repartir de zéro.
-const V = 'flemme-v3.9-gestionadmin';
-const FILES = ['./', 'index.html', 'styles.css', 'app.js', 'sb.js', 'espace.html', 'espace.js', 'espace.css', 'content.js', 'icons.svg', 'manifest.webmanifest', 'icon-192.png', 'favicon.ico'];
-const V = 'flemme-v3.9-beta-assistant';
+const V = 'flemme-v4.100-typo';
 const FILES = ['./', 'index.html', 'styles.css', 'app.js', 'sb.js', 'espace.html', 'espace.js', 'espace.css', 'assistant.js', 'assistant.css', 'content.js', 'icons.svg', 'manifest.webmanifest', 'icon-192.png', 'favicon.ico'];
 
 self.addEventListener('install', e => {
