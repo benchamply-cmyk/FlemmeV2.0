@@ -105,6 +105,13 @@ Attention : ces ZIP contiennent encore flemme.fr, le jaune, la grille à plat et
 - CSP ajoutée pour /rejoindre.html, page ajoutée au sitemap, confidentialité mise à jour, cache passé en flemme-v3.8-beta-brigade.
 - Rémunération : un seul pourcentage quelle que soit l’intervention, 65 % pour le Brigadier et 35 % pour Flemme ; 80 % / 20 % pour les ambassadeurs et les Brigadiers de la première heure. Forfaits par type d’intervention retirés.
 
+## V4.1000 — textes et typo « Affiche condensée » (version PR #28, 20 oct. 2026)
+- Accueil : nouvelle accroche « Pas envie, pas le temps, pas motivé ? On le fait pour toi, délègue-nous tes tâches ! », titre « T’as la flemme ? Pas nous. », 5 nouveaux exemples dans le champ libre, mention « Bêta gratuite • Sans engagement » retirée.
+- Services : « Déjà disponibles », « Voilà ce que nous sommes capables de traiter aujourd’hui : » avec date et heure en direct, nouveaux titres et accroches des cartes.
+- Ambitions, ambassadeurs et Brigade : nouveaux titres, textes et boutons.
+- Typographie « Affiche condensée » sur tout le site : Archivo condensé (titres, sous-titres, boutons), Instrument Sans (texte), Instrument Serif italique (« Pas nous. »), Geist Mono (étiquettes).
+- sw.js : déclarations en double retirées (erreur de syntaxe), cache passé en flemme-v4.100-typo.
+
 ## Reste à faire
 - Application : compiler et tester sur de vrais téléphones (Xcode, Android Studio).
 - Compléter les passages [...] des mentions légales et de la confidentialité, retirer le noindex.
