@@ -809,3 +809,77 @@ h1 em { -webkit-text-fill-color: #e6f0ff; }
   :is(.vx-liquid, .metal-scene i, h1, h2, .ask, .cat-head, .card, .ambition-grid li, .steps3 li) { animation: none !important; }
   body::after, .primary::after { animation: none !important; }
 }
+
+/* =========================================================================
+   Illustrations animées — PR33, 20 octobre 2026
+   Globe terrestre (accueil), réseau internet, poignée de main (Ambassadeurs),
+   contrat et signature (Brigade). illustrations.js crée les éléments et pose
+   html[data-il-…] pour chaque illustration retenue.
+   ========================================================================= */
+.il { display: none; pointer-events: none; }
+
+/* 1. Globe : en haut à droite de l'accueil, remonte avec le scroll */
+html[data-il-globe] .il-globe { display: block; }
+.il-globe {
+  position: absolute; top: 9vh; right: -7vw; width: min(52vw, 620px); aspect-ratio: 1; opacity: .75;
+  transform: translate3d(0, calc(var(--sy, 0) * -0.3px), 0);
+  filter: drop-shadow(0 0 40px rgba(83, 144, 234, .35));
+}
+.il-globe[hidden] { display: none !important; }
+@media (max-width: 700px) { .il-globe { top: 14vh; right: -30vw; width: 96vw; opacity: .5; } }
+/* Avec le globe, les petites sphères de droite se retirent pour ne pas surcharger */
+html[data-il-globe] .metal-scene :is(.o3, .ring2) { display: none; }
+
+/* 2. Réseau : sur tout l'écran, derrière le contenu */
+html[data-il-reseau] .il-reseau { display: block; }
+.il-reseau { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .8; mix-blend-mode: screen; }
+
+/* 3. Icônes communication */
+html[data-il-icones] .il-icones { display: block; }
+.il-icones { position: absolute; inset: 0; }
+.il-icones svg {
+  position: absolute; width: clamp(38px, 5vw, 64px); height: auto; opacity: .7;
+  filter: drop-shadow(0 0 6px rgba(165, 204, 255, .8)) drop-shadow(0 6px 14px rgba(0, 0, 0, .6));
+  transform: translate3d(0, calc(var(--sy, 0) * var(--v) * -1px), 0);
+  animation: il-flotte 6s ease-in-out infinite alternate;
+}
+@keyframes il-flotte { from { margin-top: 0; rotate: -6deg; } to { margin-top: -26px; rotate: 6deg; } }
+
+/* 4. Poignée de main : à droite du bloc Ambassadeurs */
+#ambassadors, #brigade { position: relative; overflow: hidden; }
+#ambassadors > :not(.il), #brigade > :not(.il) { position: relative; z-index: 1; }
+html[data-il-poignee] .il-poignee { display: block; }
+.il-poignee {
+  position: absolute; right: -10px; bottom: 30px; width: min(42%, 440px); opacity: .6;
+  filter: drop-shadow(0 0 6px rgba(165, 204, 255, .8)) drop-shadow(0 10px 20px rgba(0, 0, 0, .6));
+  animation: il-serre 3.2s ease-in-out infinite;
+}
+.il-poignee .il-trace { stroke-dasharray: 400; stroke-dashoffset: 400; animation: il-trace 2.4s ease-out forwards; }
+.il-poignee .il-eclats { opacity: 0; animation: il-eclat 3.2s ease-in-out infinite; }
+@keyframes il-trace { to { stroke-dashoffset: 0; } }
+@keyframes il-serre { 0%, 100% { translate: 0 0; } 50% { translate: 0 6px; } }
+@keyframes il-eclat { 0%, 40%, 100% { opacity: 0; } 55% { opacity: 1; } }
+
+/* 5. Contrat et signature : à droite du bloc Brigade */
+html[data-il-contrat] .il-contrat { display: block; }
+.il-contrat {
+  position: absolute; right: 4%; top: 50%; width: min(26%, 260px); opacity: .75;
+  transform: translateY(-50%) perspective(800px) rotateY(-14deg) rotateZ(4deg);
+  filter: drop-shadow(0 0 5px rgba(165, 204, 255, .7)) drop-shadow(0 20px 30px rgba(0, 0, 0, .6));
+}
+.il-contrat .il-signe { stroke-dasharray: 340; stroke-dashoffset: 340; stroke-width: 2.6; animation: il-signe 5s ease-in-out infinite; }
+@keyframes il-signe { 0% { stroke-dashoffset: 340; } 55%, 85% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+.il-contrat .il-stylo {
+  offset-path: path("M60 220c8-22 14-30 18-26s-6 30-2 30 12-30 18-30-4 24 2 24 10-16 16-16 0 12 6 12 8-8 14-8 4 6 10 6");
+  offset-rotate: 0deg; animation: il-stylo 5s ease-in-out infinite;
+}
+@keyframes il-stylo { 0% { offset-distance: 0%; opacity: 1; } 55% { offset-distance: 100%; opacity: 1; } 85%, 100% { offset-distance: 100%; opacity: 0; } }
+@media (max-width: 700px) {
+  .il-poignee { width: 70%; opacity: .25; }
+  .il-contrat { width: 42%; opacity: .3; top: 22%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .il-icones svg, .il-poignee, .il-poignee .il-eclats, .il-contrat .il-stylo { animation: none; }
+  .il-poignee .il-trace, .il-contrat .il-signe { animation: none; stroke-dashoffset: 0; }
+}

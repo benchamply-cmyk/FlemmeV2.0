@@ -30,6 +30,8 @@ def feuille(f):
             + '<style id="vx-site">\n' + css[i:j] + '\n</style><style>\n' + css[j:k] + '\n</style>'
             + '<style id="vx-metal">\n' + css[k:] + '\n</style>')
 html = re.sub(r'<link rel="stylesheet" href="([^"]+)">', lambda m: feuille(m.group(1)), html)
+# Les illustrations du site sont remplacées par celles de l'aperçu (avec leur panneau).
+html = html.replace('<script src="illustrations.js" defer></script>', '')
 html = re.sub(r'<script src="([^"]+)" defer></script>', lambda m: '<script>\n' + lire(m.group(1)).replace('</script', '<\\/script') + '\n</script>', html)
 # Icônes : le sprite est inséré dans la page, les liens « icons.svg#… » deviennent « #… ».
 sprite = lire('icons.svg').replace('<svg ', '<svg style="display:none" aria-hidden="true" ', 1)
