@@ -557,7 +557,7 @@ h1 .fl { transform: none; background: none; padding: 0; color: var(--acid); }
    chromé pour « flemme ».
    ========================================================================= */
 :root {
-  --metal-top: #030916; --metal-mid: #0d2550; --metal-low: #1a4790; --metal-end: #2c66bb;
+  --metal-top: #01040c; --metal-mid: #081b3d; --metal-low: #123a7c; --metal-end: #1d4f9c;
   --chrome: linear-gradient(180deg, #ffffff 0%, #dce9ff 30%, #7cb0f7 48%, #2758a8 52%, #a5ccff 70%, #ffffff 100%);
   --steel: linear-gradient(180deg, #f3f8ff 0%, #a5ccff 42%, #3572d0 50%, #7cb0f7 78%, #cfe2ff 100%);
   --bevel: linear-gradient(140deg, rgba(255, 255, 255, .7), rgba(165, 204, 255, .18) 30%, rgba(3, 9, 22, .5) 62%, rgba(165, 204, 255, .55));
@@ -573,8 +573,8 @@ html { background: none; }
 body {
   /* Le dégradé couvre toute la page : il s'éclaircit à mesure qu'on descend. */
   background:
-    radial-gradient(120% 60% at 50% 0%, rgba(83, 144, 234, .28), transparent 60%),
-    linear-gradient(180deg, var(--metal-top) 0%, #061331 14%, var(--metal-mid) 34%, #163f80 58%, var(--metal-low) 78%, var(--metal-end) 100%);
+    radial-gradient(120% 60% at 50% 0%, rgba(83, 144, 234, .2), transparent 60%),
+    linear-gradient(180deg, var(--metal-top) 0%, #030d24 14%, var(--metal-mid) 34%, #0e2f68 58%, var(--metal-low) 78%, var(--metal-end) 100%);
   background-color: var(--metal-top);
 }
 /* Reflets : métal brossé + éclats de lumière qui glissent avec le scroll */

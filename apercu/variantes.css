@@ -196,7 +196,7 @@ html[data-accent="gamme"] .vx-gamme { display: grid; }
 .vx-x { display: none; }
 html[data-fond="intense"] .vx-x { display: block; }
 html[data-fond="intense"] {
-  --metal-top: #01050f; --metal-mid: #0b2a66; --metal-low: #1d5ac4; --metal-end: #3b86f0;
+  --metal-top: #000309; --metal-mid: #061d4c; --metal-low: #12459e; --metal-end: #1f5fc4;
   --chrome: linear-gradient(180deg, #ffffff 0%, #f3f8ff 22%, #9cc6ff 40%, #1e4fa8 49%, #0b2a66 52%, #5ea2ff 64%, #e6f0ff 84%, #ffffff 100%);
   --steel: linear-gradient(180deg, #ffffff 0%, #cfe2ff 30%, #4f8fef 48%, #1e4fa8 52%, #7cb0f7 75%, #f3f8ff 100%);
   --bevel: linear-gradient(140deg, #ffffff, rgba(165, 204, 255, .35) 22%, rgba(1, 5, 15, .7) 55%, rgba(124, 176, 247, .9) 85%, #ffffff);
@@ -206,7 +206,7 @@ html[data-fond="intense"] body {
   background:
     radial-gradient(120% 50% at 50% 0%, rgba(94, 162, 255, .4), transparent 60%),
     repeating-linear-gradient(180deg, transparent 0 380px, rgba(165, 204, 255, .07) 420px, rgba(255, 255, 255, .14) 440px, rgba(165, 204, 255, .07) 460px, transparent 500px 760px),
-    linear-gradient(180deg, var(--metal-top) 0%, #04113a 12%, var(--metal-mid) 32%, #134aa6 58%, var(--metal-low) 78%, var(--metal-end) 100%);
+    linear-gradient(180deg, var(--metal-top) 0%, #020b26 12%, var(--metal-mid) 32%, #0c3580 58%, var(--metal-low) 78%, var(--metal-end) 100%);
 }
 /* Reflets qui balaient l'écran en continu, en plus du scroll */
 html[data-fond="intense"] body::after {
