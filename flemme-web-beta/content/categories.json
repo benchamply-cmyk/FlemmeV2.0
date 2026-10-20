@@ -109,7 +109,7 @@
     {
       "id": "rdv",
       "icone": "calendar-days",
-      "nom": "On s’occupe de tes rendez-vous",
+      "nom": "On organise tes rendez-vous",
       "accroche": "Fini les recherches interminables et les coups de téléphone.",
       "resultat": "Des créneaux identifiés ou un rendez-vous organisé lorsque la réservation est possible et autorisée.",
       "sous": [
