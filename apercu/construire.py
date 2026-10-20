@@ -14,7 +14,15 @@ html = (site / 'index.html').read_text(encoding='utf-8')
 lire = lambda f: (site / f).read_text(encoding='utf-8')
 
 # Feuilles de style et scripts du site, recopiés dans la page.
-html = re.sub(r'<link rel="stylesheet" href="([^"]+)">', lambda m: '<style>\n' + lire(m.group(1)) + '\n</style>', html)
+# styles.css : le bloc du design publié (E + Gamme Glacier) va dans <style id="vx-site">,
+# que variantes.js coupe pour les variantes B à E (elles partent de la base V4.100).
+def feuille(f):
+    css = lire(f)
+    i = css.find('/* =========================================================================\n   Design « E + Gamme Glacier »')
+    if f != 'styles.css' or i < 0:
+        return '<style>\n' + css + '\n</style>'
+    return '<style>\n' + css[:i] + '\n:root { --surface: #fff; --surface-hover: #fff; }\n</style><style id="vx-site">\n' + css[i:] + '\n</style>'
+html = re.sub(r'<link rel="stylesheet" href="([^"]+)">', lambda m: feuille(m.group(1)), html)
 html = re.sub(r'<script src="([^"]+)" defer></script>', lambda m: '<script>\n' + lire(m.group(1)).replace('</script', '<\\/script') + '\n</script>', html)
 # Icônes : le sprite est inséré dans la page, les liens « icons.svg#… » deviennent « #… ».
 sprite = lire('icons.svg').replace('<svg ', '<svg style="display:none" aria-hidden="true" ', 1)

@@ -96,6 +96,7 @@ html[data-v="nuit aere"] .hero h1 { text-shadow: none; }
 html[data-v="nuit aere"] .vx-marquee { background: var(--soft); color: var(--ink); }
 
 /* ---------- Couleur d'accent : bleus à la place du vert (combinables avec toutes les variantes) ---------- */
+html[data-accent="vert"] { --acid: #57d68d; }
 html[data-accent="azur"] { --acid: #4cc2ff; }
 html[data-accent="electrique"] { --acid: #5b8cff; }
 html[data-accent="cyan"] { --acid: #2fdde8; }

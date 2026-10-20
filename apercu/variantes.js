@@ -3,7 +3,7 @@
 (() => {
   const root = document.documentElement;
   const VARIANTES = {
-    actuel: ['A · Site', 'Le site tel qu’il est maintenant dans la PR29 : variante E + Gamme Glacier intégrées. Les autres boutons se superposent à cette base.'],
+    actuel: ['A · Site', 'Le site tel qu’il est dans la PR29 (identique à la preview Netlify) : E + Gamme Glacier. B à E repartent de l’ancienne base V4.100 pour comparer.'],
     nuit: ['B · Nuit', 'Fond encre, texte clair, vert et violet lumineux. Plus « app », reposant le soir, fort impact du titre.'],
     affiche: ['C · Affiche', 'Bandeau de couleur plein écran derrière le titre, angles vifs, aplats violets et noirs. Le plus affirmé, façon affiche de rue.'],
     aere: ['D · Aéré', 'Bords fins, ombres douces, boutons arrondis, plus d’espace entre les blocs. Plus calme et rassurant, moins « bêta ».'],
@@ -28,10 +28,21 @@
   panel.className = 'vx-panel'; panel.open = innerWidth > 700;
   panel.innerHTML = '<summary>Variantes UI/UX · PR29</summary><div class="vx-body"><div class="vx-seg" role="group" aria-label="Variante visuelle"></div><p class="vx-desc"></p><h4>Options UX (combinables)</h4></div>';
   const seg = panel.querySelector('.vx-seg'), desc = panel.querySelector('.vx-desc'), body = panel.querySelector('.vx-body');
+  // « A · Site » = le site publié (bloc E + Gamme Glacier de styles.css, isolé dans <style id="vx-site">).
+  // Les autres variantes coupent ce bloc et se superposent à la base V4.100, comme au départ.
+  const siteSheet = document.getElementById('vx-site');
+  let curV = 'actuel', curA = 'gamme';
+  const applyAccent = () => {
+    const a = curA;
+    if (curV === 'actuel' ? a === 'gamme' : a === 'vert') root.removeAttribute('data-accent');
+    else root.setAttribute('data-accent', a);
+  };
   const setV = v => {
+    curV = v;
+    if (siteSheet) siteSheet.disabled = v !== 'actuel';
     if (v === 'actuel') root.removeAttribute('data-v'); else root.setAttribute('data-v', v);
     seg.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === v));
-    desc.textContent = VARIANTES[v][1]; store.set('v', v);
+    desc.textContent = VARIANTES[v][1]; store.set('v', v); applyAccent();
   };
   for (const [v, [nom]] of Object.entries(VARIANTES)) {
     const b = document.createElement('button'); b.type = 'button'; b.dataset.v = v; b.textContent = nom;
@@ -39,7 +50,7 @@
   }
   const sw = document.createElement('div'); sw.className = 'vx-swatches'; sw.setAttribute('role', 'group'); sw.setAttribute('aria-label', 'Couleur d’accent');
   const setA = a => {
-    if (a === 'vert') root.removeAttribute('data-accent'); else root.setAttribute('data-accent', a);
+    curA = a; applyAccent();
     sw.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.a === a)); store.set('accent', a);
   };
   for (const [a, [nom, hex]] of Object.entries(ACCENTS)) {
@@ -54,7 +65,7 @@
   for (const [n, hex, role] of GAMME) { const c = document.createElement('span'); c.style.background = hex; c.dataset.r = n + ' · ' + hex + ' · ' + role; c.title = c.dataset.r; gm.append(c); }
   const hA = document.createElement('h4'); hA.textContent = 'Couleur d’accent';
   body.querySelector('h4').before(hA, sw, gm);
-  setA(ACCENTS[store.get('accent')] ? store.get('accent') : 'vert');
+  setA(ACCENTS[store.get('accent')] ? store.get('accent') : 'gamme');
   for (const [k, txt] of Object.entries(UX)) {
     const l = document.createElement('label'), c = document.createElement('input');
     c.type = 'checkbox'; c.checked = store.get('ux-' + k) === '1';
