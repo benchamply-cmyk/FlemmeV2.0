@@ -1,0 +1,86 @@
+/* =========================================================================
+   Variantes UI/UX (PR29) — chargées seulement dans l'aperçu.
+   Chaque variante est une surcouche de styles.css, activée par
+   <html data-v="…">. Les options UX s'activent par <html data-ux-…>.
+   ========================================================================= */
+
+/* ---------- B · Nuit : fond encre, vert et violet lumineux ---------- */
+html[data-v="nuit"] {
+  --ink: #f3f0ff; --paper: #0f0d17; --muted: #b9b3d6; --line: #f3f0ff;
+  --soft: #1b1828; --violet: #a99bff; --acid: #5ff0a0; color-scheme: dark;
+}
+html[data-v="nuit"] body { background: var(--paper); color: var(--ink); }
+html[data-v="nuit"] :is(.ask, .cat-head, .live-clock, .card, .ambassador-panel, .brigade-panel, .capabilities, select, input, textarea) { background: #17142a; color: var(--ink); }
+html[data-v="nuit"] .lead { color: var(--muted); }
+html[data-v="nuit"] :is(.head-link, .tool-btn, .cat-toggle, .vx-chips button) { background: transparent; color: var(--ink); border-color: var(--ink); }
+html[data-v="nuit"] .primary { background: var(--acid); color: #0f0d17; border-color: var(--acid); }
+html[data-v="nuit"] .secondary { background: transparent; color: var(--ink); }
+html[data-v="nuit"] h1 .fl { color: #0f0d17; }
+html[data-v="nuit"] .hero h1 { text-shadow: 0 0 40px rgba(169, 155, 255, .25); }
+html[data-v="nuit"] :is(.cat-head, .ask) { box-shadow: 5px 5px 0 var(--violet); border-color: var(--violet); }
+
+/* ---------- C · Affiche : aplats de couleur, angles vifs, contrastes forts ---------- */
+html[data-v="affiche"] { --paper: #f4f1e8; --soft: #fff; }
+html[data-v="affiche"] *:not(.live-dot) { border-radius: 0 !important; }
+html[data-v="affiche"] #home { max-width: none; padding: 0; margin-top: 0; }
+html[data-v="affiche"] #home > :where(h1, .lead, form, .guide-cta, .vx-chips) { max-width: 1120px; margin-left: auto; margin-right: auto; padding-left: 24px; padding-right: 24px; }
+html[data-v="affiche"] #home > h1 { margin-top: 0; margin-bottom: 0; padding-top: 48px; padding-bottom: 24px; background: var(--acid); max-width: none; padding-left: max(24px, calc(50vw - 536px)); }
+html[data-v="affiche"] #home > .lead { max-width: none; background: var(--acid); padding: 0 max(24px, calc(50vw - 536px)) 56px; margin: 0 0 -32px; padding-top: 0; color: var(--ink); font-weight: 600; }
+html[data-v="affiche"] #home > form { position: relative; z-index: 1; }
+html[data-v="affiche"] #home > section { max-width: 1120px; margin-left: auto; margin-right: auto; padding-left: 24px; padding-right: 24px; }
+html[data-v="affiche"] h1 .fl { background: var(--ink); color: var(--acid); transform: none; }
+html[data-v="affiche"] .hero h1 .not-us { color: var(--violet); }
+html[data-v="affiche"] :is(.cat-head, .ask) { border-width: 3px; box-shadow: 8px 8px 0 var(--ink); }
+html[data-v="affiche"] .cat-head:hover { background: var(--ink); color: var(--paper); }
+html[data-v="affiche"] .ambition-grid li { background: var(--violet); color: #fff; border: 0; }
+html[data-v="affiche"] .ambition-status { color: var(--acid); }
+html[data-v="affiche"] .brigade-panel { background: var(--ink); color: var(--paper); }
+html[data-v="affiche"] .brigade-panel .eyebrow { color: var(--acid); }
+
+/* ---------- D · Aéré : bords fins, ombres douces, plus d'espace ---------- */
+html[data-v="aere"] { --paper: #faf9f6; --soft: #f1effa; --line: #e3e0ee; }
+html[data-v="aere"] :is(.ask, .cat-head, .live-clock, .card, .cat-toggle, .ambition-grid li, .secondary, .primary, .ambassador-panel, .brigade-panel) { border-width: 1px; box-shadow: 0 1px 2px rgba(22, 19, 31, .06), 0 12px 32px -12px rgba(58, 47, 160, .18); }
+html[data-v="aere"] :is(.ask, .cat-head, .ambition-grid li) { border-color: var(--line); border-style: solid; }
+html[data-v="aere"] .ask { border-radius: 28px; }
+html[data-v="aere"] .cat-head { border-radius: 24px; transition: transform .2s, box-shadow .2s; }
+html[data-v="aere"] .cat-head:hover { transform: translateY(-3px); background: #fff; }
+html[data-v="aere"] .primary { border-radius: 999px; }
+html[data-v="aere"] .ideas, html[data-v="aere"] .editorial { margin-top: 120px; }
+html[data-v="aere"] .hero { text-align: center; }
+html[data-v="aere"] .hero .lead { margin-left: auto; margin-right: auto; }
+html[data-v="aere"] h1 .fl { transform: none; background: none; color: var(--violet); padding: 0; }
+html[data-v="aere"] .ambitions { border-top: 1px solid var(--line); }
+
+/* ---------- Options UX ---------- */
+/* Exemples cliquables sous le champ */
+.vx-chips { display: none; flex-wrap: wrap; gap: 8px; margin: 16px 0 0; padding: 0; list-style: none; }
+html[data-ux-chips] .vx-chips { display: flex; }
+.vx-chips button { font: 14px var(--text); padding: 8px 14px; border: 2px solid var(--ink); border-radius: 999px; background: var(--soft); color: var(--ink); cursor: pointer; }
+.vx-chips button:hover { background: var(--acid); color: #11120e; }
+
+/* Bandeau défilant des services */
+.vx-marquee { display: none; overflow: hidden; margin: 40px 0 0; padding: 14px 0; background: var(--ink); color: var(--paper); font: 900 26px var(--display); font-stretch: 62%; text-transform: uppercase; white-space: nowrap; }
+html[data-ux-marquee] .vx-marquee { display: block; }
+.vx-marquee div { display: inline-block; animation: vx-defile 40s linear infinite; }
+.vx-marquee span::after { content: "✶"; margin: 0 22px; color: var(--acid); }
+@keyframes vx-defile { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .vx-marquee div { animation: none; } }
+
+/* Bouton d'action collant (apparaît quand le champ est hors de l'écran) */
+.vx-sticky { display: none; position: fixed; z-index: 40; left: 50%; bottom: 16px; transform: translateX(-50%); }
+html[data-ux-sticky] .vx-sticky.show { display: block; }
+.vx-sticky .primary { box-shadow: 4px 4px 0 var(--ink); white-space: nowrap; }
+
+/* ---------- Sélecteur de variantes (outil d'aperçu, pas le site) ---------- */
+.vx-panel { position: fixed; z-index: 50; right: 12px; bottom: 12px; width: min(330px, calc(100vw - 24px)); font: 13px/1.4 system-ui, sans-serif; color: #16131f; background: #fff; border: 2px solid #16131f; border-radius: 14px; box-shadow: 4px 4px 0 #16131f; letter-spacing: 0; text-transform: none; }
+.vx-panel summary { cursor: pointer; padding: 10px 14px; font-weight: 700; list-style: none; }
+.vx-panel summary::-webkit-details-marker { display: none; }
+.vx-panel summary::after { content: " ▾"; }
+.vx-panel[open] summary::after { content: " ▴"; }
+.vx-body { padding: 0 14px 14px; }
+.vx-seg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin: 0 0 8px; }
+.vx-seg button { font: 600 12px system-ui, sans-serif; padding: 7px 2px; border: 1.5px solid #16131f; border-radius: 8px; background: #fff; color: #16131f; cursor: pointer; text-transform: none; letter-spacing: 0; }
+.vx-seg button[aria-pressed="true"] { background: #16131f; color: #fff; }
+.vx-desc { margin: 0 0 10px; color: #4a4560; min-height: 3.6em; }
+.vx-body label { display: flex; gap: 8px; align-items: flex-start; margin: 6px 0; cursor: pointer; }
+.vx-body h4 { margin: 10px 0 4px; font: 700 11px system-ui, sans-serif; text-transform: uppercase; letter-spacing: .08em; color: #6b6585; }
