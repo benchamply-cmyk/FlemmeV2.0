@@ -21,8 +21,6 @@
     marquee: 'Bandeau défilant des services sous le formulaire',
     theme: 'Bouton clair / sombre dans l’en-tête (version claire de la gamme Glacier)',
   };
-  const store = { get: k => { try { return localStorage.getItem('vx-' + k); } catch { return null; } },
-                  set: (k, v) => { try { localStorage.setItem('vx-' + k, v); } catch {} } };
 
   // Panneau
   const panel = document.createElement('details');
@@ -43,7 +41,7 @@
     if (siteSheet) siteSheet.disabled = v !== 'actuel';
     if (v === 'actuel') root.removeAttribute('data-v'); else root.setAttribute('data-v', v);
     seg.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === v));
-    desc.textContent = VARIANTES[v][1]; store.set('v', v); applyAccent();
+    desc.textContent = VARIANTES[v][1]; applyAccent();
   };
   for (const [v, [nom]] of Object.entries(VARIANTES)) {
     const b = document.createElement('button'); b.type = 'button'; b.dataset.v = v; b.textContent = nom;
@@ -52,7 +50,7 @@
   const sw = document.createElement('div'); sw.className = 'vx-swatches'; sw.setAttribute('role', 'group'); sw.setAttribute('aria-label', 'Couleur d’accent');
   const setA = a => {
     curA = a; applyAccent();
-    sw.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.a === a)); store.set('accent', a);
+    sw.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.a === a));
   };
   for (const [a, [nom, hex]] of Object.entries(ACCENTS)) {
     const b = document.createElement('button'), i = document.createElement('i');
@@ -66,15 +64,16 @@
   for (const [n, hex, role] of GAMME) { const c = document.createElement('span'); c.style.background = hex; c.dataset.r = n + ' · ' + hex + ' · ' + role; c.title = c.dataset.r; gm.append(c); }
   const hA = document.createElement('h4'); hA.textContent = 'Couleur d’accent';
   body.querySelector('h4').before(hA, sw, gm);
-  setA(ACCENTS[store.get('accent')] ? store.get('accent') : 'gamme');
+  // Rien n'est mémorisé : chaque ouverture repart du site tel qu'il est dans la PR29.
+  setA('gamme');
   for (const [k, txt] of Object.entries(UX)) {
     const l = document.createElement('label'), c = document.createElement('input');
-    c.type = 'checkbox'; c.checked = store.get('ux-' + k) === '1';
-    const apply = () => { root.toggleAttribute('data-ux-' + k, c.checked); store.set('ux-' + k, c.checked ? '1' : '0'); };
+    c.type = 'checkbox';
+    const apply = () => { root.toggleAttribute('data-ux-' + k, c.checked); };
     c.onchange = apply; apply(); l.append(c, txt); body.append(l);
   }
   document.body.append(panel);
-  setV(VARIANTES[store.get('v')] ? store.get('v') : 'actuel');
+  setV('actuel');
 
   // Exemples cliquables : les exemples des services disponibles.
   const form = document.getElementById('flemmeForm'), task = document.getElementById('task');
