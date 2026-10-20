@@ -386,3 +386,6 @@ header { height: auto; min-height: 74px; flex-wrap: wrap; gap: 12px 24px; paddin
 .ambitions-more { font-size: 22px; font-weight: 800; color: var(--violet); }
 @media (max-width: 900px) { #services .cat-grid, .ambition-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 600px) { #services .cat-grid, .ambition-grid { grid-template-columns: 1fr; } .ambitions { margin-top: 56px; } }
+
+/* Accroche V4.100 — 20 octobre 2026 */
+.hero h1 .not-us { color: var(--violet); }
