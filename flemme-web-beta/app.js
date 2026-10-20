@@ -91,7 +91,34 @@ document.addEventListener('click', e => {
   if (go === 'reset') resetApp();
   else show(go);
 });
-addEventListener('popstate', () => show(location.hash.slice(1) || 'home', false));
+// Les liens de section ramènent à l'accueil sans effacer une demande en cours.
+const homeSections = new Set(['home', 'services', 'ambassadors', 'brigade']);
+function showSection(id, push = true) {
+  show('home', false, false);
+  if (push) history.pushState(null, '', '#' + id);
+  const section = document.getElementById(id);
+  section.scrollIntoView({ behavior: 'instant', block: 'start' });
+  const title = section.querySelector('h1, h2');
+  if (title) { title.tabIndex = -1; title.focus({ preventScroll: true }); }
+}
+document.querySelectorAll('[data-section]').forEach(link => link.addEventListener('click', e => {
+  e.preventDefault();
+  showSection(link.dataset.section);
+}));
+addEventListener('popstate', () => {
+  const id = location.hash.slice(1) || 'home';
+  if (homeSections.has(id)) showSection(id, false);
+  else show(id, false);
+});
+
+// Date et heure en direct sous le titre des services disponibles.
+const liveClock = document.getElementById('liveClock');
+if (liveClock) {
+  const fmt = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const tick = () => { const now = new Date(); liveClock.dateTime = now.toISOString(); liveClock.textContent = fmt.format(now).replace(' à ', ' · '); };
+  tick();
+  setInterval(tick, 1000);
+}
 
 /* ---------- 4. Saisie de la demande ---------- */
 
@@ -172,7 +199,9 @@ const ideaButton = (cls, iconName, label, onClick) => {
 // services s'ouvre en menu déroulant au survol de la souris ou au clic (au toucher sur mobile).
 const cats = [];
 const closeCats = except => cats.forEach(c => { if (c !== except) { c.classList.remove('open'); c.querySelector('.cat-toggle').setAttribute('aria-expanded', 'false'); } });
-(FL.categories.groupes || []).forEach((g, i) => {
+// Le catalogue complet est conservé ; seules ces trois familles sont proposées dans la bêta.
+const availableGroups = new Set(['boulot', 'rdv', 'achats']);
+(FL.categories.groupes || []).filter(g => availableGroups.has(g.id)).forEach((g, i) => {
   const groupCat = { n: g.nom };
   const card = el('div', 'cat');
   // La carte entière mène au formulaire ; la flèche ouvre le détail (utile sur mobile).
@@ -502,8 +531,9 @@ if (draft) taskInput.value = draft;
 
 // Les anciens liens flemme.org/#facilitateur mènent à la page de la Brigade anti-flemme.
 if (location.hash === '#facilitateur') location.replace('rejoindre.html');
-history.replaceState(null, '', './');
-show('home', false, false);
+const initialSection = location.hash.slice(1);
+if (homeSections.has(initialSection)) showSection(initialSection, false);
+else { history.replaceState(null, '', './'); show('home', false, false); }
 
 // Service worker : permet au site de s'afficher même hors connexion.
 if (!NATIVE && 'serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));

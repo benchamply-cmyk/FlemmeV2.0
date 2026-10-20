@@ -1,5 +1,5 @@
 /* Polices de la refonte (Google Fonts) : doit rester tout en haut du fichier. */
-@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=DM+Mono:wght@400;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,400..900&family=Instrument+Sans:wdth,wght@75..100,400..700&family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500&display=swap");
 
 /* =========================================================================
    FLEMME — styles (CSS)
@@ -366,3 +366,74 @@ footer b { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-size:
   .brigade-panel { padding: 24px 20px; box-shadow: 8px 8px 0 var(--violet); }
   .recruit-link { display: none; }
 }
+
+/* Navigation principale — V4, 20 octobre 2026 */
+header { height: auto; min-height: 74px; flex-wrap: wrap; gap: 12px 24px; padding-top: 14px; padding-bottom: 14px; }
+.site-nav { display: flex; flex-wrap: wrap; gap: 4px 8px; }
+.site-nav a { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 12px; border-radius: 999px; color: var(--ink); text-decoration: none; font-weight: 700; }
+.site-nav a:hover, .site-nav a:focus-visible { background: var(--acid); }
+#services, #ambassadors, #brigade { scroll-margin-top: 24px; }
+@media (max-width: 600px) { .site-nav { order: 3; flex-basis: 100%; gap: 4px; } .site-nav a { font-size: 14px; padding: 8px 10px; } }
+
+/* Services disponibles et ambitions — 20 octobre 2026 */
+#services .cat-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.ambitions { margin-top: 80px; padding-top: 40px; border-top: 2px solid var(--ink); }
+.ambitions-intro { max-width: 720px; color: var(--muted); line-height: 1.6; }
+.ambition-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; padding: 0; list-style: none; margin: 28px 0; }
+.ambition-grid li { padding: 24px; background: var(--soft); border: 2px dashed var(--violet); border-radius: 22px; }
+.ambition-status { display: inline-block; color: var(--violet); font: 12px var(--mono); text-transform: uppercase; letter-spacing: .08em; }
+.ambition-grid h3 { margin: 14px 0 0; font-size: 21px; line-height: 1.2; letter-spacing: -.02em; }
+.ambitions-more { font-size: 22px; font-weight: 800; color: var(--violet); }
+@media (max-width: 900px) { #services .cat-grid, .ambition-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { #services .cat-grid, .ambition-grid { grid-template-columns: 1fr; } .ambitions { margin-top: 56px; } }
+
+/* Accroche V4.100 — 20 octobre 2026 */
+.hero h1 .not-us { color: var(--violet); }
+.live-clock { display: inline-flex; align-items: center; gap: 10px; margin: 0 0 18px; padding: 8px 16px; border: 2px solid var(--ink); border-radius: 999px; background: #fff; font: 15px var(--mono); font-variant-numeric: tabular-nums; }
+.live-clock time::first-letter { text-transform: uppercase; }
+.live-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--acid); box-shadow: 0 0 0 0 var(--acid); animation: live-pulse 1.6s infinite; }
+@keyframes live-pulse { 70% { box-shadow: 0 0 0 8px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+@media (prefers-reduced-motion: reduce) { .live-dot { animation: none; } }
+
+/* Typographie « Affiche condensée » — V4.100, 20 octobre 2026
+   Titres et sous-titres : Archivo étroit en capitales. Chute des titres : Instrument Serif italique.
+   Texte : Instrument Sans. Boutons et menu : Archivo semi-étroit en capitales. Étiquettes : Geist Mono. */
+:root {
+  --display: "Archivo", "Arial Narrow", sans-serif;
+  --text: "Instrument Sans", system-ui, sans-serif;
+  --serif: "Instrument Serif", Georgia, serif;
+  --mono: "Geist Mono", ui-monospace, monospace;
+}
+body { font-family: var(--text); }
+
+/* Titres */
+h1, h2, .logo, footer b, .ideas-title, .pay-grid b {
+  font-family: var(--display); font-stretch: 62%; font-weight: 900; text-transform: uppercase; letter-spacing: -.01em;
+}
+h1, h2 { line-height: .9; }
+.hero h1 { font-size: clamp(64px, 11vw, 156px); font-weight: 900; line-height: .86; letter-spacing: -.01em; }
+h1 .fl { font-weight: 900; }
+.hero h1 .not-us { display: inline-block; font-family: var(--serif); font-style: italic; font-weight: 400; text-transform: none; font-size: .8em; letter-spacing: -.02em; line-height: 1; }
+.ideas-title { font-size: clamp(36px, 5.2vw, 60px); line-height: .92; }
+.editorial h2 { font-size: clamp(44px, 6.4vw, 88px); letter-spacing: -.01em; line-height: .9; }
+.card-screen h2, .legal h1 { letter-spacing: -.01em; }
+.logo { font-size: 34px; letter-spacing: 0; }
+footer b { letter-spacing: -.01em; }
+
+/* Sous-titres */
+h3, .cat-title, .how b, .rank-list b, .faq summary {
+  font-family: var(--display); font-stretch: 62%; font-weight: 800; text-transform: uppercase; letter-spacing: 0; line-height: 1;
+}
+.cat-title { font-size: 24px; }
+.steps h3 { font-size: 34px; }
+.ambition-grid h3 { font-size: 26px; line-height: 1.02; }
+.ambitions-more { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 28px; }
+.how b, .rank-list b { font-size: 26px; }
+.faq summary { font-size: 24px; }
+
+/* Boutons et menu */
+.primary, .secondary, .site-nav a, .head-link, .btn-link, .examples button, .tool-btn, .ask-bottom .tool-btn, .ai-fab, .social-btn, .danger, .tabs button {
+  font-family: var(--display); font-stretch: 75%; font-weight: 800; text-transform: uppercase; letter-spacing: .04em;
+}
+.primary, .secondary { font-size: 16px; }
+.site-nav a { font-size: 15px; }
