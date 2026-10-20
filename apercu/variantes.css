@@ -185,3 +185,100 @@ html[data-accent="gamme"][data-v="nuit aere"] :is(.ask, .cat-head) { border-colo
 html[data-accent="gamme"] .vx-gamme { display: grid; }
 .vx-gamme span { height: 22px; border-radius: 4px; position: relative; }
 .vx-gamme span:hover::after { content: attr(data-r); position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%); white-space: nowrap; background: #16131f; color: #fff; font: 11px system-ui, sans-serif; padding: 3px 6px; border-radius: 4px; }
+
+/* =========================================================================
+   Proposition 2 « Métal intense » (PR31) — se superpose au bloc « Bleu métal ».
+   Plus de mouvement dans le fond (chrome liquide, reflets qui balaient en
+   continu, objets qui flottent et tournent, scintillements) et un métal plus
+   contrasté et plus brillant (bandes de lumière, chrome sur tous les titres,
+   reflets qui passent tout seuls sur les cartes et les boutons).
+   ========================================================================= */
+.vx-x { display: none; }
+html[data-fond="intense"] .vx-x { display: block; }
+html[data-fond="intense"] {
+  --metal-top: #01050f; --metal-mid: #0b2a66; --metal-low: #1d5ac4; --metal-end: #3b86f0;
+  --chrome: linear-gradient(180deg, #ffffff 0%, #f3f8ff 22%, #9cc6ff 40%, #1e4fa8 49%, #0b2a66 52%, #5ea2ff 64%, #e6f0ff 84%, #ffffff 100%);
+  --steel: linear-gradient(180deg, #ffffff 0%, #cfe2ff 30%, #4f8fef 48%, #1e4fa8 52%, #7cb0f7 75%, #f3f8ff 100%);
+  --bevel: linear-gradient(140deg, #ffffff, rgba(165, 204, 255, .35) 22%, rgba(1, 5, 15, .7) 55%, rgba(124, 176, 247, .9) 85%, #ffffff);
+}
+/* Fond : bandes de métal poli qui scintillent */
+html[data-fond="intense"] body {
+  background:
+    radial-gradient(120% 50% at 50% 0%, rgba(94, 162, 255, .4), transparent 60%),
+    repeating-linear-gradient(180deg, transparent 0 380px, rgba(165, 204, 255, .07) 420px, rgba(255, 255, 255, .14) 440px, rgba(165, 204, 255, .07) 460px, transparent 500px 760px),
+    linear-gradient(180deg, var(--metal-top) 0%, #04113a 12%, var(--metal-mid) 32%, #134aa6 58%, var(--metal-low) 78%, var(--metal-end) 100%);
+}
+/* Reflets qui balaient l'écran en continu, en plus du scroll */
+html[data-fond="intense"] body::after {
+  background:
+    linear-gradient(115deg, transparent 28%, rgba(207, 226, 255, .22) 40%, rgba(255, 255, 255, .5) 44%, rgba(207, 226, 255, .18) 48%, transparent 60%),
+    linear-gradient(115deg, transparent 64%, rgba(165, 204, 255, .2) 70%, transparent 76%),
+    radial-gradient(40% 30% at 85% 20%, rgba(165, 204, 255, .28), transparent 70%);
+  animation: vx-sweep 9s ease-in-out infinite alternate;
+}
+@keyframes vx-sweep {
+  from { transform: translate3d(calc(var(--sp) * -20% - 18%), calc(var(--sp) * -18%), 0); }
+  to { transform: translate3d(calc(var(--sp) * -20% + 18%), calc(var(--sp) * -18% - 6%), 0); }
+}
+/* Chrome liquide : grande nappe qui tourne lentement derrière tout */
+html[data-fond="intense"] .vx-liquid {
+  position: absolute; inset: -30%; border-radius: 40%;
+  background: conic-gradient(from 0deg at 50% 50%, #01050f, #1e4fa8, #a5ccff, #0b2a66, #5ea2ff, #ffffff, #1e4fa8, #01050f, #3b86f0, #01050f);
+  filter: blur(70px) saturate(130%); opacity: .38; mix-blend-mode: screen;
+  animation: vx-turn 40s linear infinite;
+}
+@keyframes vx-turn { to { transform: rotate(360deg); } }
+/* Objets : flottent, l'anneau tourne, nouveaux éléments */
+html[data-fond="intense"] .metal-scene .orb { animation: vx-float 7s ease-in-out infinite alternate; }
+html[data-fond="intense"] .metal-scene .o2 { animation-duration: 5.5s; animation-delay: -2s; }
+html[data-fond="intense"] .metal-scene .o3 { animation-duration: 4s; animation-delay: -1s; }
+@keyframes vx-float { to { margin-top: -38px; filter: brightness(1.25); } }
+html[data-fond="intense"] .metal-scene .ring { opacity: .8; animation: vx-ring 14s linear infinite; }
+@keyframes vx-ring {
+  from { transform: translate3d(0, calc(var(--sy, 0) * -0.35px), 0) rotateX(68deg) rotateZ(0deg); }
+  to { transform: translate3d(0, calc(var(--sy, 0) * -0.35px), 0) rotateX(68deg) rotateZ(360deg); }
+}
+html[data-fond="intense"] .metal-scene .ring2 {
+  width: 200px; height: 200px; top: 18vh; right: 10vw; left: auto; border-width: 9px; opacity: .7;
+  animation: vx-ring2 10s linear infinite;
+}
+@keyframes vx-ring2 {
+  from { transform: translate3d(0, calc(var(--sy, 0) * -0.6px), 0) rotateX(60deg) rotateY(20deg) rotateZ(0deg); }
+  to { transform: translate3d(0, calc(var(--sy, 0) * -0.6px), 0) rotateX(60deg) rotateY(20deg) rotateZ(-360deg); }
+}
+html[data-fond="intense"] .metal-scene .o4 { width: 90px; height: 90px; top: 85vh; left: 40vw; transform: translate3d(0, calc(var(--sy, 0) * -0.45px), 0); animation-duration: 6s; }
+html[data-fond="intense"] .metal-scene .o5 { width: 34px; height: 34px; top: 70vh; left: 22vw; transform: translate3d(0, calc(var(--sy, 0) * -0.9px), 0); animation-duration: 3.5s; }
+/* Scintillements : éclats en étoile qui s'allument et s'éteignent */
+html[data-fond="intense"] .metal-scene .glint {
+  width: 26px; height: 26px; border-radius: 0;
+  background: radial-gradient(circle, #fff 0 2px, rgba(255, 255, 255, .6) 3px, transparent 7px),
+    linear-gradient(90deg, transparent 45%, rgba(255, 255, 255, .9) 50%, transparent 55%),
+    linear-gradient(0deg, transparent 45%, rgba(255, 255, 255, .9) 50%, transparent 55%);
+  animation: vx-glint 3.2s ease-in-out infinite; opacity: 0;
+}
+@keyframes vx-glint { 0%, 100% { opacity: 0; transform: scale(.4) rotate(0deg); } 50% { opacity: 1; transform: scale(1.2) rotate(45deg); } }
+/* Métal plus brillant : chrome sur tous les grands titres, reflets automatiques */
+html[data-fond="intense"] :is(h1, h2) {
+  /* Chrome clair répété à chaque ligne (1lh) pour que toutes les lignes brillent pareil. */
+  background: linear-gradient(180deg, #ffffff 0%, #ffffff 38%, #b9d6ff 50%, #6fa8f5 58%, #e6f0ff 78%, #ffffff 100%) 0 0 / 100% 1lh repeat-y;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: none; filter: drop-shadow(0 2px 0 #04113a) drop-shadow(0 16px 24px rgba(0, 0, 0, .55));
+}
+html[data-fond="intense"] h1 em { -webkit-text-fill-color: #e6f0ff; }
+html[data-fond="intense"] :is(.ask, .cat-head, .card, .ambassador-panel, .capabilities, .ambition-grid li, .steps3 li) {
+  animation: vx-sheen 7s ease-in-out infinite;
+}
+html[data-fond="intense"] :is(.cat-head, .ambition-grid li, .steps3 li):nth-child(2) { animation-delay: -2.3s; }
+html[data-fond="intense"] :is(.cat-head, .ambition-grid li, .steps3 li):nth-child(3) { animation-delay: -4.6s; }
+@keyframes vx-sheen { 0%, 60% { background-position: 120% 0, 0 0, 0 0, 0 0; } 100% { background-position: -60% 0, 0 0, 0 0, 0 0; } }
+html[data-fond="intense"] .primary { background-size: 100% 100%; position: relative; overflow: hidden; }
+html[data-fond="intense"] .primary::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, .85) 48%, transparent 66%) -150% 0 / 60% 100% no-repeat;
+  animation: vx-btn 3.5s ease-in-out infinite;
+}
+@keyframes vx-btn { 0%, 55% { background-position: -150% 0; } 100% { background-position: 250% 0; } }
+@media (prefers-reduced-motion: reduce) {
+  html[data-fond="intense"] :is(.vx-liquid, .metal-scene i, h1, h2, .ask, .cat-head, .card, .ambition-grid li, .steps3 li) { animation: none !important; }
+  html[data-fond="intense"] body::after, html[data-fond="intense"] .primary::after { animation: none !important; }
+}

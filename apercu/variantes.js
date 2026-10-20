@@ -33,10 +33,15 @@
   // Fond « Bleu métal » (PR31) : seulement sur « A · Site », coupable pour comparer avec le Glacier uni.
   const metalSheet = document.getElementById('vx-metal'), scene = document.querySelector('.metal-scene');
   let curV = 'actuel', curA = 'gamme', curF = 'metal';
+  // Proposition 2 « Métal intense » : éléments de décor en plus (voir variantes.css).
+  if (scene) scene.insertAdjacentHTML('afterbegin', '<i class="vx-x vx-liquid"></i><i class="vx-x ring ring2"></i><i class="vx-x orb o4"></i><i class="vx-x orb o5"></i>'
+    + [[12, 22, 0], [78, 12, 1.1], [64, 46, 2.2], [30, 64, .6], [88, 74, 1.7], [8, 88, 2.6], [48, 30, 1.4]]
+      .map(([x, y, d]) => `<i class="vx-x glint" style="left:${x}vw;top:${y}vh;animation-delay:-${d}s"></i>`).join(''));
   const applyFond = () => {
-    const on = curV === 'actuel' && curF === 'metal';
+    const on = curV === 'actuel' && curF !== 'uni';
     if (metalSheet) metalSheet.disabled = !on;
     if (scene) scene.hidden = !on;
+    if (on && curF === 'intense') root.setAttribute('data-fond', 'intense'); else root.removeAttribute('data-fond');
   };
   const applyAccent = () => {
     const a = curA;
@@ -71,7 +76,7 @@
   for (const [n, hex, role] of GAMME) { const c = document.createElement('span'); c.style.background = hex; c.dataset.r = n + ' · ' + hex + ' · ' + role; c.title = c.dataset.r; gm.append(c); }
   const hF = document.createElement('h4'); hF.textContent = 'Fond (A · Site)';
   const fs = document.createElement('div'); fs.className = 'vx-seg'; fs.setAttribute('role', 'group'); fs.setAttribute('aria-label', 'Fond');
-  for (const [f, nom] of [['metal', 'Bleu métal · PR31'], ['uni', 'Glacier uni · PR30']]) {
+  for (const [f, nom] of [['metal', '1 · Bleu métal'], ['intense', '2 · Métal intense'], ['uni', 'Glacier uni · PR30']]) {
     const b = document.createElement('button'); b.type = 'button'; b.dataset.f = f; b.textContent = nom;
     b.onclick = () => { curF = f; fs.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x.dataset.f === f)); applyFond(); };
     b.setAttribute('aria-pressed', f === curF); fs.append(b);
