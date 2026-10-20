@@ -190,7 +190,9 @@ const ideaButton = (cls, iconName, label, onClick) => {
 // services s'ouvre en menu déroulant au survol de la souris ou au clic (au toucher sur mobile).
 const cats = [];
 const closeCats = except => cats.forEach(c => { if (c !== except) { c.classList.remove('open'); c.querySelector('.cat-toggle').setAttribute('aria-expanded', 'false'); } });
-(FL.categories.groupes || []).forEach((g, i) => {
+// Le catalogue complet est conservé ; seules ces trois familles sont proposées dans la bêta.
+const availableGroups = new Set(['boulot', 'rdv', 'achats']);
+(FL.categories.groupes || []).filter(g => availableGroups.has(g.id)).forEach((g, i) => {
   const groupCat = { n: g.nom };
   const card = el('div', 'cat');
   // La carte entière mène au formulaire ; la flèche ouvre le détail (utile sur mobile).
