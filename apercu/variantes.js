@@ -19,6 +19,12 @@
     chips: 'Exemples cliquables sous le champ (un clic remplit la demande)',
     marquee: 'Bandeau défilant des services sous le formulaire',
     sticky: 'Bouton « Confier ma flemme » collant en bas de l’écran',
+    header: 'En-tête collant et flouté, qui reste accessible en défilant (ordinateur)',
+    spy: 'Le menu souligne la section où tu te trouves',
+    steps: 'Parcours en 3 étapes sous le formulaire',
+    reassure: 'Rassurer sous le bouton : gratuit, sans engagement, réponse par e-mail ou téléphone',
+    helper: 'Aide à l’écriture : jauge « plus tu précises, mieux on t’aide »',
+    theme: 'Bouton clair / sombre dans l’en-tête (version claire de la gamme Glacier)',
   };
   const store = { get: k => { try { return localStorage.getItem('vx-' + k); } catch { return null; } },
                   set: (k, v) => { try { localStorage.setItem('vx-' + k, v); } catch {} } };
@@ -99,5 +105,52 @@
   sticky.innerHTML = '<button type="button" class="primary">Confier ma flemme →</button>';
   sticky.querySelector('button').onclick = () => { task.scrollIntoView({ behavior: 'smooth', block: 'center' }); task.focus({ preventScroll: true }); };
   document.body.append(sticky);
+  // Parcours en 3 étapes (mêmes étapes que l'écran de confirmation).
+  const steps = document.createElement('ol'); steps.className = 'vx-steps';
+  for (const [t, d] of [['Tu décris ta flemme', 'En quelques mots, ou par message vocal.'], ['On étudie ta demande', 'On te recontacte pour te dire si on peut t’aider.'], ['On s’en occupe', 'Puis on te demande ton avis pour faire mieux.']]) {
+    const li = document.createElement('li'), b = document.createElement('b'), sp = document.createElement('span');
+    b.textContent = t; sp.textContent = d; li.append(b, sp); steps.append(li);
+  }
+  mq.after(steps);
+
+  // Réassurance sous le bouton.
+  const rs = document.createElement('p'); rs.className = 'vx-reassure';
+  rs.textContent = 'Gratuit pendant la bêta · Sans engagement · Réponse par e-mail ou téléphone';
+  form.append(rs);
+
+  // Aide à l'écriture : une jauge qui se remplit avec la précision du message.
+  const help = document.createElement('div'); help.className = 'vx-helper'; help.setAttribute('aria-live', 'polite');
+  const bar = document.createElement('i'), hint = document.createElement('span');
+  help.append(bar, hint); form.querySelector('.ask-bottom').before(help);
+  const HINTS = [[0, 'Dis-nous ce qui te pèse.'], [25, 'Bien ! Ajoute où, quand ou ton budget.'], [80, 'Parfait, on a de quoi avancer.']];
+  const updHelp = () => {
+    const n = task.value.trim().length;
+    bar.style.setProperty('--p', Math.min(100, n / 1.2) + '%');
+    hint.textContent = HINTS.filter(([min]) => n >= min).pop()[1];
+  };
+  task.addEventListener('input', updHelp); updHelp();
+
+  // Menu : section en cours.
+  const navLinks = [...document.querySelectorAll('.site-nav a[data-section]')];
+  const spy = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    navLinks.forEach(a => a.classList.toggle('vx-current', a.dataset.section === (e.target.id === 'home' ? 'home' : e.target.id)));
+  }), { rootMargin: '-45% 0px -50% 0px' });
+  ['services', 'ambassadors', 'brigade'].forEach(id => { const el = document.getElementById(id); if (el) spy.observe(el); });
+  new IntersectionObserver(([e]) => { if (e.isIntersecting) navLinks.forEach(a => a.classList.toggle('vx-current', a.dataset.section === 'home')); }).observe(form);
+
+  // Bouton clair / sombre : la version claire reprend la gamme Glacier sur fond clair.
+  const tb = document.createElement('button'); tb.type = 'button'; tb.className = 'head-link vx-theme';
+  let light = false;
+  const setTheme = () => {
+    tb.textContent = light ? '☾ Sombre' : '☀ Clair';
+    tb.setAttribute('aria-label', light ? 'Passer en thème sombre' : 'Passer en thème clair');
+    if (curV !== 'actuel') return;
+    if (siteSheet) siteSheet.disabled = light;
+    if (light) { root.setAttribute('data-v', 'aere'); root.setAttribute('data-accent', 'gamme'); } else { root.removeAttribute('data-v'); applyAccent(); }
+  };
+  tb.onclick = () => { light = !light; setTheme(); };
+  document.querySelector('.head-right').prepend(tb); setTheme();
+
   new IntersectionObserver(([e]) => sticky.classList.toggle('show', !e.isIntersecting && document.getElementById('home').classList.contains('active'))).observe(form);
 })();

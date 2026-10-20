@@ -71,6 +71,34 @@ html[data-ux-marquee] .vx-marquee { display: block; }
 html[data-ux-sticky] .vx-sticky.show { display: block; }
 .vx-sticky .primary { box-shadow: 4px 4px 0 var(--ink); white-space: nowrap; }
 
+/* En-tête collant et flouté */
+@media (min-width: 701px) { html[data-ux-header] header { position: sticky; top: 0; z-index: 30; max-width: none; padding-left: max(24px, calc(50vw - 656px)); padding-right: max(24px, calc(50vw - 656px)); background: color-mix(in srgb, var(--paper) 78%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent); } }
+
+/* Menu : section en cours */
+html[data-ux-spy] .site-nav a.vx-current { box-shadow: inset 0 -3px 0 var(--acid); border-radius: 0; }
+
+/* Parcours en 3 étapes */
+.vx-steps { display: none; counter-reset: vx; list-style: none; padding: 0; margin: 40px 0 0; gap: 16px; grid-template-columns: repeat(3, minmax(0, 1fr)); text-align: left; }
+html[data-ux-steps] .vx-steps { display: grid; }
+.vx-steps li { counter-increment: vx; display: grid; gap: 6px; padding: 18px 20px; border: 1px solid var(--line); border-radius: 20px; }
+.vx-steps li::before { content: counter(vx); font: 800 30px var(--display); font-stretch: 62%; color: var(--violet); }
+.vx-steps b { font: 800 22px var(--display); font-stretch: 62%; text-transform: uppercase; }
+.vx-steps span { color: var(--muted); line-height: 1.45; }
+@media (max-width: 700px) { .vx-steps { grid-template-columns: 1fr; } }
+
+/* Réassurance */
+.vx-reassure { display: none; margin: 10px 8px 4px; text-align: right; font: 13px var(--mono); color: var(--muted); }
+html[data-ux-reassure] .vx-reassure { display: block; }
+
+/* Aide à l'écriture */
+.vx-helper { display: none; align-items: center; gap: 12px; padding: 0 18px 10px; font-size: 14px; color: var(--muted); }
+html[data-ux-helper] .vx-helper { display: flex; }
+.vx-helper i { --p: 0%; flex: 0 0 120px; height: 6px; border-radius: 99px; background: linear-gradient(90deg, var(--acid) var(--p), color-mix(in srgb, var(--line) 70%, transparent) var(--p)); transition: background .2s; }
+
+/* Bouton clair / sombre */
+.vx-theme { display: none; cursor: pointer; }
+html[data-ux-theme] .vx-theme { display: inline-flex; }
+
 /* ---------- Sélecteur de variantes (outil d'aperçu, pas le site) ---------- */
 .vx-panel { position: fixed; z-index: 50; right: 12px; bottom: 12px; width: min(330px, calc(100vw - 24px)); font: 13px/1.4 system-ui, sans-serif; color: #16131f; background: #fff; border: 2px solid #16131f; border-radius: 14px; box-shadow: 4px 4px 0 #16131f; letter-spacing: 0; text-transform: none; }
 .vx-panel summary { cursor: pointer; padding: 10px 14px; font-weight: 700; list-style: none; }

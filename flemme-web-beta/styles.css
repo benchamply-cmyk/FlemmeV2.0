@@ -488,6 +488,7 @@ h1 .fl { transform: none; background: none; padding: 0; color: var(--acid); }
 .secondary { background: transparent; color: var(--ink); }
 :is(.head-link, .tool-btn) { background: transparent; color: var(--ink); border-color: var(--line); }
 :is(.beta-tag, .status-dot) { background: var(--g900); color: var(--g300); }
+.site-nav a:hover, .site-nav a:focus-visible { background: var(--acid); color: var(--paper); }
 
 /* Espacement aéré */
 .ideas, .editorial { margin-top: 120px; }
