@@ -91,7 +91,25 @@ document.addEventListener('click', e => {
   if (go === 'reset') resetApp();
   else show(go);
 });
-addEventListener('popstate', () => show(location.hash.slice(1) || 'home', false));
+// Les liens de section ramènent à l'accueil sans effacer une demande en cours.
+const homeSections = new Set(['home', 'services', 'ambassadors', 'brigade']);
+function showSection(id, push = true) {
+  show('home', false, false);
+  if (push) history.pushState(null, '', '#' + id);
+  const section = document.getElementById(id);
+  section.scrollIntoView({ behavior: 'instant', block: 'start' });
+  const title = section.querySelector('h1, h2');
+  if (title) { title.tabIndex = -1; title.focus({ preventScroll: true }); }
+}
+document.querySelectorAll('[data-section]').forEach(link => link.addEventListener('click', e => {
+  e.preventDefault();
+  showSection(link.dataset.section);
+}));
+addEventListener('popstate', () => {
+  const id = location.hash.slice(1) || 'home';
+  if (homeSections.has(id)) showSection(id, false);
+  else show(id, false);
+});
 
 /* ---------- 4. Saisie de la demande ---------- */
 
@@ -502,8 +520,9 @@ if (draft) taskInput.value = draft;
 
 // Les anciens liens flemme.org/#facilitateur mènent à la page de la Brigade anti-flemme.
 if (location.hash === '#facilitateur') location.replace('rejoindre.html');
-history.replaceState(null, '', './');
-show('home', false, false);
+const initialSection = location.hash.slice(1);
+if (homeSections.has(initialSection)) showSection(initialSection, false);
+else { history.replaceState(null, '', './'); show('home', false, false); }
 
 // Service worker : permet au site de s'afficher même hors connexion.
 if (!NATIVE && 'serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
