@@ -366,3 +366,11 @@ footer b { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-size:
   .brigade-panel { padding: 24px 20px; box-shadow: 8px 8px 0 var(--violet); }
   .recruit-link { display: none; }
 }
+
+/* Navigation principale — V4, 20 octobre 2026 */
+header { height: auto; min-height: 74px; flex-wrap: wrap; gap: 12px 24px; padding-top: 14px; padding-bottom: 14px; }
+.site-nav { display: flex; flex-wrap: wrap; gap: 4px 8px; }
+.site-nav a { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 12px; border-radius: 999px; color: var(--ink); text-decoration: none; font-weight: 700; }
+.site-nav a:hover, .site-nav a:focus-visible { background: var(--acid); }
+#services, #ambassadors, #brigade { scroll-margin-top: 24px; }
+@media (max-width: 600px) { .site-nav { order: 3; flex-basis: 100%; gap: 4px; } .site-nav a { font-size: 14px; padding: 8px 10px; } }
