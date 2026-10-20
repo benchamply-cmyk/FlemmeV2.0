@@ -3,7 +3,7 @@
 (() => {
   const root = document.documentElement;
   const VARIANTES = {
-    actuel: ['A · Actuel', 'Le design V4.100 tel quel : fond lavande, cartes à bord épais et ombres pleines, typo « Affiche condensée ».'],
+    actuel: ['A · Site', 'Le site tel qu’il est maintenant dans la PR29 : variante E + Gamme Glacier intégrées. Les autres boutons se superposent à cette base.'],
     nuit: ['B · Nuit', 'Fond encre, texte clair, vert et violet lumineux. Plus « app », reposant le soir, fort impact du titre.'],
     affiche: ['C · Affiche', 'Bandeau de couleur plein écran derrière le titre, angles vifs, aplats violets et noirs. Le plus affirmé, façon affiche de rue.'],
     aere: ['D · Aéré', 'Bords fins, ombres douces, boutons arrondis, plus d’espace entre les blocs. Plus calme et rassurant, moins « bêta ».'],

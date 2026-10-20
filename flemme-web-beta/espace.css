@@ -5,7 +5,7 @@
 
 /* En-tête : étiquette bêta + lien vers l'espace */
 .head-right { display: flex; align-items: center; gap: 10px; }
-.head-link { font-size: 14px; font-weight: 850; color: var(--ink); text-decoration: none; padding: 8px 14px; border: 2px solid var(--ink); border-radius: 99px; background: #fff; }
+.head-link { font-size: 14px; font-weight: 850; color: var(--ink); text-decoration: none; padding: 8px 14px; border: 2px solid var(--ink); border-radius: 99px; background: var(--surface); }
 .head-link:hover { background: var(--acid); }
 
 /* Liens présentés comme des boutons */
@@ -42,9 +42,9 @@ a.full { display: block; }
 
 /* Pastilles de statut */
 .pill { font-size: 12px; font-weight: 850; padding: 6px 11px; border-radius: 99px; background: var(--soft); color: var(--ink); }
-.pill-en_etude { background: #fff3c4; }
+.pill-en_etude { background: #fff3c4; color: #5a4500; }
 .pill-acceptee, .pill-en_cours { background: #dff5e8; color: #14532d; }
-.pill-terminee { background: var(--acid); }
+.pill-terminee { background: var(--acid); color: var(--paper); }
 .pill-refusee { background: #fde8e6; color: #8a1c12; }
 
 /* Lien de suivi sur l'écran de confirmation */
@@ -72,7 +72,7 @@ a.full { display: block; }
 .account summary { cursor: pointer; font-weight: 850; }
 .account p { color: var(--muted); line-height: 1.5; font-size: 14px; }
 .account button { display: block; width: 100%; margin-top: 10px; }
-.danger { border: 2px solid #8a1c12; border-radius: 14px; padding: 14px 20px; background: #fff; color: #8a1c12; font: inherit; font-weight: 900; font-size: 15px; cursor: pointer; }
+.danger { border: 2px solid #8a1c12; border-radius: 14px; padding: 14px 20px; background: var(--surface); color: #8a1c12; font: inherit; font-weight: 900; font-size: 15px; cursor: pointer; }
 .danger:hover { background: #fde8e6; }
 
 /* Discussion avec l'équipe */
@@ -82,7 +82,7 @@ a.full { display: block; }
 .msg { max-width: 85%; padding: 10px 14px; border-radius: 16px; }
 .msg p { margin: 0; line-height: 1.45; white-space: pre-line; overflow-wrap: anywhere; }
 .msg span { display: block; margin-top: 4px; font-size: 11px; color: var(--muted); }
-.msg-client { align-self: flex-end; background: var(--ink); color: #fff; border-bottom-right-radius: 4px; }
+.msg-client { align-self: flex-end; background: var(--ink); color: var(--paper); border-bottom-right-radius: 4px; }
 .msg-client span { color: #c9cbc0; }
 .msg-equipe { align-self: flex-start; background: var(--soft); border-bottom-left-radius: 4px; }
 .msg-empty { font-size: 14px; color: var(--muted); }
@@ -93,9 +93,9 @@ a.full { display: block; }
 /* Onglets « Se connecter » / « Créer mon compte » */
 .tabs { display: flex; gap: 4px; margin: 14px 0 4px; padding: 4px; border-radius: 14px; background: var(--soft); }
 .tabs button { flex: 1; min-height: 44px; border: 0; border-radius: 10px; background: transparent; font: inherit; font-size: 15px; font-weight: 800; color: var(--muted); cursor: pointer; }
-.tabs button[aria-selected="true"] { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.tabs button[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
 .hint { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
-.card input[type=password] { width: 100%; padding: 15px; border: 1px solid var(--line); border-radius: 12px; background: #fff; font: inherit; font-size: 16px; }
+.card input[type=password] { width: 100%; padding: 15px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); font: inherit; font-size: 16px; }
 .opt { font-weight: 500; color: var(--muted); }
 .pseudo-form { margin: 0 0 18px; }
 .pseudo-form .row { display: flex; gap: 8px; margin-top: 8px; }
