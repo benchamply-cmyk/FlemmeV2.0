@@ -15,15 +15,10 @@
     cyan: ['Cyan', '#2fdde8'], lagon: ['Lagon', '#3fb6c8'], glacier: ['Glacier', '#a5ccff'],
     gamme: ['Gamme Glacier', 'linear-gradient(90deg, #e6f0ff, #a5ccff, #3572d0, #142c57)'],
   };
+  // Les autres options UX (exemples, bouton collant, en-tête collant, menu, étapes,
+  // réassurance, aide à l'écriture) sont intégrées au site depuis la PR29.
   const UX = {
-    chips: 'Exemples cliquables sous le champ (un clic remplit la demande)',
     marquee: 'Bandeau défilant des services sous le formulaire',
-    sticky: 'Bouton « Confier ma flemme » collant en bas de l’écran',
-    header: 'En-tête collant et flouté, qui reste accessible en défilant (ordinateur)',
-    spy: 'Le menu souligne la section où tu te trouves',
-    steps: 'Parcours en 3 étapes sous le formulaire',
-    reassure: 'Rassurer sous le bouton : gratuit, sans engagement, réponse par e-mail ou téléphone',
-    helper: 'Aide à l’écriture : jauge « plus tu précises, mieux on t’aide »',
     theme: 'Bouton clair / sombre dans l’en-tête (version claire de la gamme Glacier)',
   };
   const store = { get: k => { try { return localStorage.getItem('vx-' + k); } catch { return null; } },

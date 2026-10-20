@@ -21,7 +21,10 @@ def feuille(f):
     i = css.find('/* =========================================================================\n   Design « E + Gamme Glacier »')
     if f != 'styles.css' or i < 0:
         return '<style>\n' + css + '\n</style>'
-    return '<style>\n' + css[:i] + '\n:root { --surface: #fff; --surface-hover: #fff; }\n</style><style id="vx-site">\n' + css[i:] + '\n</style>'
+    j = css.find('/* =========================================================================\n   Options UX', i)
+    j = j if j > 0 else len(css)
+    return ('<style>\n' + css[:i] + '\n:root { --surface: #fff; --surface-hover: #f1effa; --g400: var(--violet); --glow: none; }\n</style>'
+            + '<style id="vx-site">\n' + css[i:j] + '\n</style><style>\n' + css[j:] + '\n</style>')
 html = re.sub(r'<link rel="stylesheet" href="([^"]+)">', lambda m: feuille(m.group(1)), html)
 html = re.sub(r'<script src="([^"]+)" defer></script>', lambda m: '<script>\n' + lire(m.group(1)).replace('</script', '<\\/script') + '\n</script>', html)
 # Icônes : le sprite est inséré dans la page, les liens « icons.svg#… » deviennent « #… ».

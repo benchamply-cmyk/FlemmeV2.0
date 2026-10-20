@@ -504,3 +504,41 @@ h1 .fl { transform: none; background: none; padding: 0; color: var(--acid); }
 .ideas, .editorial { margin-top: 120px; }
 .ambitions { border-top: 1px solid var(--line); }
 @media (max-width: 600px) { .ideas, .editorial { margin-top: 72px; } }
+
+/* =========================================================================
+   Options UX — PR29, 20 octobre 2026
+   ========================================================================= */
+/* En-tête collant et flouté (ordinateur) */
+@media (min-width: 701px) {
+  header { position: sticky; top: 0; z-index: 30; max-width: none; padding-left: max(24px, calc(50vw - 656px)); padding-right: max(24px, calc(50vw - 656px)); background: color-mix(in srgb, var(--paper) 78%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
+}
+/* Menu : section en cours */
+.site-nav a.current { box-shadow: inset 0 -3px 0 var(--acid); border-radius: 0; }
+
+/* Aide à l'écriture */
+.write-help { --p: 0%; display: flex; align-items: center; gap: 12px; padding: 0 18px 10px; font-size: 14px; color: var(--muted); }
+.write-help i { flex: 0 0 120px; height: 6px; border-radius: 99px; background: linear-gradient(90deg, var(--acid) var(--p), color-mix(in srgb, var(--line) 70%, transparent) var(--p)); }
+
+/* Réassurance sous le bouton */
+.reassure { margin: 10px 8px 4px; text-align: right; font: 13px var(--mono); color: var(--muted); }
+
+/* Exemples cliquables */
+.example-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 16px 0 0; padding: 0; list-style: none; }
+.example-chips button { font: 14px var(--text); padding: 8px 14px; border: 1px solid var(--line); border-radius: 999px; background: transparent; color: var(--ink); cursor: pointer; }
+.example-chips button:hover, .example-chips button:focus-visible { background: var(--surface-hover); border-color: var(--g400); }
+
+/* Parcours en 3 étapes */
+.steps3 { counter-reset: st; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 40px 0 0; padding: 0; list-style: none; text-align: left; }
+.steps3 li { counter-increment: st; display: grid; gap: 6px; padding: 18px 20px; border: 1px solid var(--line); border-radius: 20px; }
+.steps3 li::before { content: counter(st); font: 800 30px var(--display); font-stretch: 62%; color: var(--violet); }
+.steps3 b { font: 800 22px var(--display); font-stretch: 62%; text-transform: uppercase; }
+.steps3 span { color: var(--muted); line-height: 1.45; }
+@media (max-width: 700px) { .steps3 { grid-template-columns: 1fr; } }
+
+/* Bouton collant */
+.sticky-cta { display: none; position: fixed; z-index: 40; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); }
+.sticky-cta.show { display: block; }
+.sticky-cta .primary { white-space: nowrap; box-shadow: var(--glow); }
+/* Sur mobile, au-dessus du bouton « Me faire guider » */
+@media (max-width: 700px) { .sticky-cta { bottom: calc(80px + env(safe-area-inset-bottom, 0px)); } }
+

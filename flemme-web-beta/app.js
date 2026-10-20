@@ -512,6 +512,47 @@ window.flemmePrefill = d => {
   if (d.precisions) $('#precisions').value = d.precisions;
 };
 
+/* ---------- 8 bis. Aides de l'accueil (PR29) ---------- */
+
+// Exemples cliquables : un clic remplit la demande avec l'exemple d'un service.
+(() => {
+  const box = $('#exampleChips');
+  const ex = (FL.categories.groupes || []).flatMap(g => (g.sous || []).map(c => c.exemple)).filter(Boolean).slice(0, 5);
+  ex.forEach(t => {
+    const li = el('li', ''), b = el('button', '', t);
+    b.type = 'button';
+    b.addEventListener('click', () => { taskInput.value = t; saveDraft(); updateHelp(); taskInput.focus(); });
+    li.append(b); box.append(li);
+  });
+})();
+
+// Aide à l'écriture : une jauge qui se remplit avec la précision du message.
+const helpBox = $('#writeHelp');
+const HELP = [[0, 'Plus tu es précis, mieux on t’aide.'], [25, 'Bien ! Ajoute où, quand ou ton budget.'], [80, 'Parfait, on a de quoi avancer.']];
+function updateHelp() {
+  const n = taskInput.value.trim().length;
+  helpBox.style.setProperty('--p', Math.min(100, n / 1.2) + '%');
+  helpBox.querySelector('span').textContent = HELP.filter(([min]) => n >= min).pop()[1];
+}
+taskInput.addEventListener('input', updateHelp);
+updateHelp();
+
+// Bouton « Confier ma flemme » collant : visible quand le formulaire n'est plus à l'écran.
+if ('IntersectionObserver' in window) {
+  const sticky = $('#stickyCta');
+  new IntersectionObserver(([e]) => sticky.classList.toggle('show', !e.isIntersecting && $('#home').classList.contains('active')))
+    .observe($('#flemmeForm'));
+
+  // Menu : souligne la section en cours (Accueil tant que le formulaire est visible).
+  const navLinks = $$('.site-nav a[data-section]');
+  const mark = id => navLinks.forEach(a => a.classList.toggle('current', a.dataset.section === id));
+  // « Notre ambition » fait partie des Services dans le menu.
+  const sectionOf = { ambitions: 'services' };
+  const spy = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) mark(sectionOf[e.target.id] || e.target.id); }), { rootMargin: '-45% 0px -50% 0px' });
+  ['services', 'ambitions', 'ambassadors', 'brigade'].forEach(id => { const s = document.getElementById(id); if (s) spy.observe(s); });
+  new IntersectionObserver(([e]) => { if (e.isIntersecting) mark('home'); }).observe($('#flemmeForm'));
+}
+
 /* ---------- 9. Textes modifiables depuis /admin ---------- */
 
 (() => {
