@@ -114,8 +114,17 @@ addEventListener('popstate', () => {
 // Date et heure en direct sous le titre des services disponibles.
 const liveClock = document.getElementById('liveClock');
 if (liveClock) {
-  const fmt = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  const tick = () => { const now = new Date(); liveClock.dateTime = now.toISOString(); liveClock.textContent = fmt.format(now).replace(' à ', ' · '); };
+  // Format compact : « mar. 20 oct. » · « 19:50 » · « 52 » (secondes en discret).
+  const fmtDate = new Intl.DateTimeFormat('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
+  const two = n => String(n).padStart(2, '0');
+  const [dEl, tEl, sEl] = liveClock.children;
+  const tick = () => {
+    const now = new Date();
+    liveClock.dateTime = now.toISOString();
+    dEl.textContent = fmtDate.format(now);
+    tEl.textContent = two(now.getHours()) + ':' + two(now.getMinutes());
+    sEl.textContent = two(now.getSeconds());
+  };
   tick();
   setInterval(tick, 1000);
 }
