@@ -23,8 +23,12 @@ def feuille(f):
         return '<style>\n' + css + '\n</style>'
     j = css.find('/* =========================================================================\n   Options UX', i)
     j = j if j > 0 else len(css)
+    # Le bloc « Bleu métal » (PR31) a sa propre feuille, que le panneau peut couper.
+    k = css.find('/* =========================================================================\n   Fond « Bleu métal »', j)
+    k = k if k > 0 else len(css)
     return ('<style>\n' + css[:i] + '\n:root { --surface: #fff; --surface-hover: #f1effa; --g400: var(--violet); --glow: none; }\n</style>'
-            + '<style id="vx-site">\n' + css[i:j] + '\n</style><style>\n' + css[j:] + '\n</style>')
+            + '<style id="vx-site">\n' + css[i:j] + '\n</style><style>\n' + css[j:k] + '\n</style>'
+            + '<style id="vx-metal">\n' + css[k:] + '\n</style>')
 html = re.sub(r'<link rel="stylesheet" href="([^"]+)">', lambda m: feuille(m.group(1)), html)
 html = re.sub(r'<script src="([^"]+)" defer></script>', lambda m: '<script>\n' + lire(m.group(1)).replace('</script', '<\\/script') + '\n</script>', html)
 # Icônes : le sprite est inséré dans la page, les liens « icons.svg#… » deviennent « #… ».

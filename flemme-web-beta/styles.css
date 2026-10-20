@@ -546,3 +546,143 @@ h1 .fl { transform: none; background: none; padding: 0; color: var(--acid); }
 @media (max-width: 700px) { .steps3 { grid-template-columns: 1fr; } }
 
 
+
+/* =========================================================================
+   Fond « Bleu métal » — PR31, 20 octobre 2026
+   Fond en dégradé sur toute la hauteur de la page : bleu nuit en haut,
+   bleu acier de plus en plus clair en descendant. Par-dessus, des reflets
+   brossés et des éclats de lumière qui glissent au scroll (--sp, de 0 à 1,
+   posé par app.js), des objets chromés en 3D dans le décor de l'accueil,
+   des cartes en métal biseauté qui s'inclinent sous la souris et un texte
+   chromé pour « flemme ».
+   ========================================================================= */
+:root {
+  --metal-top: #030916; --metal-mid: #0d2550; --metal-low: #1a4790; --metal-end: #2c66bb;
+  --chrome: linear-gradient(180deg, #ffffff 0%, #dce9ff 30%, #7cb0f7 48%, #2758a8 52%, #a5ccff 70%, #ffffff 100%);
+  --steel: linear-gradient(180deg, #f3f8ff 0%, #a5ccff 42%, #3572d0 50%, #7cb0f7 78%, #cfe2ff 100%);
+  --bevel: linear-gradient(140deg, rgba(255, 255, 255, .7), rgba(165, 204, 255, .18) 30%, rgba(3, 9, 22, .5) 62%, rgba(165, 204, 255, .55));
+  --glass: rgba(9, 22, 48, .66);
+  --surface: rgba(9, 22, 48, .72); --surface-hover: rgba(20, 44, 87, .8);
+  --line: rgba(165, 204, 255, .22);
+  --relief: inset 0 1px 0 rgba(255, 255, 255, .28), inset 0 -1px 0 rgba(0, 0, 0, .45), 0 2px 0 rgba(3, 9, 22, .6), 0 28px 60px -24px rgba(0, 0, 0, .85), 0 12px 30px -18px rgba(83, 144, 234, .55);
+  --glow: var(--relief);
+  --sp: 0;
+}
+/* Pas de fond sur html : celui de body couvre alors toute la page (et passe sous le décor fixe). */
+html { background: none; }
+body {
+  /* Le dégradé couvre toute la page : il s'éclaircit à mesure qu'on descend. */
+  background:
+    radial-gradient(120% 60% at 50% 0%, rgba(83, 144, 234, .28), transparent 60%),
+    linear-gradient(180deg, var(--metal-top) 0%, #061331 14%, var(--metal-mid) 34%, #163f80 58%, var(--metal-low) 78%, var(--metal-end) 100%);
+  background-color: var(--metal-top);
+}
+/* Reflets : métal brossé + éclats de lumière qui glissent avec le scroll */
+body::before, body::after { content: ""; position: fixed; inset: -50% -20%; z-index: -1; pointer-events: none; }
+body::before {
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, .025) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, .06) 0 1px, transparent 1px 4px);
+  mix-blend-mode: overlay;
+}
+body::after {
+  background:
+    linear-gradient(115deg, transparent 30%, rgba(207, 226, 255, .16) 42%, rgba(255, 255, 255, .28) 45%, rgba(207, 226, 255, .1) 48%, transparent 60%),
+    linear-gradient(115deg, transparent 62%, rgba(165, 204, 255, .12) 70%, transparent 76%),
+    radial-gradient(40% 30% at 85% 20%, rgba(165, 204, 255, .18), transparent 70%);
+  transform: translate3d(calc(var(--sp) * -20%), calc(var(--sp) * -18%), 0);
+  mix-blend-mode: screen;
+  will-change: transform;
+}
+
+/* Décor 3D de l'accueil : sphères et anneau chromés, en parallaxe */
+.metal-scene { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; perspective: 900px; }
+.metal-scene i { position: absolute; display: block; border-radius: 50%; will-change: transform; }
+.metal-scene .orb {
+  background:
+    radial-gradient(circle at 32% 28%, #ffffff 0%, #e6f0ff 7%, #a5ccff 18%, #3572d0 42%, #0d2550 70%, #030916 100%);
+  box-shadow: inset -18px -24px 40px rgba(3, 9, 22, .7), inset 10px 12px 24px rgba(255, 255, 255, .35), 0 40px 80px -30px rgba(0, 0, 0, .9);
+}
+.metal-scene .o1 { width: 220px; height: 220px; top: 14vh; left: -60px; transform: translate3d(0, calc(var(--sy, 0) * -0.25px), 0); }
+.metal-scene .o2 { width: 120px; height: 120px; top: 62vh; right: 6vw; transform: translate3d(0, calc(var(--sy, 0) * -0.5px), 0); }
+.metal-scene .o3 { width: 56px; height: 56px; top: 30vh; right: 24vw; opacity: .9; transform: translate3d(0, calc(var(--sy, 0) * -0.8px), 0); }
+.metal-scene .ring {
+  width: 340px; height: 340px; top: 48vh; left: 8vw; border-radius: 50%;
+  border: 14px solid transparent;
+  background: var(--chrome) border-box;
+  -webkit-mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0); mask-composite: exclude;
+  opacity: .55; filter: drop-shadow(0 20px 30px rgba(0, 0, 0, .6));
+  transform: translate3d(0, calc(var(--sy, 0) * -0.35px), 0) rotateX(68deg) rotateZ(calc(var(--sy, 0) * .08deg));
+}
+@media (max-width: 700px) {
+  .metal-scene .o1 { width: 140px; height: 140px; left: -50px; }
+  .metal-scene .o2 { width: 80px; height: 80px; right: -20px; }
+  .metal-scene .ring { width: 220px; height: 220px; left: -40px; border-width: 10px; }
+}
+
+footer { color: var(--g100); }
+.live-clock { box-shadow: none; }
+
+/* En-tête : verre teinté au-dessus du métal */
+@media (min-width: 701px) { header { background: rgba(3, 9, 22, .55); border-bottom-color: rgba(165, 204, 255, .18); } }
+
+/* Texte chromé : « flemme » brille, les grands titres ont du relief */
+h1 .fl, footer b {
+  background: var(--chrome); background-size: 100% 220%; background-position: 50% 0;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 2px 0 #0d2550) drop-shadow(0 14px 22px rgba(0, 0, 0, .55));
+  animation: chrome-shine 6s ease-in-out infinite alternate;
+}
+@keyframes chrome-shine { to { background-position: 50% 100%; } }
+:is(h1, h2) { text-shadow: 0 1px 0 rgba(255, 255, 255, .15), 0 3px 0 rgba(3, 9, 22, .55), 0 18px 30px rgba(0, 0, 0, .45); }
+h1 .fl { text-shadow: none; }
+
+/* Surfaces en métal biseauté : bord chromé, reflet, ombre portée */
+:is(.ask, .cat-head, .card, .ambassador-panel, .capabilities, .ambition-grid li, .steps3 li) {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, .1) 45%, transparent 55%) 120% 0 / 250% 100% no-repeat padding-box,
+    linear-gradient(180deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, 0) 40%, rgba(0, 0, 0, .12)) padding-box,
+    linear-gradient(var(--glass), var(--glass)) padding-box,
+    var(--bevel) border-box;
+  -webkit-backdrop-filter: blur(10px) saturate(140%); backdrop-filter: blur(10px) saturate(140%);
+  box-shadow: var(--relief);
+  transition: background-position .8s ease, transform .25s ease, box-shadow .25s ease;
+}
+:is(.cat-head, .card, .ambition-grid li, .steps3 li):hover { background-position: -40% 0, 0 0, 0 0, 0 0; }
+.cat-head:hover { background-color: transparent; }
+.brigade-panel {
+  border: 1px solid transparent;
+  background: linear-gradient(160deg, #2758a8, #142c57 60%, #0d2550) padding-box, var(--bevel) border-box;
+  box-shadow: var(--relief);
+}
+.ask:focus-within { box-shadow: var(--relief), 0 0 0 3px rgba(165, 204, 255, .35); }
+
+/* Inclinaison 3D sous la souris (classe .tilt posée par app.js) */
+.tilt { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(var(--lift, 0)); transform-style: preserve-3d; }
+.tilt:hover { --lift: -4px; }
+
+/* Boutons en acier poli */
+.primary {
+  background: var(--steel); color: #061331; border: 1px solid rgba(255, 255, 255, .6);
+  box-shadow: inset 0 1px 0 #fff, inset 0 -2px 0 rgba(13, 37, 80, .45), 0 10px 24px -10px rgba(83, 144, 234, .9), 0 2px 0 rgba(3, 9, 22, .6);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .6);
+}
+.primary:hover { background: var(--steel); filter: brightness(1.12) saturate(1.1); transform: translateY(-1px); color: #061331; }
+:is(.secondary, .head-link, .tool-btn, .cat-toggle) {
+  border: 1px solid transparent;
+  background: linear-gradient(rgba(9, 22, 48, .6), rgba(9, 22, 48, .6)) padding-box, var(--bevel) border-box;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .18), 0 6px 16px -8px rgba(0, 0, 0, .7);
+}
+
+/* Entrée en 3D des blocs au scroll (classe .rise posée par app.js) */
+.rise { opacity: 0; transform: perspective(1000px) rotateX(14deg) translateY(40px); transition: opacity .7s ease, transform .9s cubic-bezier(.2, .7, .2, 1); }
+.rise.up { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  body::after, .metal-scene i { transform: none !important; }
+  h1 .fl, footer b { animation: none; }
+  .tilt { transform: none; }
+  .rise { opacity: 1; transform: none; }
+}

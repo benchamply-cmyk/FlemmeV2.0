@@ -548,6 +548,44 @@ if ('IntersectionObserver' in window) {
   new IntersectionObserver(([e]) => { if (e.isIntersecting) mark('home'); }).observe($('#flemmeForm'));
 }
 
+/* ---------- 8 ter. Bleu métal : reflets au scroll, inclinaison 3D (PR31) ---------- */
+
+{
+  const doc = document.documentElement;
+  const calme = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // --sy : pixels défilés (parallaxe du décor) ; --sp : progression de 0 à 1 (reflets).
+  let ticking = false;
+  const onScroll = () => {
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(() => {
+      const max = Math.max(1, doc.scrollHeight - innerHeight);
+      doc.style.setProperty('--sy', String(Math.round(scrollY)));
+      doc.style.setProperty('--sp', (scrollY / max).toFixed(3));
+      ticking = false;
+    });
+  };
+  if (!calme) { addEventListener('scroll', onScroll, { passive: true }); onScroll(); }
+
+  // Cartes qui s'inclinent sous la souris (ordinateur uniquement).
+  if (!calme && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    $$('.cat-head, .ambition-grid li, .steps3 li, .card').forEach(el => {
+      el.classList.add('tilt');
+      el.addEventListener('pointermove', e => {
+        const r = el.getBoundingClientRect();
+        el.style.setProperty('--ry', ((e.clientX - r.left) / r.width - .5) * 10 + 'deg');
+        el.style.setProperty('--rx', ((e.clientY - r.top) / r.height - .5) * -10 + 'deg');
+      });
+      el.addEventListener('pointerleave', () => { el.style.removeProperty('--rx'); el.style.removeProperty('--ry'); });
+    });
+  }
+
+  // Les blocs de l'accueil se redressent en 3D quand ils entrent à l'écran.
+  if (!calme && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('up'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -10% 0px' });
+    $$('#home > .ideas, #home > .editorial, #home > .ambitions, .steps3').forEach(el => { el.classList.add('rise'); io.observe(el); });
+  }
+}
+
 /* ---------- 9. Textes modifiables depuis /admin ---------- */
 
 (() => {

@@ -1,9 +1,9 @@
 'use strict';
-// Sélecteur de variantes UI/UX de l'aperçu (PR29). N'est pas chargé sur le site.
+// Sélecteur de variantes UI/UX de l'aperçu (PR29, PR31). N'est pas chargé sur le site.
 (() => {
   const root = document.documentElement;
   const VARIANTES = {
-    actuel: ['A · Site', 'Le site tel qu’il est dans la PR29 (identique à la preview Netlify) : E + Gamme Glacier. B à E repartent de l’ancienne base V4.100 pour comparer.'],
+    actuel: ['A · Site', 'Le site tel qu’il est dans la PR31 (identique à la preview Netlify) : E + Gamme Glacier, avec le fond choisi ci-dessous. B à E repartent de l’ancienne base V4.100 pour comparer.'],
     nuit: ['B · Nuit', 'Fond encre, texte clair, vert et violet lumineux. Plus « app », reposant le soir, fort impact du titre.'],
     affiche: ['C · Affiche', 'Bandeau de couleur plein écran derrière le titre, angles vifs, aplats violets et noirs. Le plus affirmé, façon affiche de rue.'],
     aere: ['D · Aéré', 'Bords fins, ombres douces, boutons arrondis, plus d’espace entre les blocs. Plus calme et rassurant, moins « bêta ».'],
@@ -25,12 +25,19 @@
   // Panneau
   const panel = document.createElement('details');
   panel.className = 'vx-panel'; panel.open = innerWidth > 700;
-  panel.innerHTML = '<summary>Variantes UI/UX · PR29</summary><div class="vx-body"><div class="vx-seg" role="group" aria-label="Variante visuelle"></div><p class="vx-desc"></p><h4>Options UX (combinables)</h4></div>';
+  panel.innerHTML = '<summary>Variantes UI/UX · PR31</summary><div class="vx-body"><div class="vx-seg" role="group" aria-label="Variante visuelle"></div><p class="vx-desc"></p><h4>Options UX (combinables)</h4></div>';
   const seg = panel.querySelector('.vx-seg'), desc = panel.querySelector('.vx-desc'), body = panel.querySelector('.vx-body');
   // « A · Site » = le site publié (bloc E + Gamme Glacier de styles.css, isolé dans <style id="vx-site">).
   // Les autres variantes coupent ce bloc et se superposent à la base V4.100, comme au départ.
   const siteSheet = document.getElementById('vx-site');
-  let curV = 'actuel', curA = 'gamme';
+  // Fond « Bleu métal » (PR31) : seulement sur « A · Site », coupable pour comparer avec le Glacier uni.
+  const metalSheet = document.getElementById('vx-metal'), scene = document.querySelector('.metal-scene');
+  let curV = 'actuel', curA = 'gamme', curF = 'metal';
+  const applyFond = () => {
+    const on = curV === 'actuel' && curF === 'metal';
+    if (metalSheet) metalSheet.disabled = !on;
+    if (scene) scene.hidden = !on;
+  };
   const applyAccent = () => {
     const a = curA;
     if (curV === 'actuel' ? a === 'gamme' : a === 'vert') root.removeAttribute('data-accent');
@@ -41,7 +48,7 @@
     if (siteSheet) siteSheet.disabled = v !== 'actuel';
     if (v === 'actuel') root.removeAttribute('data-v'); else root.setAttribute('data-v', v);
     seg.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === v));
-    desc.textContent = VARIANTES[v][1]; applyAccent();
+    desc.textContent = VARIANTES[v][1]; applyAccent(); applyFond();
   };
   for (const [v, [nom]] of Object.entries(VARIANTES)) {
     const b = document.createElement('button'); b.type = 'button'; b.dataset.v = v; b.textContent = nom;
@@ -62,9 +69,16 @@
     ['600', '#3572d0', 'focus, étiquettes, point du logo'], ['700', '#2758a8', '« Pas nous. », ombres pleines'], ['800', '#1e4280', 'bloc Brigade (nuit)'], ['900', '#142c57', 'bandeau défilant, fonds nuit']];
   const gm = document.createElement('div'); gm.className = 'vx-gamme';
   for (const [n, hex, role] of GAMME) { const c = document.createElement('span'); c.style.background = hex; c.dataset.r = n + ' · ' + hex + ' · ' + role; c.title = c.dataset.r; gm.append(c); }
+  const hF = document.createElement('h4'); hF.textContent = 'Fond (A · Site)';
+  const fs = document.createElement('div'); fs.className = 'vx-seg'; fs.setAttribute('role', 'group'); fs.setAttribute('aria-label', 'Fond');
+  for (const [f, nom] of [['metal', 'Bleu métal · PR31'], ['uni', 'Glacier uni · PR30']]) {
+    const b = document.createElement('button'); b.type = 'button'; b.dataset.f = f; b.textContent = nom;
+    b.onclick = () => { curF = f; fs.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x.dataset.f === f)); applyFond(); };
+    b.setAttribute('aria-pressed', f === curF); fs.append(b);
+  }
   const hA = document.createElement('h4'); hA.textContent = 'Couleur d’accent';
-  body.querySelector('h4').before(hA, sw, gm);
-  // Rien n'est mémorisé : chaque ouverture repart du site tel qu'il est dans la PR29.
+  body.querySelector('h4').before(hF, fs, hA, sw, gm);
+  // Rien n'est mémorisé : chaque ouverture repart du site tel qu'il est dans la PR31.
   setA('gamme');
   for (const [k, txt] of Object.entries(UX)) {
     const l = document.createElement('label'), c = document.createElement('input');
