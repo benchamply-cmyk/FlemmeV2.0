@@ -1,0 +1,30 @@
+<!doctype html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#57d68d"><title>Contact — Flemme</title><meta name="description" content="Une question, une idée, un souci ? Écris à l’équipe Flemme."><link rel="canonical" href="https://www.flemme.org/contact.html"><link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" type="image/png" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="espace.css"></head><body>
+<header><a class="logo" href="./">FLEMME<span>.</span></a><div class="head-right"><a class="head-link" href="./">Accueil</a></div></header>
+<main>
+<section class="card-screen" aria-labelledby="contactTitle">
+<div class="card">
+<div id="contactBox">
+<div class="eyebrow">Contact</div>
+<h2 id="contactTitle" tabindex="-1">Écris-nous.</h2>
+<p>Une question, une idée, un souci&#8239;? Ton message arrive directement à l’équipe Flemme. On te répond par e-mail.</p>
+<form id="contactForm" name="contact" method="POST" action="/contact.html" data-netlify="true" netlify-honeypot="bot-field">
+<input type="hidden" name="form-name" value="contact"><p class="hp" aria-hidden="true"><label>Ne pas remplir <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+<label for="cMail">Ton e-mail</label><input id="cMail" name="email" type="email" autocomplete="email" maxlength="120" required placeholder="toi@exemple.fr">
+<label for="cSubject">Objet</label><input id="cSubject" name="objet" type="text" maxlength="120" required>
+<label for="cMsg">Ton message</label><textarea id="cMsg" name="message" maxlength="5000" required></textarea>
+<p class="err" id="contactErr" role="alert" hidden></p>
+<button type="submit" class="primary full" id="contactSend">Envoyer →</button>
+</form>
+<small>Évite les informations sensibles. <a href="confidentialite.html">Confidentialité</a></small>
+</div>
+<div id="contactDone" hidden>
+<div class="success">✓</div>
+<h2 tabindex="-1">Message envoyé.</h2>
+<p>Merci&#8239;! L’équipe Flemme te répond par e-mail dès que possible.</p>
+<a class="secondary btn-link full" href="./">Retour à l’accueil</a>
+</div>
+</div>
+</section>
+</main>
+<footer><b>FLEMME.</b><span>Les besoins du quotidien. La suite, avec toi.</span><nav><a href="mentions.html">Mentions légales</a><a href="confidentialite.html">Confidentialité</a><a href="rejoindre.html">Rejoindre la Brigade</a></nav></footer>
+<script src="content.js" defer></script><script src="contact.js" defer></script></body></html>
