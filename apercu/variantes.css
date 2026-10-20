@@ -21,7 +21,7 @@ html[data-v~="nuit"] :is(.cat-head, .ask) { box-shadow: 5px 5px 0 var(--violet);
 
 /* ---------- C · Affiche : aplats de couleur, angles vifs, contrastes forts ---------- */
 html[data-v="affiche"] { --paper: #f4f1e8; --soft: #fff; }
-html[data-v="affiche"] *:not(.live-dot) { border-radius: 0 !important; }
+html[data-v="affiche"] *:not(.live-dot, .vx-panel, .vx-panel *) { border-radius: 0 !important; }
 html[data-v="affiche"] #home { max-width: none; padding: 0; margin-top: 0; }
 html[data-v="affiche"] #home > :where(h1, .lead, form, .guide-cta, .vx-chips) { max-width: 1120px; margin-left: auto; margin-right: auto; padding-left: 24px; padding-right: 24px; }
 html[data-v="affiche"] #home > h1 { margin-top: 0; margin-bottom: 0; padding-top: 48px; padding-bottom: 24px; background: var(--acid); max-width: none; padding-left: max(24px, calc(50vw - 536px)); }
@@ -94,3 +94,15 @@ html[data-v="nuit aere"] .ask:focus-within { border-color: var(--violet); }
 html[data-v="nuit aere"] h1 .fl { color: var(--acid); }
 html[data-v="nuit aere"] .hero h1 { text-shadow: none; }
 html[data-v="nuit aere"] .vx-marquee { background: var(--soft); color: var(--ink); }
+
+/* ---------- Couleur d'accent : bleus à la place du vert (combinables avec toutes les variantes) ---------- */
+html[data-accent="azur"] { --acid: #4cc2ff; }
+html[data-accent="electrique"] { --acid: #5b8cff; }
+html[data-accent="cyan"] { --acid: #2fdde8; }
+html[data-accent="glacier"] { --acid: #a5ccff; }
+html[data-accent="lagon"] { --acid: #3fb6c8; }
+
+.vx-swatches { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 4px; }
+.vx-swatches button { display: inline-flex; align-items: center; gap: 6px; font: 600 12px system-ui, sans-serif; padding: 5px 9px 5px 5px; border: 1.5px solid #16131f; border-radius: 999px; background: #fff; color: #16131f; cursor: pointer; text-transform: none; letter-spacing: 0; }
+.vx-swatches button[aria-pressed="true"] { background: #16131f; color: #fff; }
+.vx-swatches i { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .25); }

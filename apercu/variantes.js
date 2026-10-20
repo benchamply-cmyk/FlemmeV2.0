@@ -5,9 +5,14 @@
   const VARIANTES = {
     actuel: ['A · Actuel', 'Le design V4.100 tel quel : fond lavande, cartes à bord épais et ombres pleines, typo « Affiche condensée ».'],
     nuit: ['B · Nuit', 'Fond encre, texte clair, vert et violet lumineux. Plus « app », reposant le soir, fort impact du titre.'],
-    affiche: ['C · Affiche', 'Bandeau vert plein écran derrière le titre, angles vifs, aplats violets et noirs. Le plus affirmé, façon affiche de rue.'],
+    affiche: ['C · Affiche', 'Bandeau de couleur plein écran derrière le titre, angles vifs, aplats violets et noirs. Le plus affirmé, façon affiche de rue.'],
     aere: ['D · Aéré', 'Bords fins, ombres douces, boutons arrondis, plus d’espace entre les blocs. Plus calme et rassurant, moins « bêta ».'],
-    'nuit aere': ['E · B+D', 'Le mélange B + D : fond encre et accents lumineux de B, avec les bords fins, les ombres douces, les boutons arrondis et l’espace de D. Le mot « flemme » passe en vert.'],
+    'nuit aere': ['E · B+D', 'Le mélange B + D : fond encre et accents lumineux de B, avec les bords fins, les ombres douces, les boutons arrondis et l’espace de D. Le mot « flemme » prend la couleur d’accent.'],
+  };
+  // Couleur d'accent : le vert de la marque ou une nuance de bleu.
+  const ACCENTS = {
+    vert: ['Vert', '#57d68d'], azur: ['Azur', '#4cc2ff'], electrique: ['Électrique', '#5b8cff'],
+    cyan: ['Cyan', '#2fdde8'], lagon: ['Lagon', '#3fb6c8'], glacier: ['Glacier', '#a5ccff'],
   };
   const UX = {
     chips: 'Exemples cliquables sous le champ (un clic remplit la demande)',
@@ -31,6 +36,18 @@
     const b = document.createElement('button'); b.type = 'button'; b.dataset.v = v; b.textContent = nom;
     b.onclick = () => setV(v); seg.append(b);
   }
+  const sw = document.createElement('div'); sw.className = 'vx-swatches'; sw.setAttribute('role', 'group'); sw.setAttribute('aria-label', 'Couleur d’accent');
+  const setA = a => {
+    if (a === 'vert') root.removeAttribute('data-accent'); else root.setAttribute('data-accent', a);
+    sw.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.a === a)); store.set('accent', a);
+  };
+  for (const [a, [nom, hex]] of Object.entries(ACCENTS)) {
+    const b = document.createElement('button'), i = document.createElement('i');
+    b.type = 'button'; b.dataset.a = a; i.style.background = hex; b.append(i, nom); b.onclick = () => setA(a); sw.append(b);
+  }
+  const hA = document.createElement('h4'); hA.textContent = 'Couleur d’accent';
+  body.querySelector('h4').before(hA, sw);
+  setA(ACCENTS[store.get('accent')] ? store.get('accent') : 'vert');
   for (const [k, txt] of Object.entries(UX)) {
     const l = document.createElement('label'), c = document.createElement('input');
     c.type = 'checkbox'; c.checked = store.get('ux-' + k) === '1';
