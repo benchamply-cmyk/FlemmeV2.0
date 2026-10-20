@@ -7,6 +7,7 @@
     nuit: ['B · Nuit', 'Fond encre, texte clair, vert et violet lumineux. Plus « app », reposant le soir, fort impact du titre.'],
     affiche: ['C · Affiche', 'Bandeau vert plein écran derrière le titre, angles vifs, aplats violets et noirs. Le plus affirmé, façon affiche de rue.'],
     aere: ['D · Aéré', 'Bords fins, ombres douces, boutons arrondis, plus d’espace entre les blocs. Plus calme et rassurant, moins « bêta ».'],
+    'nuit aere': ['E · B+D', 'Le mélange B + D : fond encre et accents lumineux de B, avec les bords fins, les ombres douces, les boutons arrondis et l’espace de D. Le mot « flemme » passe en vert.'],
   };
   const UX = {
     chips: 'Exemples cliquables sous le champ (un clic remplit la demande)',
