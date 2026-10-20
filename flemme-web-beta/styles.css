@@ -374,3 +374,15 @@ header { height: auto; min-height: 74px; flex-wrap: wrap; gap: 12px 24px; paddin
 .site-nav a:hover, .site-nav a:focus-visible { background: var(--acid); }
 #services, #ambassadors, #brigade { scroll-margin-top: 24px; }
 @media (max-width: 600px) { .site-nav { order: 3; flex-basis: 100%; gap: 4px; } .site-nav a { font-size: 14px; padding: 8px 10px; } }
+
+/* Services disponibles et ambitions — 20 octobre 2026 */
+#services .cat-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.ambitions { margin-top: 80px; padding-top: 40px; border-top: 2px solid var(--ink); }
+.ambitions-intro { max-width: 720px; color: var(--muted); line-height: 1.6; }
+.ambition-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; padding: 0; list-style: none; margin: 28px 0; }
+.ambition-grid li { padding: 24px; background: var(--soft); border: 2px dashed var(--violet); border-radius: 22px; }
+.ambition-status { display: inline-block; color: var(--violet); font: 12px var(--mono); text-transform: uppercase; letter-spacing: .08em; }
+.ambition-grid h3 { margin: 14px 0 0; font-size: 21px; line-height: 1.2; letter-spacing: -.02em; }
+.ambitions-more { font-size: 22px; font-weight: 800; color: var(--violet); }
+@media (max-width: 900px) { #services .cat-grid, .ambition-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { #services .cat-grid, .ambition-grid { grid-template-columns: 1fr; } .ambitions { margin-top: 56px; } }
