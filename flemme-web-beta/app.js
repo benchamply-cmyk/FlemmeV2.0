@@ -114,8 +114,17 @@ addEventListener('popstate', () => {
 // Date et heure en direct sous le titre des services disponibles.
 const liveClock = document.getElementById('liveClock');
 if (liveClock) {
-  const fmt = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  const tick = () => { const now = new Date(); liveClock.dateTime = now.toISOString(); liveClock.textContent = fmt.format(now).replace(' à ', ' · '); };
+  // Format compact : « mar. 20 oct. » · « 19:50 » · « 52 » (secondes en discret).
+  const fmtDate = new Intl.DateTimeFormat('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
+  const two = n => String(n).padStart(2, '0');
+  const [dEl, tEl, sEl] = liveClock.children;
+  const tick = () => {
+    const now = new Date();
+    liveClock.dateTime = now.toISOString();
+    dEl.textContent = fmtDate.format(now);
+    tEl.textContent = two(now.getHours()) + ':' + two(now.getMinutes());
+    sEl.textContent = two(now.getSeconds());
+  };
   tick();
   setInterval(tick, 1000);
 }
@@ -502,6 +511,42 @@ window.flemmePrefill = d => {
   if ([...when.options].some(o => o.value === d.echeance)) when.value = d.echeance;
   if (d.precisions) $('#precisions').value = d.precisions;
 };
+
+/* ---------- 8 bis. Aides de l'accueil (PR29) ---------- */
+
+// Exemples cliquables : un clic remplit la demande avec l'exemple d'un service.
+(() => {
+  const box = $('#exampleChips');
+  const ex = (FL.categories.groupes || []).flatMap(g => (g.sous || []).map(c => c.exemple)).filter(Boolean).slice(0, 5);
+  ex.forEach(t => {
+    const li = el('li', ''), b = el('button', '', t);
+    b.type = 'button';
+    b.addEventListener('click', () => { taskInput.value = t; saveDraft(); updateHelp(); taskInput.focus(); });
+    li.append(b); box.append(li);
+  });
+})();
+
+// Aide à l'écriture : une jauge qui se remplit avec la précision du message.
+const helpBox = $('#writeHelp');
+const HELP = [[0, 'Plus tu es précis, mieux on t’aide.'], [25, 'Bien ! Ajoute où, quand ou ton budget.'], [80, 'Parfait, on a de quoi avancer.']];
+function updateHelp() {
+  const n = taskInput.value.trim().length;
+  helpBox.style.setProperty('--p', Math.min(100, n / 1.2) + '%');
+  helpBox.querySelector('span').textContent = HELP.filter(([min]) => n >= min).pop()[1];
+}
+taskInput.addEventListener('input', updateHelp);
+updateHelp();
+
+if ('IntersectionObserver' in window) {
+  // Menu : souligne la section en cours (Accueil tant que le formulaire est visible).
+  const navLinks = $$('.site-nav a[data-section]');
+  const mark = id => navLinks.forEach(a => a.classList.toggle('current', a.dataset.section === id));
+  // « Notre ambition » fait partie des Services dans le menu.
+  const sectionOf = { ambitions: 'services' };
+  const spy = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) mark(sectionOf[e.target.id] || e.target.id); }), { rootMargin: '-45% 0px -50% 0px' });
+  ['services', 'ambitions', 'ambassadors', 'brigade'].forEach(id => { const s = document.getElementById(id); if (s) spy.observe(s); });
+  new IntersectionObserver(([e]) => { if (e.isIntersecting) mark('home'); }).observe($('#flemmeForm'));
+}
 
 /* ---------- 9. Textes modifiables depuis /admin ---------- */
 

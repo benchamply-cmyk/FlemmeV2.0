@@ -1,0 +1,187 @@
+/* =========================================================================
+   Variantes UI/UX (PR29) — chargées seulement dans l'aperçu.
+   Chaque variante est une surcouche de styles.css, activée par
+   <html data-v="…">. Les options UX s'activent par <html data-ux-…>.
+   ========================================================================= */
+
+/* ---------- B · Nuit : fond encre, vert et violet lumineux ---------- */
+html[data-v~="nuit"] {
+  --ink: #f3f0ff; --paper: #0f0d17; --muted: #b9b3d6; --line: #f3f0ff;
+  --soft: #1b1828; --violet: #a99bff; --acid: #5ff0a0; color-scheme: dark;
+}
+html[data-v~="nuit"] body { background: var(--paper); color: var(--ink); }
+html[data-v~="nuit"] :is(.ask, .cat-head, .live-clock, .card, .ambassador-panel, .brigade-panel, .capabilities, select, input, textarea) { background: #17142a; color: var(--ink); }
+html[data-v~="nuit"] .lead { color: var(--muted); }
+html[data-v~="nuit"] :is(.head-link, .tool-btn, .cat-toggle, .vx-chips button) { background: transparent; color: var(--ink); border-color: var(--ink); }
+html[data-v~="nuit"] .primary { background: var(--acid); color: #0f0d17; border-color: var(--acid); }
+html[data-v~="nuit"] .secondary { background: transparent; color: var(--ink); }
+html[data-v~="nuit"] h1 .fl { color: #0f0d17; }
+html[data-v~="nuit"] .hero h1 { text-shadow: 0 0 40px rgba(169, 155, 255, .25); }
+html[data-v~="nuit"] :is(.cat-head, .ask) { box-shadow: 5px 5px 0 var(--violet); border-color: var(--violet); }
+
+/* ---------- C · Affiche : aplats de couleur, angles vifs, contrastes forts ---------- */
+html[data-v="affiche"] { --paper: #f4f1e8; --soft: #fff; }
+html[data-v="affiche"] *:not(.live-dot, .vx-panel, .vx-panel *) { border-radius: 0 !important; }
+html[data-v="affiche"] #home { max-width: none; padding: 0; margin-top: 0; }
+html[data-v="affiche"] #home > :where(h1, .lead, form, .guide-cta, .vx-chips) { max-width: 1120px; margin-left: auto; margin-right: auto; padding-left: 24px; padding-right: 24px; }
+html[data-v="affiche"] #home > h1 { margin-top: 0; margin-bottom: 0; padding-top: 48px; padding-bottom: 24px; background: var(--acid); max-width: none; padding-left: max(24px, calc(50vw - 536px)); }
+html[data-v="affiche"] #home > .lead { max-width: none; background: var(--acid); padding: 0 max(24px, calc(50vw - 536px)) 56px; margin: 0 0 -32px; padding-top: 0; color: var(--ink); font-weight: 600; }
+html[data-v="affiche"] #home > form { position: relative; z-index: 1; }
+html[data-v="affiche"] #home > section { max-width: 1120px; margin-left: auto; margin-right: auto; padding-left: 24px; padding-right: 24px; }
+html[data-v="affiche"] h1 .fl { background: var(--ink); color: var(--acid); transform: none; }
+html[data-v="affiche"] .hero h1 .not-us { color: var(--violet); }
+html[data-v="affiche"] :is(.cat-head, .ask) { border-width: 3px; box-shadow: 8px 8px 0 var(--ink); }
+html[data-v="affiche"] .cat-head:hover { background: var(--ink); color: var(--paper); }
+html[data-v="affiche"] .ambition-grid li { background: var(--violet); color: #fff; border: 0; }
+html[data-v="affiche"] .ambition-status { color: var(--acid); }
+html[data-v="affiche"] .brigade-panel { background: var(--ink); color: var(--paper); }
+html[data-v="affiche"] .brigade-panel .eyebrow { color: var(--acid); }
+
+/* ---------- D · Aéré : bords fins, ombres douces, plus d'espace ---------- */
+html[data-v~="aere"] { --paper: #faf9f6; --soft: #f1effa; --line: #e3e0ee; }
+html[data-v~="aere"] :is(.ask, .cat-head, .live-clock, .card, .cat-toggle, .ambition-grid li, .secondary, .primary, .ambassador-panel, .brigade-panel) { border-width: 1px; box-shadow: 0 1px 2px rgba(22, 19, 31, .06), 0 12px 32px -12px rgba(58, 47, 160, .18); }
+html[data-v~="aere"] :is(.ask, .cat-head, .ambition-grid li) { border-color: var(--line); border-style: solid; }
+html[data-v~="aere"] .ask { border-radius: 28px; }
+html[data-v~="aere"] .cat-head { border-radius: 24px; transition: transform .2s, box-shadow .2s; }
+html[data-v~="aere"] .cat-head:hover { transform: translateY(-3px); background: #fff; }
+html[data-v~="aere"] .primary { border-radius: 999px; }
+html[data-v~="aere"] .ideas, html[data-v~="aere"] .editorial { margin-top: 120px; }
+html[data-v~="aere"] .hero { text-align: center; }
+html[data-v~="aere"] .hero .lead { margin-left: auto; margin-right: auto; }
+html[data-v~="aere"] h1 .fl { transform: none; background: none; color: var(--violet); padding: 0; }
+html[data-v~="aere"] .ambitions { border-top: 1px solid var(--line); }
+
+/* ---------- Options UX ---------- */
+/* Exemples cliquables sous le champ */
+.vx-chips { display: none; flex-wrap: wrap; gap: 8px; margin: 16px 0 0; padding: 0; list-style: none; }
+html[data-ux-chips] .vx-chips { display: flex; }
+.vx-chips button { font: 14px var(--text); padding: 8px 14px; border: 2px solid var(--ink); border-radius: 999px; background: var(--soft); color: var(--ink); cursor: pointer; }
+.vx-chips button:hover { background: var(--acid); color: #11120e; }
+
+/* Bandeau défilant des services */
+.vx-marquee { display: none; overflow: hidden; margin: 40px 0 0; padding: 14px 0; background: var(--ink); color: var(--paper); font: 900 26px var(--display); font-stretch: 62%; text-transform: uppercase; white-space: nowrap; }
+html[data-ux-marquee] .vx-marquee { display: block; }
+.vx-marquee div { display: inline-block; animation: vx-defile 40s linear infinite; }
+.vx-marquee span::after { content: "✶"; margin: 0 22px; color: var(--acid); }
+@keyframes vx-defile { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .vx-marquee div { animation: none; } }
+
+/* Bouton d'action collant (apparaît quand le champ est hors de l'écran) */
+.vx-sticky { display: none; position: fixed; z-index: 40; left: 50%; bottom: 16px; transform: translateX(-50%); }
+html[data-ux-sticky] .vx-sticky.show { display: block; }
+.vx-sticky .primary { box-shadow: 4px 4px 0 var(--ink); white-space: nowrap; }
+
+/* En-tête collant et flouté */
+@media (min-width: 701px) { html[data-ux-header] header { position: sticky; top: 0; z-index: 30; max-width: none; padding-left: max(24px, calc(50vw - 656px)); padding-right: max(24px, calc(50vw - 656px)); background: color-mix(in srgb, var(--paper) 78%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent); } }
+
+/* Menu : section en cours */
+html[data-ux-spy] .site-nav a.vx-current { box-shadow: inset 0 -3px 0 var(--acid); border-radius: 0; }
+
+/* Parcours en 3 étapes */
+.vx-steps { display: none; counter-reset: vx; list-style: none; padding: 0; margin: 40px 0 0; gap: 16px; grid-template-columns: repeat(3, minmax(0, 1fr)); text-align: left; }
+html[data-ux-steps] .vx-steps { display: grid; }
+.vx-steps li { counter-increment: vx; display: grid; gap: 6px; padding: 18px 20px; border: 1px solid var(--line); border-radius: 20px; }
+.vx-steps li::before { content: counter(vx); font: 800 30px var(--display); font-stretch: 62%; color: var(--violet); }
+.vx-steps b { font: 800 22px var(--display); font-stretch: 62%; text-transform: uppercase; }
+.vx-steps span { color: var(--muted); line-height: 1.45; }
+@media (max-width: 700px) { .vx-steps { grid-template-columns: 1fr; } }
+
+/* Réassurance */
+.vx-reassure { display: none; margin: 10px 8px 4px; text-align: right; font: 13px var(--mono); color: var(--muted); }
+html[data-ux-reassure] .vx-reassure { display: block; }
+
+/* Aide à l'écriture */
+.vx-helper { display: none; align-items: center; gap: 12px; padding: 0 18px 10px; font-size: 14px; color: var(--muted); }
+html[data-ux-helper] .vx-helper { display: flex; }
+.vx-helper i { --p: 0%; flex: 0 0 120px; height: 6px; border-radius: 99px; background: linear-gradient(90deg, var(--acid) var(--p), color-mix(in srgb, var(--line) 70%, transparent) var(--p)); transition: background .2s; }
+
+/* Bouton clair / sombre */
+.vx-theme { display: none; cursor: pointer; }
+html[data-ux-theme] .vx-theme { display: inline-flex; }
+
+/* ---------- Sélecteur de variantes (outil d'aperçu, pas le site) ---------- */
+.vx-panel { position: fixed; z-index: 50; right: 12px; bottom: 12px; width: min(330px, calc(100vw - 24px)); font: 13px/1.4 system-ui, sans-serif; color: #16131f; background: #fff; border: 2px solid #16131f; border-radius: 14px; box-shadow: 4px 4px 0 #16131f; letter-spacing: 0; text-transform: none; }
+.vx-panel summary { cursor: pointer; padding: 10px 14px; font-weight: 700; list-style: none; }
+.vx-panel summary::-webkit-details-marker { display: none; }
+.vx-panel summary::after { content: " ▾"; }
+.vx-panel[open] summary::after { content: " ▴"; }
+.vx-body { padding: 0 14px 14px; }
+.vx-seg { display: flex; flex-wrap: wrap; gap: 4px; margin: 0 0 8px; }
+.vx-seg button { flex: 1 0 auto; white-space: nowrap; font: 600 12px system-ui, sans-serif; padding: 7px 8px; border: 1.5px solid #16131f; border-radius: 8px; background: #fff; color: #16131f; cursor: pointer; text-transform: none; letter-spacing: 0; }
+.vx-seg button[aria-pressed="true"] { background: #16131f; color: #fff; }
+.vx-desc { margin: 0 0 10px; color: #4a4560; min-height: 3.6em; }
+.vx-body label { display: flex; gap: 8px; align-items: flex-start; margin: 6px 0; cursor: pointer; }
+.vx-body h4 { margin: 10px 0 4px; font: 700 11px system-ui, sans-serif; text-transform: uppercase; letter-spacing: .08em; color: #6b6585; }
+
+/* ---------- E · Nuit aérée : palette de B, structure de D ---------- */
+html[data-v="nuit aere"] { --paper: #100e19; --soft: #1b1828; --line: #2e2945; }
+html[data-v="nuit aere"] :is(.ask, .cat-head, .live-clock, .card, .cat-toggle, .ambition-grid li, .secondary, .primary, .ambassador-panel, .brigade-panel) { box-shadow: 0 1px 0 rgba(255, 255, 255, .04) inset, 0 18px 40px -16px rgba(169, 155, 255, .28); }
+html[data-v="nuit aere"] :is(.ask, .cat-head, .ambition-grid li, .live-clock, .head-link, .tool-btn, .cat-toggle, .vx-chips button) { border-color: var(--line); }
+html[data-v="nuit aere"] .cat-head:hover { background: #1d1a30; border-color: var(--violet); }
+html[data-v="nuit aere"] .ask:focus-within { border-color: var(--violet); }
+html[data-v="nuit aere"] h1 .fl { color: var(--acid); }
+html[data-v="nuit aere"] .hero h1 { text-shadow: none; }
+html[data-v="nuit aere"] .vx-marquee { background: var(--soft); color: var(--ink); }
+
+/* ---------- Couleur d'accent : bleus à la place du vert (combinables avec toutes les variantes) ---------- */
+html[data-accent="vert"] { --acid: #57d68d; }
+html[data-accent="azur"] { --acid: #4cc2ff; }
+html[data-accent="electrique"] { --acid: #5b8cff; }
+html[data-accent="cyan"] { --acid: #2fdde8; }
+html[data-accent="glacier"] { --acid: #a5ccff; }
+html[data-accent="lagon"] { --acid: #3fb6c8; }
+
+.vx-swatches { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 4px; }
+.vx-swatches button { display: inline-flex; align-items: center; gap: 6px; font: 600 12px system-ui, sans-serif; padding: 5px 9px 5px 5px; border: 1.5px solid #16131f; border-radius: 999px; background: #fff; color: #16131f; cursor: pointer; text-transform: none; letter-spacing: 0; }
+.vx-swatches button[aria-pressed="true"] { background: #16131f; color: #fff; }
+.vx-swatches i { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .25); }
+
+/* ---------- Gamme Glacier : le bleu Glacier décliné en 10 nuances, une par rôle ----------
+   50 #f3f8ff fonds doux · 100 #e6f0ff fond de page · 200 #cfe2ff bordures douces, puces
+   300 #a5ccff accent (Glacier) · 400 #7cb0f7 survol, pastille « en direct » · 500 #5390ea icônes, liens
+   600 #3572d0 focus, étiquettes · 700 #2758a8 « Pas nous. », ombres pleines · 800 #1e4280 · 900 #142c57 encre bleue */
+html[data-accent="gamme"] {
+  --g50: #f3f8ff; --g100: #e6f0ff; --g200: #cfe2ff; --g300: #a5ccff; --g400: #7cb0f7;
+  --g500: #5390ea; --g600: #3572d0; --g700: #2758a8; --g800: #1e4280; --g900: #142c57;
+  --acid: var(--g300); --orange: var(--g300); --violet: var(--g700); --paper: var(--g100); --soft: var(--g50); --ink: #0f1a30; --muted: #3c4a66;
+}
+html[data-accent="gamme"] :focus-visible { outline-color: var(--g600); }
+html[data-accent="gamme"] :is(.eyebrow, .badge, .ambition-status) { color: var(--g600); }
+html[data-accent="gamme"] .cat-head:hover { background: var(--g50); }
+html[data-accent="gamme"] .cat-head > .ico, html[data-accent="gamme"] .cat-head .ico { color: var(--g500); }
+html[data-accent="gamme"] .cat-toggle { background: var(--g100); border-color: var(--g700); }
+html[data-accent="gamme"] .ambition-grid li { background: var(--g50); border-color: var(--g400); }
+html[data-accent="gamme"] .live-dot { background: var(--g400); box-shadow: 0 0 0 0 var(--g400); }
+html[data-accent="gamme"] .vx-chips button { background: var(--g50); border-color: var(--g200); }
+html[data-accent="gamme"] .vx-chips button:hover { background: var(--g200); }
+html[data-accent="gamme"] .secondary:hover { background: var(--g100); }
+html[data-accent="gamme"] .logo span, html[data-accent="gamme"] .ambitions-more { color: var(--g600); }
+html[data-accent="gamme"] .brigade-panel { background: var(--g200); box-shadow: 12px 12px 0 var(--g700); }
+html[data-accent="gamme"] .vx-marquee { background: var(--g900); color: var(--g100); }
+html[data-accent="gamme"] .vx-marquee span::after { color: var(--g300); }
+html[data-accent="gamme"][data-v="affiche"] .ambition-grid li { background: var(--g700); color: #fff; }
+html[data-accent="gamme"][data-v="affiche"] .ambition-status { color: var(--g300); }
+html[data-accent="gamme"][data-v="affiche"] .brigade-panel { background: var(--g900); color: var(--g100); }
+html[data-accent="gamme"][data-v="aere"] .cat-head:hover { background: #fff; }
+/* Sur fond nuit : la gamme s'inverse (fonds 900, textes 100, accents 300 et 200). */
+html[data-accent="gamme"][data-v~="nuit"] {
+  --paper: #0a1427; --soft: var(--g900); --ink: var(--g50); --muted: #a9bddc; --line: #2a4170; --violet: var(--g200);
+}
+html[data-accent="gamme"][data-v~="nuit"] :is(.ask, .cat-head, .live-clock, .card, .ambassador-panel, .capabilities, select, input, textarea) { background: #0f1d36; }
+html[data-accent="gamme"][data-v~="nuit"] :is(.cat-head, .ask) { border-color: var(--g700); }
+html[data-accent="gamme"][data-v~="nuit"] .cat-head:hover { background: #142650; border-color: var(--g400); }
+html[data-accent="gamme"][data-v~="nuit"] .cat-toggle { background: transparent; border-color: var(--g400); }
+html[data-accent="gamme"][data-v~="nuit"] .ambition-grid li { background: #0f1d36; border-color: var(--g600); }
+html[data-accent="gamme"][data-v~="nuit"] :is(.eyebrow, .badge, .ambition-status, .logo span, .ambitions-more) { color: var(--g400); }
+html[data-accent="gamme"][data-v~="nuit"] .brigade-panel { background: var(--g800); color: var(--g50); box-shadow: 12px 12px 0 var(--g300); }
+html[data-accent="gamme"][data-v~="nuit"] .brigade-panel :is(p, .eyebrow) { color: var(--g50); }
+html[data-accent="gamme"][data-v~="nuit"] .vx-chips button { background: transparent; color: var(--g100); border-color: #2a4170; }
+html[data-accent="gamme"][data-v~="nuit"] .vx-marquee { background: var(--g900); }
+html[data-accent="gamme"][data-v="nuit aere"] :is(.ask, .cat-head, .live-clock, .card, .cat-toggle, .ambition-grid li, .secondary, .primary, .ambassador-panel, .brigade-panel) { box-shadow: 0 18px 40px -16px rgba(165, 204, 255, .25); }
+html[data-accent="gamme"][data-v="nuit aere"] :is(.ask, .cat-head) { border-color: #2a4170; }
+
+/* Légende de la gamme dans le panneau */
+.vx-gamme { display: none; grid-template-columns: repeat(10, 1fr); gap: 2px; margin: 6px 0 2px; }
+html[data-accent="gamme"] .vx-gamme { display: grid; }
+.vx-gamme span { height: 22px; border-radius: 4px; position: relative; }
+.vx-gamme span:hover::after { content: attr(data-r); position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%); white-space: nowrap; background: #16131f; color: #fff; font: 11px system-ui, sans-serif; padding: 3px 6px; border-radius: 4px; }

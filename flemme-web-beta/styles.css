@@ -58,13 +58,13 @@ h1 em { font-style: normal; font-weight: 500; background: var(--acid); padding: 
 .lead { font-size: clamp(18px, 2.5vw, 25px); line-height: 1.45; max-width: 720px; margin: 0 auto; color: #42443d; }
 
 /* Grand champ « Raconte-nous tout » */
-.ask { background: #fff; border: 2px solid var(--ink); border-radius: 24px; padding: 8px; box-shadow: 8px 8px 0 var(--ink); text-align: left; }
+.ask { background: var(--surface); border: 2px solid var(--ink); border-radius: 24px; padding: 8px; box-shadow: 8px 8px 0 var(--ink); text-align: left; }
 .ask textarea { width: 100%; min-height: 110px; resize: none; border: 0; outline: 0; padding: 18px; font: inherit; font-size: 20px; background: transparent; }
 .ask-bottom { display: flex; align-items: center; justify-content: space-between; padding: 5px 6px 6px 16px; color: var(--muted); font-size: 12px; }
 
 /* ---------- 5. Boutons ---------- */
 .primary, .secondary { border: 0; border-radius: 14px; padding: 16px 20px; font-weight: 900; font-size: 15px; cursor: pointer; }
-.primary { background: var(--ink); color: #fff; }
+.primary { background: var(--ink); color: var(--paper); }
 .secondary { background: var(--soft); color: var(--ink); }
 .primary:disabled { opacity: .6; cursor: wait; }
 .full { width: 100%; margin-top: 28px; }
@@ -73,7 +73,7 @@ h1 em { font-style: normal; font-weight: 500; background: var(--acid); padding: 
 
 /* ---------- 6. Écrans en carte (demande, confirmation, facilitateur) ---------- */
 .card-screen { max-width: 700px; margin: 4vh auto; padding: 24px; }
-.card { background: #fff; border: 1px solid var(--line); border-radius: 28px; padding: clamp(25px, 5vw, 50px); }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 28px; padding: clamp(25px, 5vw, 50px); }
 .card > p { color: var(--muted); line-height: 1.5; }
 h2 { font-size: clamp(32px, 6vw, 52px); letter-spacing: -2.5px; line-height: 1; margin: 12px 0 20px; }
 .progress { display: flex; gap: 5px; margin-bottom: 25px; }
@@ -82,7 +82,7 @@ h2 { font-size: clamp(32px, 6vw, 52px); letter-spacing: -2.5px; line-height: 1; 
 
 /* Champs de formulaire */
 .card label, .lbl, legend { display: block; font-size: 13px; font-weight: 900; margin: 28px 0 9px; }
-.card select, .card input[type=text], .card input[type=email], .card input[type=tel], .card textarea { width: 100%; padding: 15px; border: 1px solid var(--line); border-radius: 12px; background: #fff; font: inherit; font-size: 16px; }
+.card select, .card input[type=text], .card input[type=email], .card input[type=tel], .card textarea { width: 100%; padding: 15px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); font: inherit; font-size: 16px; }
 .card textarea { min-height: 110px; resize: vertical; }
 fieldset { border: 0; padding: 0; margin: 20px 0 0; }
 fieldset .check { margin: 0 0 8px !important; }
@@ -113,7 +113,7 @@ legend { margin: 0 0 9px; padding: 0; }
 .legal h1 { font-size: clamp(34px, 7vw, 56px); letter-spacing: -2px; line-height: 1; margin: 16px 0; }
 .legal h2 { font-size: 22px; letter-spacing: -.5px; margin: 32px 0 8px; }
 .legal mark { background: var(--acid); padding: 0 4px; border-radius: 4px; }
-.nojs { max-width: 720px; margin: 16px auto; padding: 14px 18px; background: #fff; border: 1px solid var(--line); border-radius: 14px; text-align: center; }
+.nojs { max-width: 720px; margin: 16px auto; padding: 14px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; text-align: center; }
 
 /* ---------- 8. Téléphones ---------- */
 @media (max-width: 600px) {
@@ -212,13 +212,13 @@ h1 .fl { display: inline-block; font-weight: 800; background: var(--acid); paddi
 /* Boutons en pilule */
 .primary, .secondary { border-radius: 999px; padding: 16px 26px; font-family: inherit; font-weight: 800; font-size: 17px; min-height: 52px; }
 .primary { background: var(--ink); color: var(--acid); }
-.primary:hover { background: var(--violet); color: #fff; }
-.secondary { background: #fff; color: var(--ink); border: 2px solid var(--ink); }
+.primary:hover { background: var(--violet); color: var(--paper); }
+.secondary { background: var(--surface); color: var(--ink); border: 2px solid var(--ink); }
 .back { font-family: inherit; }
 
 /* Exemples */
 .examples { justify-content: flex-start; font-family: var(--mono); }
-.examples button { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-size: 15px; font-weight: 600; min-height: 44px; padding: 10px 18px; border: 2px solid var(--ink); background: #fff; }
+.examples button { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-size: 15px; font-weight: 600; min-height: 44px; padding: 10px 18px; border: 2px solid var(--ink); background: var(--surface); }
 .examples button:hover { background: var(--acid); }
 
 /* Sections éditoriales */
@@ -228,7 +228,7 @@ h1 .fl { display: inline-block; font-weight: 800; background: var(--acid); paddi
 
 /* Les 3 étapes : cartes blanche, verte, noire, légèrement inclinées */
 .steps { gap: 20px; }
-.steps article { border: 3px solid var(--ink); border-radius: 28px; padding: 28px; background: #fff; transform: rotate(-1deg); }
+.steps article { border: 3px solid var(--ink); border-radius: 28px; padding: 28px; background: var(--surface); transform: rotate(-1deg); }
 .steps article:nth-child(2) { background: var(--acid); transform: rotate(.8deg); }
 .steps article:nth-child(3) { background: var(--ink); color: var(--paper); transform: rotate(-.6deg); }
 .steps article:nth-child(3) p { color: #d9d5f0; }
@@ -238,7 +238,7 @@ h1 .fl { display: inline-block; font-weight: 800; background: var(--acid); paddi
 .steps h3 { font-size: 28px; font-weight: 800; letter-spacing: -.035em; line-height: 1.05; }
 
 /* « Rechercher. Comparer. Organiser. Trouver. » */
-.capabilities { background: #fff; border: 3px solid var(--ink); border-radius: 32px; padding: clamp(28px, 5vw, 56px); }
+.capabilities { background: var(--surface); border: 3px solid var(--ink); border-radius: 32px; padding: clamp(28px, 5vw, 56px); }
 .capabilities h2 { font-size: clamp(48px, 8vw, 112px); letter-spacing: -.06em; line-height: .92; }
 
 /* « Faites-le pour moi » : bloc sombre */
@@ -293,7 +293,7 @@ footer b { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-size:
 /* Les 7 résultats concrets : cartes avec menu déroulant (survol ou clic) */
 .cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
 .cat { position: relative; display: flex; flex-direction: column; }
-.cat-head { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; width: 100%; min-height: 150px; text-align: left; font: inherit; color: var(--ink); padding: 18px 18px 40px; border: 3px solid var(--ink); border-radius: 22px; background: #fff; cursor: pointer; box-shadow: 5px 5px 0 var(--ink); transition: background .12s; }
+.cat-head { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; width: 100%; min-height: 150px; text-align: left; font: inherit; color: var(--ink); padding: 18px 18px 40px; border: 3px solid var(--ink); border-radius: 22px; background: var(--surface); cursor: pointer; box-shadow: 5px 5px 0 var(--ink); transition: background .12s; }
 .cat-top { position: relative; flex: 1; display: flex; }
 .cat-top .cat-head { flex: 1; }
 .cat-toggle { position: absolute; right: 10px; bottom: 10px; width: 36px; height: 36px; font: inherit; font-size: 16px; color: var(--ink); background: var(--soft); border: 2px solid var(--ink); border-radius: 50%; cursor: pointer; transition: transform .15s; }
@@ -301,7 +301,7 @@ footer b { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-size:
 .cat-title { font-size: 19px; font-weight: 800; letter-spacing: -.02em; line-height: 1.15; }
 .cat-tag { font-size: 14px; font-style: italic; color: var(--muted); line-height: 1.35; }
 .cat.open .cat-head { background: var(--acid); }
-.cat-menu { display: none; position: absolute; z-index: 20; top: calc(100% + 6px); left: 0; width: max(100%, 340px); max-width: calc(100vw - 32px); background: #fff; border: 3px solid var(--ink); border-radius: 20px; padding: 14px; box-shadow: 8px 8px 0 var(--violet); }
+.cat-menu { display: none; position: absolute; z-index: 20; top: calc(100% + 6px); left: 0; width: max(100%, 340px); max-width: calc(100vw - 32px); background: var(--surface); border: 3px solid var(--ink); border-radius: 20px; padding: 14px; box-shadow: 8px 8px 0 var(--violet); }
 .cat.open .cat-menu { display: block; }
 /* Pont invisible entre la carte et le menu : la souris peut y descendre sans le fermer */
 .cat-menu::before { content: ""; position: absolute; left: 0; right: 0; top: -12px; height: 12px; }
@@ -329,7 +329,7 @@ footer b { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-size:
 @media (prefers-reduced-motion: reduce) { .cat-head, .cat-toggle { transition: none; } }
 
 /* ---------- Formulaire : dictée, précisions, message vocal, pièces jointes ---------- */
-.tool-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 8px 14px; font: inherit; font-size: 15px; font-weight: 700; color: var(--ink); background: #fff; border: 2px solid var(--ink); border-radius: 999px; cursor: pointer; }
+.tool-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 8px 14px; font: inherit; font-size: 15px; font-weight: 700; color: var(--ink); background: var(--surface); border: 2px solid var(--ink); border-radius: 999px; cursor: pointer; }
 .tool-btn .ico { font-size: 18px; }
 .tool-btn:hover { background: var(--acid); }
 .tool-btn.rec { background: var(--orange); }
@@ -389,7 +389,7 @@ header { height: auto; min-height: 74px; flex-wrap: wrap; gap: 12px 24px; paddin
 
 /* Accroche V4.100 — 20 octobre 2026 */
 .hero h1 .not-us { color: var(--violet); }
-.live-clock { display: inline-flex; align-items: center; gap: 10px; margin: 0 0 18px; padding: 8px 16px; border: 2px solid var(--ink); border-radius: 999px; background: #fff; font: 15px var(--mono); font-variant-numeric: tabular-nums; }
+.live-clock { display: inline-flex; align-items: center; gap: 10px; margin: 0 0 18px; padding: 8px 16px; border: 2px solid var(--ink); border-radius: 999px; background: var(--surface); font: 15px var(--mono); font-variant-numeric: tabular-nums; }
 .live-clock time::first-letter { text-transform: uppercase; }
 .live-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--acid); box-shadow: 0 0 0 0 var(--acid); animation: live-pulse 1.6s infinite; }
 @keyframes live-pulse { 70% { box-shadow: 0 0 0 8px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
@@ -437,3 +437,112 @@ h3, .cat-title, .how b, .rank-list b, .faq summary {
 }
 .primary, .secondary { font-size: 16px; }
 .site-nav a { font-size: 15px; }
+
+/* =========================================================================
+   Design « E + Gamme Glacier » — PR29, 20 octobre 2026
+   Fond nuit, structure aérée (bords fins, ombres douces, boutons arrondis,
+   plus d'espace) et le bleu Glacier décliné en 10 nuances, une par rôle :
+   50 fonds clairs · 100-200 texte et accents doux · 300 accent principal
+   (« flemme », bouton) · 400 étiquettes, survols · 500 icônes · 600 bordures
+   des cartes Ambition · 800 bloc Brigade · 900 fonds sombres.
+   Les variantes comparées sont dans apercu/ (hors du site publié).
+   ========================================================================= */
+:root {
+  --g50: #f3f8ff; --g100: #e6f0ff; --g200: #cfe2ff; --g300: #a5ccff; --g400: #7cb0f7;
+  --g500: #5390ea; --g600: #3572d0; --g700: #2758a8; --g800: #1e4280; --g900: #142c57;
+  --paper: #0a1427; --surface: #0f1d36; --surface-hover: #142650;
+  --ink: var(--g50); --muted: #a9bddc; --line: #2a4170; --soft: var(--g900);
+  --acid: var(--g300); --violet: var(--g200); --orange: var(--g300);
+  --glow: 0 18px 40px -16px rgba(165, 204, 255, .25);
+  color-scheme: dark;
+}
+body { background: var(--paper); color: var(--ink); }
+:focus-visible { outline-color: var(--g300); }
+
+/* Surfaces : cartes, champs et blocs sur fond nuit */
+:is(.ask, .cat-head, .live-clock, .card, .ambassador-panel, .capabilities, select, input, textarea) { background: var(--surface); color: var(--ink); }
+:is(.ask, .cat-head, .live-clock, .card, .cat-toggle, .ambition-grid li, .secondary, .primary, .ambassador-panel, .brigade-panel) { border-width: 1px; box-shadow: var(--glow); }
+:is(.ask, .cat-head) { border-color: var(--line); border-style: solid; }
+.ask { border-radius: 28px; }
+.ask:focus-within { border-color: var(--violet); }
+.cat-head { border-radius: 24px; transition: transform .2s, border-color .2s, background .2s; }
+.cat-head:hover { transform: translateY(-3px); background: var(--surface-hover); border-color: var(--g400); }
+.cat-head .ico { color: var(--g500); }
+.cat-toggle { background: transparent; color: var(--ink); border-color: var(--g400); }
+.ambition-grid li { background: var(--surface); border-style: solid; border-color: var(--g600); }
+.brigade-panel { background: var(--g800); color: var(--g50); }
+.brigade-panel :is(p, .eyebrow) { color: var(--g50); }
+@media (prefers-reduced-motion: reduce) { .cat-head:hover { transform: none; } }
+
+/* Textes et accents */
+.lead { color: var(--muted); }
+.hero { text-align: center; }
+.hero .lead { margin-left: auto; margin-right: auto; }
+.hero h1 { text-shadow: none; }
+h1 .fl { transform: none; background: none; padding: 0; color: var(--acid); }
+:is(.eyebrow, .badge, .ambition-status, .logo span, .ambitions-more) { color: var(--g400); }
+.live-dot { background: var(--g400); box-shadow: 0 0 0 0 var(--g400); }
+
+/* Boutons */
+.primary { background: var(--acid); color: var(--paper); border-color: var(--acid); border-radius: 999px; }
+.secondary { background: transparent; color: var(--ink); }
+:is(.head-link, .tool-btn) { background: transparent; color: var(--ink); border-color: var(--line); }
+:is(.beta-tag, .status-dot) { background: var(--g900); color: var(--g300); }
+.site-nav a:hover, .site-nav a:focus-visible { background: var(--acid); color: var(--paper); }
+
+/* Compteur en direct : point clignotant, date et heure, sans cadre */
+.live-clock { gap: 14px; padding: 0; border: 0; background: none; box-shadow: none; border-radius: 0; font: 14px var(--mono); font-variant-numeric: tabular-nums; color: var(--muted); }
+.live-clock time { display: inline-flex; align-items: baseline; gap: 10px; }
+.live-clock time::first-letter { text-transform: none; }
+.lc-date { color: var(--muted); }
+.lc-time { color: var(--ink); font-size: 18px; font-weight: 500; letter-spacing: .02em; }
+.lc-sec { margin-left: -8px; color: var(--g500); font-size: 12px; }
+.lc-sec::before { content: ":"; }
+.live-dot { width: 8px; height: 8px; }
+
+/* Espacement aéré */
+.ideas, .editorial { margin-top: 120px; }
+.ambitions { border-top: 1px solid var(--line); }
+@media (max-width: 600px) { .ideas, .editorial { margin-top: 72px; } }
+
+/* =========================================================================
+   Options UX — PR29, 20 octobre 2026
+   ========================================================================= */
+/* En-tête collant et flouté (ordinateur) */
+@media (min-width: 701px) {
+  header { position: sticky; top: 0; z-index: 30; max-width: none; padding-left: max(24px, calc(50vw - 656px)); padding-right: max(24px, calc(50vw - 656px)); background: color-mix(in srgb, var(--paper) 78%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
+}
+/* Écrans moyens : en-tête resserré pour rester sur une ligne */
+@media (min-width: 601px) and (max-width: 980px) {
+  header { gap: 8px 12px; padding-left: 16px; padding-right: 16px; }
+  .site-nav { gap: 0; }
+  .site-nav a { font-size: 13px; padding: 8px 8px; }
+  .head-right { gap: 6px; }
+  .head-right .head-link { font-size: 13px; padding-left: 12px; padding-right: 12px; }
+}
+/* Trop étroit pour une ligne : le menu passe dessous, logo et boutons restent en haut */
+@media (min-width: 601px) and (max-width: 749px) { .site-nav { order: 3; flex-basis: 100%; justify-content: center; } }
+/* Menu : section en cours */
+.site-nav a.current { box-shadow: inset 0 -3px 0 var(--acid); border-radius: 0; }
+
+/* Aide à l'écriture */
+.write-help { --p: 0%; display: flex; align-items: center; gap: 12px; padding: 0 18px 10px; font-size: 14px; color: var(--muted); }
+.write-help i { flex: 0 0 120px; height: 6px; border-radius: 99px; background: linear-gradient(90deg, var(--acid) var(--p), color-mix(in srgb, var(--line) 70%, transparent) var(--p)); }
+
+/* Réassurance sous le bouton */
+.reassure { margin: 10px 8px 4px; text-align: right; font: 13px var(--mono); color: var(--muted); }
+
+/* Exemples cliquables */
+.example-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 16px 0 0; padding: 0; list-style: none; }
+.example-chips button { font: 14px var(--text); padding: 8px 14px; border: 1px solid var(--line); border-radius: 999px; background: transparent; color: var(--ink); cursor: pointer; }
+.example-chips button:hover, .example-chips button:focus-visible { background: var(--surface-hover); border-color: var(--g400); }
+
+/* Parcours en 3 étapes */
+.steps3 { counter-reset: st; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 40px 0 0; padding: 0; list-style: none; text-align: left; }
+.steps3 li { counter-increment: st; display: grid; gap: 6px; padding: 18px 20px; border: 1px solid var(--line); border-radius: 20px; }
+.steps3 li::before { content: counter(st); font: 800 30px var(--display); font-stretch: 62%; color: var(--violet); }
+.steps3 b { font: 800 22px var(--display); font-stretch: 62%; text-transform: uppercase; }
+.steps3 span { color: var(--muted); line-height: 1.45; }
+@media (max-width: 700px) { .steps3 { grid-template-columns: 1fr; } }
+
+
