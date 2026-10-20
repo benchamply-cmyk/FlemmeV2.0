@@ -490,12 +490,11 @@ h1 .fl { transform: none; background: none; padding: 0; color: var(--acid); }
 :is(.beta-tag, .status-dot) { background: var(--g900); color: var(--g300); }
 .site-nav a:hover, .site-nav a:focus-visible { background: var(--acid); color: var(--paper); }
 
-/* Compteur « en direct » : ligne minimaliste, sans cadre */
+/* Compteur en direct : point clignotant, date et heure, sans cadre */
 .live-clock { gap: 14px; padding: 0; border: 0; background: none; box-shadow: none; border-radius: 0; font: 14px var(--mono); font-variant-numeric: tabular-nums; color: var(--muted); }
 .live-clock time { display: inline-flex; align-items: baseline; gap: 10px; }
 .live-clock time::first-letter { text-transform: none; }
-.live-label { color: var(--g400); text-transform: uppercase; letter-spacing: .12em; font-size: 12px; }
-.lc-date { padding-left: 14px; border-left: 1px solid var(--line); }
+.lc-date { color: var(--muted); }
 .lc-time { color: var(--ink); font-size: 18px; font-weight: 500; letter-spacing: .02em; }
 .lc-sec { margin-left: -8px; color: var(--g500); font-size: 12px; }
 .lc-sec::before { content: ":"; }
