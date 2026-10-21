@@ -16,9 +16,9 @@
   async function perform(action) {
     if (busy) return;
     busy = true;
-    document.querySelectorAll('#managerPanel button').forEach(b => b.disabled = true);
+    document.querySelectorAll('#managerPanel button:not([data-plan-command])').forEach(b => b.disabled = true);
     try { await action(); } catch (error) { notice(error.status ? error.message : 'Connexion interrompue. Actualise avant de réessayer.'); }
-    finally { busy = false; document.querySelectorAll('#managerPanel button').forEach(b => b.disabled = false); if(snapshot) render(snapshot); permissions(); }
+    finally { busy = false; document.querySelectorAll('#managerPanel button:not([data-plan-command])').forEach(b => b.disabled = false); if(snapshot) render(snapshot); permissions(); }
   }
   async function list(more = false) {
     if(!more) listOffset=0;
@@ -44,6 +44,7 @@
       $('conversationMessages').append(card);
     });
     $('missionEvents').replaceChildren();saved.events.forEach(event=>{
+      if(!canRun&&(event.payload.agent_plan||event.payload.agent_plan_approval))return;
       const li=document.createElement('li');li.textContent=new Date(event.created_at).toLocaleString('fr-FR')+' — '+(eventLabels[event.kind]||'Événement');
       if(event.payload.note) paragraph(li,event.payload.note);if(event.payload.result) paragraph(li,event.payload.result);
       $('missionEvents').append(li);
@@ -83,6 +84,7 @@
   $('recoverMessage').addEventListener('click',()=>perform(async()=>{
     if(!canRun)return;render(await client.recover(snapshot.id,{request_id:snapshot.pending_request_id,expected_revision:snapshot.revision,note:'Récupération manuelle après interruption.'}));notice('Analyse libérée ; ton message reste conservé.');
   }));
+  window.addEventListener('flemme:plan-snapshot',event=>{if(canRun)render(event.detail);});
   window.addEventListener('flemme:refresh',()=>perform(async()=>{if(snapshot)render(await client.read(snapshot.id));await list();}));
   await perform(list);
 })();

@@ -30,6 +30,8 @@ async def acquire(conversation_id: UUID, request: Request, memory=Depends(get_ad
             raise HTTPException(413, 'Trois documents de 1 Mo maximum.')
     try:
         model = Acquire.model_validate_json(body)
+        from flemme_manager.services.agent_plans import require_approval
+        await require_approval(memory, str(conversation_id), "acquisition", model)
         return await produce(memory, str(conversation_id), model)
     except ValidationError:
         raise HTTPException(422, 'Requête ou documents invalides.') from None

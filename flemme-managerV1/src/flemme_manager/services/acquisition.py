@@ -3,6 +3,7 @@ import base64
 import hashlib
 from datetime import datetime, timezone
 from decimal import Decimal
+from uuid import UUID
 from pydantic import Field
 from flemme_manager.acquisition_schemas import AcquisitionRequest, AcquisitionError
 from flemme_manager.delivery_schemas import StrictModel
@@ -27,6 +28,7 @@ class DocumentUpload(StrictModel):
 
 
 class Acquire(AcquisitionRequest):
+    approval_id: UUID | None = None
     mode: str = Field(pattern='^(web|documents)$')
     documents: list[DocumentUpload] = Field(default_factory=list, max_length=3)
 

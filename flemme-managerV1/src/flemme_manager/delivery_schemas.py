@@ -97,6 +97,7 @@ class DeliveryInput(StrictModel):
 
 
 class DeliveryRequest(DeliveryInput):
+    approval_id: UUID | None = None
     request_id: UUID
     expected_revision: int = Field(ge=0, le=9223372036854775805)
 

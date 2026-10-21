@@ -34,6 +34,9 @@ class Memory:
 
 @pytest.fixture
 def setup(monkeypatch):
+    from flemme_manager.services import agent_plans
+    async def approved(*args): return {}
+    monkeypatch.setattr(agent_plans, 'require_approval', approved)
     monkeypatch.setenv('FLEMME_V3_ENABLED','true')
     memory=Memory();app.dependency_overrides[get_memory]=lambda:memory
     try:yield TestClient(app),memory

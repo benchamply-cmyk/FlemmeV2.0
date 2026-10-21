@@ -73,10 +73,8 @@
     if($('deliveryUpfront').value){constraints.max_upfront_payment=$('deliveryUpfront').value;constraints.currency=$('deliveryCurrency').value;constraints.tax_basis=$('deliveryTax').value;}
     if($('deliveryDuration').value)constraints.duration_months=Number($('deliveryDuration').value);
     if($('deliveryLocation').value.trim())constraints.location=$('deliveryLocation').value.trim();if($('deliveryDate').value)constraints.available_on=$('deliveryDate').value;
-    const input={sources,constraints};
-    if(pending && JSON.stringify(pending.input)!==JSON.stringify(input)){ $('specialistsNotice').textContent='Consulte les livrables et actualise la mission avant de modifier une requête dont le résultat est incertain.';return;}
-    pending ||= {input,request_id:crypto.randomUUID(),expected_revision:current.revision};
-    const result=await api().produce(current.id,{...input,request_id:pending.request_id,expected_revision:pending.expected_revision});pending=null;
-    show([result]);$('specialistsNotice').textContent='Tentative et résultat conservés.';window.dispatchEvent(new CustomEvent('flemme:refresh'));
+    await ManagerAgentPlans.prepare({kind:'delivery',current,input:{sources,constraints},form:$('specialistsForm'),
+      onResult:result=>{show([result]);$('specialistsNotice').textContent='Tentative et résultat conservés.';},
+      onError:error=>{$('specialistsNotice').textContent=error.message;}});
   });});
 })();

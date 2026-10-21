@@ -75,6 +75,7 @@ async def get_memory(authorization: str | None = Header(default=None)):
             raise HTTPException(401, "Une session confirmée est requise.")
     except StorageError as error:
         raise HTTPException(error.status, "La session n'a pas pu être vérifiée.") from None
+    memory.user_id = user["id"]
     return memory
 
 

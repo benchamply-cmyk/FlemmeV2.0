@@ -18,6 +18,8 @@ router=APIRouter(prefix='/api/v3/conversations',tags=['specialists'],dependencie
 @router.post('/{conversation_id}/deliveries',status_code=201)
 async def execute(conversation_id:UUID,request:DeliveryRequest,memory=Depends(get_admin_memory)):
     try:
+        from flemme_manager.services.agent_plans import require_approval
+        await require_approval(memory,str(conversation_id),"delivery",request)
         return await produce_delivery(memory,str(conversation_id),request)
     except DeliveryInputError:
         raise HTTPException(422,'Sources insuffisantes pour la mission ; tentative conservée.') from None

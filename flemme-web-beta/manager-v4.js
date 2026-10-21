@@ -11,7 +11,7 @@
     '<label for="acquisitionBudget">Plafond en EUR (facultatif)</label><input id="acquisitionBudget" type="number" min="0" step="0.01">'+
     '<label for="acquisitionTaxes">Taxes du plafond</label><select id="acquisitionTaxes"><option value="included">TTC</option><option value="excluded">HT</option></select>'+
     '<p>Recherche web : plafond mensuel ; documents : plafond total. Le prix ne suffit pas à confirmer les conditions ou la disponibilité.</p>'+
-    '<button id="acquisitionSubmit" type="submit">Rechercher ou analyser</button></form><p id="acquisitionNotice" role="status" aria-live="polite"></p><div id="acquisitionResult"></div>';
+    '<button id="acquisitionSubmit" type="submit">Préparer le plan des agents</button></form><p id="acquisitionNotice" role="status" aria-live="polite"></p><div id="acquisitionResult"></div>';
   section.hidden=true; panel.append(section);
   const $=id=>document.getElementById(id);
   let current,client,busy=false,pending;
@@ -54,14 +54,13 @@
       }
       const constraints={};if($('acquisitionBudget').value){constraints.max_price=$('acquisitionBudget').value;constraints.currency='EUR';constraints.price_basis=mode==='web'?'per_month':'total';constraints.tax_basis=$('acquisitionTaxes').value;}
       const input={mode,query:$('acquisitionQuery').value.trim(),constraints,documents};
-      if(pending&&JSON.stringify(input)!==JSON.stringify(pending.input))throw new Error('Consulte les livrables et libère la tentative interrompue avant de changer cette demande.');
-      pending ||= {input,request_id:crypto.randomUUID(),expected_revision:current.revision};
-      $('acquisitionNotice').textContent='Analyse en cours ; les inconnues seront signalées.';
-      const row=await api().acquire(current.id,{...pending.input,request_id:pending.request_id,expected_revision:pending.expected_revision});pending=null;
-      const article=document.createElement('article'),pre=document.createElement('pre');pre.className='manager-message';
-      pre.textContent=row.output?.payload.result?.markdown||'Tentative conservée sans rapport.';article.append(pre);window.FlemmeAgentRouting?.render(article,row);references(article,row,current.id);
-      $('acquisitionResult').replaceChildren(article);$('acquisitionNotice').textContent='Résultat enregistré. Consulte les sources avant de décider.';
-      window.dispatchEvent(new CustomEvent('flemme:refresh'));
+      await ManagerAgentPlans.prepare({kind:'acquisition',current,input,form:$('acquisitionForm'),
+        onResult:row=>{
+          const article=document.createElement('article'),pre=document.createElement('pre');pre.className='manager-message';
+          pre.textContent=row.output?.payload.result?.markdown||'Tentative conservée sans rapport.';
+          article.append(pre);window.FlemmeAgentRouting?.render(article,row);references(article,row,current.id);
+          $('acquisitionResult').replaceChildren(article);$('acquisitionNotice').textContent='Résultat enregistré. Consulte les sources avant de décider.';
+        },onError:error=>{$('acquisitionNotice').textContent=error.message;}});
     }catch(error){$('acquisitionNotice').textContent=error.status===503?'Recherche et documents non activés.':error.message;
       if(error.status&&error.status!==409)pending=null;
     }finally{busy=false;$('acquisitionSubmit').disabled=false;}

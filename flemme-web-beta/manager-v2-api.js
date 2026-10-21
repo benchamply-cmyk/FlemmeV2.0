@@ -23,6 +23,8 @@
     }
     return {
       access: () => call('/access'),
+      plan: (id,body) => call('/conversations/'+encodeURIComponent(id)+'/agent-plans','POST',body),
+      approvePlan: (id,plan,body) => call('/conversations/'+encodeURIComponent(id)+'/agent-plans/'+encodeURIComponent(plan)+'/approve','POST',body),
       acquire: (id, body) => call('/conversations/' + encodeURIComponent(id) + '/acquisitions', 'POST', body, '/api/v4'),
       original: async (id, run, index) => {
         const account = await session();
