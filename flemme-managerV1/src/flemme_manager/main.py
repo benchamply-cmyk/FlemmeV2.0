@@ -23,3 +23,6 @@ app.include_router(deliveries_v3_router)
 
 from flemme_manager.routes.acquisition import router as acquisition_router
 app.include_router(acquisition_router)
+
+from flemme_manager.routes.agent_plans import router as agent_plans_router
+app.include_router(agent_plans_router)

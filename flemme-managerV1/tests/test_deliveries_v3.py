@@ -19,6 +19,10 @@ def qualification():
 
 
 class Memory:
+    async def request(self, method, path, payload):
+        assert path == "/rest/v1/rpc/est_admin"
+        return True
+
     def __init__(self):
         self.calls=[]
         self.snapshot={'pending_request_id':None,'mission':{'state':'in_progress'},'messages':[{'assessment':qualification()}]}
@@ -30,6 +34,9 @@ class Memory:
 
 @pytest.fixture
 def setup(monkeypatch):
+    from flemme_manager.services import agent_plans
+    async def approved(*args): return {}
+    monkeypatch.setattr(agent_plans, 'require_approval', approved)
     monkeypatch.setenv('FLEMME_V3_ENABLED','true')
     memory=Memory();app.dependency_overrides[get_memory]=lambda:memory
     try:yield TestClient(app),memory

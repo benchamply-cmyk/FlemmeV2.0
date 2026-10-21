@@ -372,3 +372,6 @@ async function start() {
   if (prefill && !$('#email').value) { setMode('signup'); $('#email').value = prefill; } // arrivée depuis « Suivre ma demande »
 }
 start();
+
+// Raccourci « Compte et sécurité » : ouvre le panneau du compte en plus d'y descendre.
+document.querySelectorAll('a[href="#compte"]').forEach(a => a.addEventListener('click', () => { $('#compte').open = true; }));
