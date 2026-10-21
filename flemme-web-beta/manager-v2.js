@@ -31,7 +31,7 @@
     $('missionState').textContent='Mission : '+(labels[saved.mission.state]||saved.mission.state);
     $('conversationMessages').replaceChildren();
     saved.messages.forEach(message => {
-      const card=document.createElement('article');card.className='manager-message';
+      const card=document.createElement('article');card.className='manager-message from-'+(message.role==='user'?'user':'manager');
       paragraph(card,message.role==='user'?'Toi':'Flemme Manager');
       paragraph(card,message.assessment ? message.assessment.user_response.message : message.content);
       if(message.assessment) message.assessment.qualification_questions.forEach(q=>paragraph(card,q.question));

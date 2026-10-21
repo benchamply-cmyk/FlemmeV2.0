@@ -12,7 +12,9 @@ ici = pathlib.Path(__file__).resolve().parent
 site = ici.parent / 'flemme-web-beta'
 sortie = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else ici / 'sortie')
 sortie.mkdir(parents=True, exist_ok=True)
-PAGES = ['index.html', 'services.html', 'demarche.html', 'ambassadeurs.html', 'rejoindre.html', 'mentions.html', 'confidentialite.html']
+PAGES = ['index.html', 'services.html', 'demarche.html', 'ambassadeurs.html', 'rejoindre.html', 'mentions.html', 'confidentialite.html', 'espace.html', 'manager.html']
+# Mon espace et Mes conversations : Supabase et le Manager sont remplacés par des données fictives.
+DEMO = {'sb.js': (ici / 'demo-espace.js').read_text(encoding='utf-8'), 'manager-v2-api.js': ''}
 
 lire = lambda f: (site / f).read_text(encoding='utf-8')
 sprite = lire('icons.svg').replace('<svg ', '<svg style="display:none" aria-hidden="true" ', 1)
@@ -23,7 +25,7 @@ for page in PAGES:
     html = lire(page)
     # Feuilles de style et scripts du site, recopiés dans la page.
     html = re.sub(r'<link rel="stylesheet" href="([^"]+)">', lambda m: '<style>\n' + lire(m.group(1)) + '\n</style>', html)
-    html = re.sub(r'<script src="([^"]+)" defer></script>', lambda m: '<script>\n' + lire(m.group(1)).replace('</script', '<\\/script') + '\n</script>', html)
+    html = re.sub(r'<script src="([^"]+)" defer></script>', lambda m: '<script>\n' + (DEMO[m.group(1)] if page in ('espace.html', 'manager.html') and m.group(1) in DEMO else lire(m.group(1))).replace('</script', '<\\/script') + '\n</script>', html)
     # Icônes : le sprite est inséré dans la page, les liens « icons.svg#… » deviennent « #… ».
     html = html.replace('icons.svg#', '#').replace("'icons.svg#i-'", "'#i-'")
     html = html.replace('<body>', '<body>\n' + sprite, 1)
