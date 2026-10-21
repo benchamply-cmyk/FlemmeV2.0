@@ -155,7 +155,6 @@ function openSpace(s) {
   show('space');
   loadList();
   SB.pseudo().then(p => showWho(s.email, p));
-  SB.equipe.membre().then(m => { $('#teamLink').hidden = !m; }); // lien vers equipe.html pour l'équipe seulement
 }
 
 /* ---------- 3. Connexion ---------- */

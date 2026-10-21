@@ -197,7 +197,7 @@ async function load() {
 
 $('#filter').addEventListener('change', renderList);
 $('#search').addEventListener('input', renderList);
-$('#refresh').addEventListener('click', () => activeView === 'demandes' ? load() : loadPanel());
+$('#refresh').addEventListener('click', () => activeView === 'demandes' ? load() : activeView === 'manager' ? window.dispatchEvent(new CustomEvent('flemme:refresh')) : loadPanel());
 
 async function start() {
   ++panelRevision; rows = []; last = {}; $('#list').replaceChildren(); $('#stats').replaceChildren(); $('#adminPanel').replaceChildren(); show('off');
@@ -207,7 +207,7 @@ async function start() {
   if (!(await ADMIN.membre())) { $('#deniedWho').textContent = s.email || ''; return show('denied'); }
   $('#who').textContent = s.email || '';
   show('board');
-  if (activeView === 'demandes') load(); else loadPanel();
+  if (activeView === 'demandes') load(); else if (activeView !== 'manager') loadPanel();
 }
 
 // Private operational notes append to the journal, preserving every decision.
@@ -236,9 +236,10 @@ let panelRevision = 0;
 document.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => {
   activeView = button.dataset.view;
   document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', String(b === button)));
-  $('#requests').hidden = activeView !== 'demandes'; $('#adminPanel').hidden = activeView === 'demandes';
+  $('#requests').hidden = activeView !== 'demandes'; $('#managerView').hidden = activeView !== 'manager';
+  $('#adminPanel').hidden = ['demandes', 'manager'].includes(activeView);
   ++panelRevision;
-  if (activeView === 'demandes') load(); else loadPanel();
+  if (activeView === 'demandes') load(); else if (activeView === 'manager') window.dispatchEvent(new CustomEvent('flemme:refresh')); else loadPanel();
 }));
 
 async function loadPanel() {
@@ -333,10 +334,10 @@ function renderMission(mission) {
 
 $('#adminLogin').addEventListener('submit', async e => {
   e.preventDefault(); const button = e.currentTarget.querySelector('button'); button.disabled = true; $('#loginError').hidden = true;
-  try { await SB.login($('#adminEmail').value.trim(), $('#adminPassword').value); $('#adminPassword').value = ''; await start(); }
+  try { await SB.login($('#adminEmail').value.trim(), $('#adminPassword').value); $('#adminPassword').value = ''; location.reload(); } // rechargement : le Flemme Manager s'ouvre avec la session
   catch(error) { showError($('#loginError'), msgOf(error)); } finally { button.disabled = false; }
 });
-$('#adminLogout').addEventListener('click', async () => { await SB.logout(); await start(); });
+$('#adminLogout').addEventListener('click', async () => { await SB.logout(); location.reload(); });
 function renderMissionLink(d) {
   const form = el('form','admin-note'), input = el('input');
   input.type = 'text'; input.required = true; input.placeholder = 'Identifiant de mission Manager';
