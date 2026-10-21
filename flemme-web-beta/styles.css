@@ -451,6 +451,8 @@ h3, .cat-title, .how b, .rank-list b, .faq summary {
   --soft: #f3f7ff;
 }
 .logo span { color: var(--glacier-deep); }
+/* Le mot « flemme » du titre d'accueil reste surligné en vert, seule touche verte du site. */
+.hero h1 .fl { background: #57d68d; }
 
 /* Fond bleu pastel : nappes lilas, rose et aqua qui dérivent lentement, et un reflet nacré. */
 body { background: var(--paper); position: relative; isolation: isolate; }
