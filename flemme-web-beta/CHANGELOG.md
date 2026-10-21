@@ -119,7 +119,7 @@ Attention : ces ZIP contiennent encore flemme.fr, le jaune, la grille à plat et
 - V5 Mon espace et Mes conversations (branche feature/manager-espace-v5) : en-tête V5 avec menus et burger, connexion sur deux colonnes, tableau de bord avec raccourcis, frise d’avancement horizontale, conversations du Manager en bulles avec colonne latérale (espace-v5.css, logique Supabase et Manager inchangée). Intègre aussi l’accès administrateur des agents de la PR #39 (rôles, plans à valider) habillé en V5.
 - Espace client et espace admin séparés (branche feature/espace-admin-separes) : /espace ne contient que les fonctions client (demandes, discussion, compte, conversations Flemme Manager en lecture seule) ; tout le Flemme Manager administrateur passe dans l’onglet « Flemme Manager » de /gestionadmin ; /manager redirige vers /espace.
 - Accueil : accroche « Pas envie ? Pas le temps ? Pas motivé ? On le fait pour toi, délègue-nous tes tâches ! » et lien « T’as aussi la flemme d’écrire ? Laisse-toi guider… » (branche fix/accroche-accueil).
-- Accueil : le mot « flemme » du titre est surligné en vert espoir #57d68d au lieu du bleu glacier (branche fix/accroche-accueil, d’autres verts proposés à Ben).
+- Accueil : le mot « flemme » du titre est surligné en vert espoir #57d68d au lieu du bleu glacier (branche fix/accroche-accueil, choisi par Ben parmi 5 verts).
 
 ## Reste à faire
 - Application : compiler et tester sur de vrais téléphones (Xcode, Android Studio).
