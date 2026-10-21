@@ -1,4 +1,4 @@
-<!doctype html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#a5ccff"><meta name="robots" content="noindex"><title>Mon espace — Flemme</title><link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" type="image/png" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="espace.css"><link rel="stylesheet" href="espace-v5.css"></head><body>
+<!doctype html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#a5ccff"><meta name="robots" content="noindex"><title>Mon espace — Flemme</title><link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" type="image/png" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="espace.css"><link rel="stylesheet" href="espace-v5.css"><link rel="stylesheet" href="manager-v5.css"></head><body>
 <header>
 <a class="logo" href="./">FLEMME<span>.</span></a>
 <nav class="site-nav" aria-label="Navigation principale"><a href="services.html">Services</a><a href="demarche.html">Notre démarche</a><a href="ambassadeurs.html">Ambassadeurs</a><a href="rejoindre.html">La Brigade</a></nav>
@@ -18,7 +18,7 @@
 <ul class="auth-perks">
 <li><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="icons.svg#i-clipboard-list"/></svg><span><b>Suis chaque demande</b> de la réception à la fin, étape par étape.</span></li>
 <li><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="icons.svg#i-message-circle"/></svg><span><b>Écris à l’équipe</b> dans le fil de la demande, sans chercher d’e-mail.</span></li>
-<li><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="icons.svg#i-sparkles"/></svg><span><b>Reprends tes conversations</b> avec Flemme Manager là où tu les as laissées.</span></li>
+<li><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="icons.svg#i-sparkles"/></svg><span><b>Retrouve tes conversations</b> avec Flemme Manager et leurs livrables.</span></li>
 <li><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="icons.svg#i-shield-check"/></svg><span><b>Tes données restent à toi</b> : visibles par toi et l’équipe Flemme seulement.</span></li>
 </ul>
 </div>
@@ -45,15 +45,22 @@
 <section id="space" hidden>
 <div class="space-head"><div><div class="eyebrow">Mon espace</div><h1>Tes demandes.</h1><p class="who"><span id="whoLabel">Connecté avec</span> <b id="who"></b></p></div><div class="space-actions"><a class="primary btn-link" href="./">+ Nouvelle demande</a><button type="button" class="secondary" id="logout">Se déconnecter</button></div></div>
 <nav class="space-tiles" aria-label="Raccourcis de l’espace">
-<a class="tile" href="manager.html"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="icons.svg#i-sparkles"/></svg><span><b>Mes conversations</b><small>Flemme Manager : besoins, missions, livrables</small></span></a>
+<a class="tile" id="convTile" href="#conversations" hidden><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="icons.svg#i-sparkles"/></svg><span><b>Mes conversations</b><small>Flemme Manager : échanges et livrables</small></span></a>
 <a class="tile" href="#compte"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="icons.svg#i-shield-check"/></svg><span><b>Compte et sécurité</b><small>Pseudo, mot de passe, données</small></span></a>
-<a class="tile" id="teamLink" href="/gestionadmin" hidden><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="icons.svg#i-users"/></svg><span><b>Gestion admin</b><small>Réservé à l’équipe Flemme</small></span></a>
 </nav>
 <div class="eyebrow list-title">Suivi de tes demandes</div>
 <p class="err" id="listErr" role="alert" hidden></p>
 <p class="loading" id="loading">Chargement…</p>
 <div id="empty" class="card" hidden><h3>Aucune demande pour l’instant.</h3><p>Les demandes envoyées avec l’adresse <b class="me"></b> apparaîtront ici, y compris celles faites avant ton inscription.</p><a class="primary btn-link" href="./">Confier ma première flemme →</a></div>
 <ol id="list" class="demandes"></ol>
+<section id="conversations" class="manager-memory space-convs" aria-labelledby="convTitle" hidden>
+<div class="eyebrow">Flemme Manager</div><h2 id="convTitle">Mes conversations</h2>
+<p class="hint">Tes échanges avec Flemme Manager, en lecture seule. L’équipe Flemme pilote les agents de son côté.</p>
+<label for="convList">Choisir une conversation</label><select id="convList"><option value="">Choisis une conversation</option></select><button type="button" id="convOlder" class="link-btn" hidden>Charger les conversations plus anciennes</button>
+<p id="convNotice" class="app-notice" role="status" aria-live="polite"></p>
+<div id="convThread" class="mgr-card" hidden><div class="mgr-thread-head"><div class="eyebrow">Mission</div><h3 id="convState"></h3></div><div id="convMessages" class="conv-messages" aria-live="polite"></div>
+<button type="button" class="secondary" id="convDeliveries">Voir les livrables</button><div id="convDeliveryList"></div></div>
+</section>
 <details class="card account" id="compte"><summary>Sécurité et données du compte</summary>
 <p>Tes demandes ne sont visibles que par toi et par l’équipe Flemme. Ton mot de passe n’est jamais stocké en clair et tous les échanges sont chiffrés (HTTPS).</p>
 <form id="pseudoForm" class="pseudo-form"><label for="newPseudo">Ton pseudo</label><p class="hint">Affiché à la place de ton e-mail, et utilisable avec ton mot de passe pour te connecter. Laisse vide pour le retirer.</p><div class="row"><input id="newPseudo" name="pseudo" type="text" autocomplete="nickname" autocapitalize="none" spellcheck="false" minlength="3" maxlength="30" pattern="[A-Za-z0-9_.\-]{3,30}"><button type="submit" class="secondary">Enregistrer</button></div><p class="err" id="pseudoErr" role="alert" hidden></p><p class="ok" id="pseudoOk" hidden>Pseudo enregistré.</p></form>
@@ -65,4 +72,4 @@
 </section>
 
 </main><footer><b>FLEMME.</b><span>Les besoins du quotidien. La suite, avec toi.</span><nav><a href="services.html">Services</a><a href="demarche.html">Notre démarche</a><a href="ambassadeurs.html">Ambassadeurs</a><a href="rejoindre.html">Rejoindre la Brigade</a><a href="mentions.html">Mentions légales</a><a href="confidentialite.html">Confidentialité</a><a href="mailto:ben.champly@gmail.com">Contact</a></nav></footer>
-<script src="content.js" defer></script><script src="nav.js" defer></script><script src="sb.js" defer></script><script src="espace.js" defer></script></body></html>
+<script src="content.js" defer></script><script src="nav.js" defer></script><script src="sb.js" defer></script><script src="espace.js" defer></script><script src="manager-v2-api.js" defer></script><script src="espace-conversations.js" defer></script></body></html>

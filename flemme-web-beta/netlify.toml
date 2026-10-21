@@ -19,6 +19,19 @@
   from = "/gestionadmin"
   to = "/gestionadmin.html"
   status = 200
+
+# Ancienne page « Mes conversations » : le Flemme Manager administrateur est dans
+# /gestionadmin, les conversations du client (lecture seule) dans /espace.
+[[redirects]]
+  from = "/manager"
+  to = "/espace#conversations"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/manager.html"
+  to = "/espace#conversations"
+  status = 301
+  force = true
 # Les dépendances des fonctions ne sont pas à servir comme des pages.
 [[redirects]]
   from = "/node_modules/*"

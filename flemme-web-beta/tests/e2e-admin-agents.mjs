@@ -17,7 +17,9 @@ try {
    if(url.pathname==='/content.js')return route.fulfill({contentType:'application/javascript',body:"window.FLEMME={managerV2:{url:'https://flemme.test'}};"});
    if(url.pathname==='/sb.js')return route.fulfill({contentType:'application/javascript',body:"window.SB={ready:true,session:async()=>({access_token:'simulated-session'})};"});
    if(url.pathname==='/favicon.ico')return route.fulfill({status:204});
-   const filename=url.pathname==='/'?'manager.html':url.pathname.slice(1);
+   // Le Flemme Manager vit dans l'onglet « Flemme Manager » de gestionadmin.html ; le reste du centre de contrôle est remplacé par l'ouverture de cet onglet.
+   if(['/gestionadmin.js','/gestionadmin-api.js','/gestionadmin-specialistes.js'].includes(url.pathname))return route.fulfill({contentType:'application/javascript',body:url.pathname==='/gestionadmin.js'?"document.getElementById('board').hidden=false;document.getElementById('requests').hidden=true;document.getElementById('managerView').hidden=false;":''});
+   const filename=url.pathname==='/'?'gestionadmin.html':url.pathname.slice(1);
    if(!/^[a-z0-9.-]+$/.test(filename))throw new Error('Unexpected asset');
    return route.fulfill({contentType:filename.endsWith('.js')?'application/javascript':filename.endsWith('.css')?'text/css':'text/html',body:await readFile(new URL('../'+filename,import.meta.url))});
   });
