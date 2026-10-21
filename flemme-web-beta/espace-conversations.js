@@ -1,8 +1,8 @@
 'use strict';
 /* =========================================================================
    FLEMME — Mes conversations avec Flemme Manager, dans l'espace client.
-   Lecture seule : liste des conversations, messages et livrables. Toutes les
-   commandes (nouvelle conversation, agents, historique) sont dans /gestionadmin.
+   Le client crée une conversation, écrit au Manager et lit les livrables.
+   Les agents, les plans et le suivi de mission restent dans /gestionadmin.
    ========================================================================= */
 (() => {
   const $ = id => document.getElementById(id);
@@ -11,7 +11,10 @@
   const when = iso => new Date(iso).toLocaleString('fr-FR');
   const URL_MANAGER = ((window.FLEMME || {}).managerV2 || {}).url;
   if (!URL_MANAGER || !window.ManagerV2API || !window.SB) return;
-  let client, current = null, offset = 0, started = false;
+  const LOCKED = ['in_progress', 'blocked', 'completed', 'cancelled'];
+  let client, current = null, offset = 0, started = false, busy = false;
+  // Rejouer le même identifiant après une coupure évite un message ou une conversation en double.
+  let pendingCreation = null, pendingMessage = null;
   const notice = text => { $('convNotice').textContent = text; };
 
   async function list(more) {
@@ -34,9 +37,26 @@
       return card;
     }));
     $('convDeliveryList').replaceChildren();
+    const locked = LOCKED.includes(saved.mission.state);
+    $('convLocked').hidden = !locked;
+    $('convText').disabled = locked;
+    $('convSend').disabled = locked || busy || !!saved.pending_request_id;
+    if (saved.pending_request_id) notice('Le Manager prépare sa réponse. Rouvre la conversation dans un instant pour la lire.');
   }
   async function run(action) {
-    try { await action(); } catch (e) { notice(e.status ? e.message : 'Connexion interrompue. Réessaie dans un instant.'); }
+    busy = true; $('convSend').disabled = true; $('convNew').disabled = true;
+    try { await action(); } catch (e) {
+      notice(e.status ? e.message : 'Connexion interrompue. Réessaie dans un instant.');
+      // 502/503 : le message est conservé, on recharge pour l'afficher.
+      if (current && (e.status === 502 || e.status === 503)) { pendingMessage = null; $('convText').value = ''; try { render(await client.read(current.id)); } catch (_) {} }
+    } finally {
+      busy = false; $('convNew').disabled = false;
+      $('convSend').disabled = !current || LOCKED.includes(current.mission.state) || !!current.pending_request_id;
+    }
+  }
+  async function select(id) {
+    await list(false);
+    $('convList').value = id;
   }
   async function start() {
     if (started) return;
@@ -49,7 +69,24 @@
       notice(count ? '' : 'Aucune conversation pour l’instant.');
     });
   }
-  $('convList').addEventListener('change', () => run(async () => { const id = $('convList').value; if (!id) return; notice(''); render(await client.read(id)); }));
+  $('convList').addEventListener('change', () => run(async () => { const id = $('convList').value; if (!id) return; pendingMessage = null; notice(''); render(await client.read(id)); }));
+  $('convNew').addEventListener('click', () => run(async () => {
+    const saved = await client.create(pendingCreation ||= crypto.randomUUID());
+    pendingCreation = null; pendingMessage = null; $('convText').value = '';
+    render(saved); await select(saved.id);
+    notice('Conversation créée. Écris ton besoin ci-dessous.');
+    $('convText').focus();
+  }));
+  $('convForm').addEventListener('submit', e => { e.preventDefault(); run(async () => {
+    const text = $('convText').value.trim();
+    if (!text || !current) return;
+    if (pendingMessage && pendingMessage.request !== text) { pendingMessage = null; current = await client.read(current.id); }
+    pendingMessage ||= { request_id: crypto.randomUUID(), expected_revision: current.revision, request: text };
+    notice('Message envoyé, le Manager réfléchit…');
+    const saved = await client.send(current.id, pendingMessage);
+    pendingMessage = null; $('convText').value = '';
+    notice(''); render(saved); await select(saved.id);
+  }); });
   $('convOlder').addEventListener('click', () => run(() => list(true)));
   $('convDeliveries').addEventListener('click', () => run(async () => {
     if (!current) return;
@@ -62,6 +99,6 @@
   }));
   // L'espace s'affiche après la connexion (espace.js) : on charge les conversations à ce moment-là.
   const space = $('space');
-  new MutationObserver(() => { if (!space.hidden) start(); else { started = false; $('conversations').hidden = true; $('convTile').hidden = true; $('convThread').hidden = true; } }).observe(space, { attributes: true, attributeFilter: ['hidden'] });
+  new MutationObserver(() => { if (!space.hidden) start(); else { started = false; current = null; pendingCreation = null; pendingMessage = null; $('conversations').hidden = true; $('convTile').hidden = true; $('convThread').hidden = true; } }).observe(space, { attributes: true, attributeFilter: ['hidden'] });
   if (!space.hidden) start();
 })();

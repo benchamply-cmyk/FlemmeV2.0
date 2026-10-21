@@ -130,7 +130,7 @@ body:has(.app-page) .sticky-cta { display: none !important; }
 @media (prefers-reduced-motion: reduce) { .tile { transition: none; } }
 .app-page .back { border: 0; background: none; padding: 8px 0; color: var(--ink); font: 600 15px var(--text); text-transform: none; letter-spacing: 0; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
 
-/* Mes conversations avec Flemme Manager (lecture seule, espace-conversations.js) */
+/* Mes conversations avec Flemme Manager (espace-conversations.js) */
 .space-convs { margin-top: 56px; scroll-margin-top: 96px; }
 .space-convs h2 { font-size: clamp(36px, 5vw, 64px); margin: 10px 0 8px; }
 .space-convs > label { margin-top: 18px; }
@@ -141,3 +141,5 @@ body:has(.app-page) .sticky-cta { display: none !important; }
 #convDeliveries { margin-top: 22px; }
 #convDeliveryList article { margin-top: 18px; padding-top: 16px; border-top: 2px dashed var(--ink); }
 #convDeliveryList h3 { font-size: 22px; }
+#convNew { display: block; margin: 18px 0 6px; }
+#convLocked { margin: 8px 0 0; }

@@ -51,8 +51,9 @@ async def execute(memory, operation, conversation_id=None, request_id=None, revi
         raise HTTPException(error.status, messages.get(error.status, "Le stockage est indisponible.")) from None
 
 
+# Clients write to the Manager from /espace; mission events and recovery stay admin-only.
 @router.post("/conversations", status_code=201)
-async def create(body: CreateConversation, memory=Depends(get_admin_memory)):
+async def create(body: CreateConversation, memory=Depends(get_memory)):
     return await execute(memory, "create", str(body.conversation_id))
 
 
@@ -68,7 +69,7 @@ async def resume(conversation_id: UUID, memory=Depends(get_memory)):
 
 
 @router.post("/conversations/{conversation_id}/messages", status_code=201)
-async def message(conversation_id: UUID, body: Turn, memory=Depends(get_admin_memory)):
+async def message(conversation_id: UUID, body: Turn, memory=Depends(get_memory)):
     try:
         return await submit_turn(memory, str(conversation_id), str(body.request_id),
                                  body.request, body.expected_revision)
