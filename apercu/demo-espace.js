@@ -81,7 +81,7 @@
       events: [{ kind: 'created', created_at: jour(9), payload: {} }, { kind: 'status', created_at: jour(4), payload: { note: 'Déménagement réservé.' } }] },
   };
   window.ManagerV2API = { createClient: () => ({
-    access: async () => ok({ can_run_agents: etat !== 'client' }),
+    access: async () => ok({ can_run_agents: true }),
     plan: async (id, body) => ok({ snapshot: structuredClone(conv[id]), plan: { id: 'plan-demo-0001', steps: [
       { agent: 'Document', actions: ['Extraire le texte des deux devis'], parameters: { documents: ['Devis A', 'Devis B'] } },
       { agent: 'Compare', actions: ['Comparer prix, prestations et délais'], parameters: { max_price: '9000', currency: 'EUR' } },
@@ -106,13 +106,20 @@
     bar.setAttribute('style', 'position:fixed;z-index:99;left:12px;bottom:12px;display:flex;gap:4px;align-items:center;padding:6px;background:#16131f;color:#fff;border-radius:999px;font:12px "Geist Mono",monospace;box-shadow:0 6px 20px rgba(0,0,0,.25)');
     const lbl = document.createElement('span'); lbl.textContent = 'Aperçu'; lbl.setAttribute('style', 'padding:0 8px');
     bar.append(lbl);
-    [['deconnecte', 'Déconnecté'], ['connecte', 'Admin'], ['client', 'Client'], ['vide', 'Sans demande']].forEach(([v, t]) => {
+    [['deconnecte', 'Déconnecté'], ['connecte', 'Connecté'], ['vide', 'Sans demande']].forEach(([v, t]) => {
       const b = document.createElement('button');
       b.textContent = t; b.type = 'button';
       b.setAttribute('style', 'border:0;border-radius:999px;padding:6px 10px;cursor:pointer;font:inherit;' + (v === etat ? 'background:#a5ccff;color:#16131f' : 'background:transparent;color:#fff'));
       b.addEventListener('click', () => { setEtat(v); location.reload(); });
       bar.append(b);
     });
+    // Lien de l'aperçu entre les deux pages (le site, lui, ne les relie pas).
+    const admin = /gestionadmin/.test(location.pathname);
+    const other = document.createElement('a');
+    other.href = admin ? 'espace.html' : 'gestionadmin.html';
+    other.textContent = admin ? '→ Espace client' : '→ Gestion admin';
+    other.setAttribute('style', 'padding:6px 10px;margin-left:4px;border-left:1px solid #555;color:#a5ccff;text-decoration:none');
+    bar.append(other);
     document.body.append(bar);
   });
 })();
