@@ -19,6 +19,10 @@ def qualification():
 
 
 class Memory:
+    async def request(self, method, path, payload):
+        assert path == "/rest/v1/rpc/est_admin"
+        return True
+
     def __init__(self):
         self.calls=[]
         self.snapshot={'pending_request_id':None,'mission':{'state':'in_progress'},'messages':[{'assessment':qualification()}]}

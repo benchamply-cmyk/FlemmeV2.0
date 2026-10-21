@@ -3,7 +3,7 @@ import os
 from urllib.parse import urlparse
 
 import httpx2 as httpx
-from fastapi import Header, HTTPException
+from fastapi import Depends, Header, HTTPException
 
 
 class StorageError(Exception):
@@ -78,7 +78,23 @@ async def get_memory(authorization: str | None = Header(default=None)):
     return memory
 
 
+async def can_run_agents(memory):
+    """Use the pinned administrator authority, never user-editable metadata."""
+    try:
+        return await memory.request("POST", "/rest/v1/rpc/est_admin", {}) is True
+    except StorageError:
+        raise HTTPException(503, "Le statut administrateur ne peut pas être vérifié.") from None
+
+
+async def require_admin(memory):
+    if not await can_run_agents(memory):
+        raise HTTPException(403, "Les agents sont réservés aux administrateurs.")
+    return memory
+
+
+async def get_admin_memory(memory=Depends(get_memory)):
+    return await require_admin(memory)
+
+
 async def protect_legacy_analysis(authorization: str | None = Header(default=None)):
-    """When V2 is enabled, the legacy analysis route shares its authentication."""
-    if os.getenv("FLEMME_V2_ENABLED", "").lower() == "true":
-        await get_memory(authorization)
+    await require_admin(await get_memory(authorization))

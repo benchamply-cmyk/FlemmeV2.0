@@ -7,7 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from flemme_manager.agents.manager import ManagerConfigurationError, ManagerExecutionError
 from flemme_manager.memory.service import submit_turn
-from flemme_manager.memory.supabase import StorageError, get_memory
+from flemme_manager.memory.supabase import StorageError, get_memory, get_admin_memory, can_run_agents
 from flemme_manager.schemas import RequestText, ShortText
 
 router = APIRouter(prefix="/api/v2", tags=["memory"])
@@ -52,7 +52,7 @@ async def execute(memory, operation, conversation_id=None, request_id=None, revi
 
 
 @router.post("/conversations", status_code=201)
-async def create(body: CreateConversation, memory=Depends(get_memory)):
+async def create(body: CreateConversation, memory=Depends(get_admin_memory)):
     return await execute(memory, "create", str(body.conversation_id))
 
 
@@ -68,7 +68,7 @@ async def resume(conversation_id: UUID, memory=Depends(get_memory)):
 
 
 @router.post("/conversations/{conversation_id}/messages", status_code=201)
-async def message(conversation_id: UUID, body: Turn, memory=Depends(get_memory)):
+async def message(conversation_id: UUID, body: Turn, memory=Depends(get_admin_memory)):
     try:
         return await submit_turn(memory, str(conversation_id), str(body.request_id),
                                  body.request, body.expected_revision)
@@ -87,12 +87,17 @@ async def mission(conversation_id: UUID, memory=Depends(get_memory)):
 
 
 @router.post("/conversations/{conversation_id}/mission/events", status_code=201)
-async def event(conversation_id: UUID, body: Event, memory=Depends(get_memory)):
+async def event(conversation_id: UUID, body: Event, memory=Depends(get_admin_memory)):
     return await execute(memory, "event", str(conversation_id), str(body.request_id),
                          body.expected_revision, body.model_dump(mode="json", exclude={"request_id", "expected_revision"}))
 
 
 @router.post("/conversations/{conversation_id}/messages/recover")
-async def recover(conversation_id: UUID, body: Recovery, memory=Depends(get_memory)):
+async def recover(conversation_id: UUID, body: Recovery, memory=Depends(get_admin_memory)):
     return await execute(memory, "recover", str(conversation_id), str(body.request_id),
                          body.expected_revision, {"note": body.note})
+
+
+@router.get("/access")
+async def access(memory=Depends(get_memory)):
+    return {"can_run_agents": await can_run_agents(memory)}

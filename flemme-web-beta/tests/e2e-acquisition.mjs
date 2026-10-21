@@ -20,7 +20,7 @@ try{
   if(url.pathname==='/api/v4/conversations/cid/acquisitions/rid/documents/0')return route.fulfill({contentType:'application/octet-stream',body:'original simulated'});
   if(url.pathname==='/manager.html'){
    return route.fulfill({contentType:'text/html; charset=utf-8',body:`<!doctype html><html lang="fr"><head><meta charset="utf-8"><link rel="stylesheet" href="manager-v2.css"></head><body><section id="specialistsPanel"></section>
-    <script>window.FLEMME={managerV2:{url:'https://flemme.test'}};window.SB={session:async()=>({access_token:'simulated-session'})};
+    <script>window.FlemmeAgentAccess={canRun:true};window.FLEMME={managerV2:{url:'https://flemme.test'}};window.SB={session:async()=>({access_token:'simulated-session'})};
     window.ready=function(workflow){window.dispatchEvent(new CustomEvent('flemme:conversation',{detail:{id:'cid',revision:2,pending_request_id:null,mission:{state:'qualified'},messages:[{assessment:{mission_status:'ready',selected_workflow:{workflow_id:workflow}}}]}}))};</script>
     <script src="manager-v2-api.js"></script><script src="manager-v4.js"></script></body></html>`});
   }
@@ -48,6 +48,11 @@ try{
  const download=page.waitForEvent('download');await page.locator('#acquisitionResult button').first().click();
  assert.equal((await download).suggestedFilename(),'A.txt');
  await page.screenshot({path:process.env.E2E_SCREENSHOT||join(tmpdir(),'flemme-acquisition-e2e.png'),fullPage:true});
+ await page.evaluate(()=>{window.FlemmeAgentAccess={canRun:false};ready('rechercher_produit');});
+ assert.equal(await page.locator('#acquisitionForm').isVisible(),false);
+ const previousCalls=calls.length;
+ await page.evaluate(()=>document.getElementById('acquisitionForm').dispatchEvent(new Event('submit',{cancelable:true})));
+ assert.equal(calls.length,previousCalls);
  assert.deepEqual(errors,[]);
  console.log('Browser E2E passed: web request, two quotes, literal safe rendering, source link, authenticated original download. All upstreams simulated.');
 }finally{await browser.close();}

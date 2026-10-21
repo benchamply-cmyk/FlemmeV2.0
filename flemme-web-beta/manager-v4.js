@@ -12,7 +12,7 @@
     '<label for="acquisitionTaxes">Taxes du plafond</label><select id="acquisitionTaxes"><option value="included">TTC</option><option value="excluded">HT</option></select>'+
     '<p>Recherche web : plafond mensuel ; documents : plafond total. Le prix ne suffit pas à confirmer les conditions ou la disponibilité.</p>'+
     '<button id="acquisitionSubmit" type="submit">Rechercher ou analyser</button></form><p id="acquisitionNotice" role="status" aria-live="polite"></p><div id="acquisitionResult"></div>';
-  panel.append(section);
+  section.hidden=true; panel.append(section);
   const $=id=>document.getElementById(id);
   let current,client,busy=false,pending;
   const api=()=>client ||= ManagerV2API.createClient(FLEMME.managerV2.url,()=>SB.session());
@@ -20,7 +20,7 @@
     if(current?.id!==event.detail.id){pending=null;$('acquisitionResult').replaceChildren();}
     current=event.detail;
     const last=[...current.messages].reverse().find(m=>m.assessment)?.assessment;
-    section.hidden=!last || last.mission_status!=='ready' || !!current.pending_request_id || !['qualified','in_progress'].includes(current.mission.state);
+    section.hidden=!window.FlemmeAgentAccess?.canRun || !last || last.mission_status!=='ready' || !!current.pending_request_id || !['qualified','in_progress'].includes(current.mission.state);
     if(!pending)$('acquisitionMode').value=last?.selected_workflow.workflow_id==='comparer_devis'?'documents':'web';
   });
   function references(article,row,id){
@@ -41,7 +41,7 @@
   }
   window.addEventListener('flemme:delivery-rendered',e=>references(e.detail.article,e.detail.row,e.detail.conversationId));
   $('acquisitionForm').addEventListener('submit',async event=>{
-    event.preventDefault();if(busy||!current)return;busy=true;$('acquisitionSubmit').disabled=true;
+    event.preventDefault();if(!window.FlemmeAgentAccess?.canRun||busy||!current)return;busy=true;$('acquisitionSubmit').disabled=true;
     try{
       const mode=$('acquisitionMode').value,files=[...$('acquisitionFiles').files];
       if(mode==='documents'&&(files.length<2||files.length>3))throw new Error('Choisis deux à trois devis.');
@@ -59,7 +59,7 @@
       $('acquisitionNotice').textContent='Analyse en cours ; les inconnues seront signalées.';
       const row=await api().acquire(current.id,{...pending.input,request_id:pending.request_id,expected_revision:pending.expected_revision});pending=null;
       const article=document.createElement('article'),pre=document.createElement('pre');pre.className='manager-message';
-      pre.textContent=row.output?.payload.result?.markdown||'Tentative conservée sans rapport.';article.append(pre);references(article,row,current.id);
+      pre.textContent=row.output?.payload.result?.markdown||'Tentative conservée sans rapport.';article.append(pre);window.FlemmeAgentRouting?.render(article,row);references(article,row,current.id);
       $('acquisitionResult').replaceChildren(article);$('acquisitionNotice').textContent='Résultat enregistré. Consulte les sources avant de décider.';
       window.dispatchEvent(new CustomEvent('flemme:refresh'));
     }catch(error){$('acquisitionNotice').textContent=error.status===503?'Recherche et documents non activés.':error.message;

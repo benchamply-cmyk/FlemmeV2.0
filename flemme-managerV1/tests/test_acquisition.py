@@ -51,6 +51,7 @@ class Memory:
         self.output = None
 
     async def request(self, method, path, payload):
+        if path == "/rest/v1/rpc/est_admin": return True
         self.calls.append((path, payload))
         return {'snapshot': self.snapshot, 'replayed': self.replayed, 'output': self.output}
 
