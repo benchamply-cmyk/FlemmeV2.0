@@ -86,3 +86,6 @@
   .apply { margin: 56px auto; }
   .brigade-hero .cta-row a { width: 100%; }
 }
+
+/* V5 : ancres du menu « La Brigade » */
+#pourquoi, #remuneration, #grades, #faq { scroll-margin-top: 24px; }

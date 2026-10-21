@@ -2,8 +2,8 @@
 // Stratégie « réseau d'abord » : on essaie toujours la version en ligne, et on
 // ne se sert de la copie que si le réseau ne répond pas.
 // Changer V (flemme-v5 → flemme-v6…) force les visiteurs à repartir de zéro.
-const V = 'flemme-v4.100-typo';
-const FILES = ['./', 'index.html', 'styles.css', 'app.js', 'sb.js', 'espace.html', 'espace.js', 'espace.css', 'assistant.js', 'assistant.css', 'content.js', 'icons.svg', 'manifest.webmanifest', 'icon-192.png', 'favicon.ico'];
+const V = 'flemme-v5-arbo';
+const FILES = ['./', 'index.html', 'styles.css', 'app.js', 'sb.js', 'espace.html', 'espace.js', 'espace.css', 'assistant.js', 'assistant.css', 'content.js', 'nav.js', 'services.html', 'services.js', 'demarche.html', 'ambassadeurs.html', 'icons.svg', 'manifest.webmanifest', 'icon-192.png', 'favicon.ico'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(V).then(c => c.addAll(FILES)));

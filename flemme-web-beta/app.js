@@ -535,5 +535,12 @@ const initialSection = location.hash.slice(1);
 if (homeSections.has(initialSection)) showSection(initialSection, false);
 else { history.replaceState(null, '', './'); show('home', false, false); }
 
+// Liens venus des autres pages (services, ambassadeurs, recherche) : ./?service=artisan ouvre
+// directement la demande pour ce service, ./?ambassadeur=1 coche l'option ambassadeur.
+const params = new URLSearchParams(location.search);
+const askedService = byId(params.get('service'));
+if (askedService) startOffer(askedService.n, askedService);
+if (params.get('ambassadeur') === '1') { $('#missionForm input[name=ambassadeur]').checked = true; taskInput.focus(); }
+
 // Service worker : permet au site de s'afficher même hors connexion.
 if (!NATIVE && 'serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));

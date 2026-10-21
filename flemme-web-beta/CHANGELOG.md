@@ -114,6 +114,7 @@ Attention : ces ZIP contiennent encore flemme.fr, le jaune, la grille à plat et
 
 ## À venir
 - Design V5 (branche feature/design-v5) : nouvelle version du design, travaillée sur un aperçu commentable (apercu/construire.py).
+- V5 : menus déroulants au survol des onglets, pages dédiées Services, Notre démarche et Ambassadeurs (accueil inchangé), onglet La Brigade vers rejoindre.html, recherche sur le site (nav.js), bleu glacier #a5ccff à la place du vert et fond bleu pastel à reflets.
 
 ## Reste à faire
 - Application : compiler et tester sur de vrais téléphones (Xcode, Android Studio).
