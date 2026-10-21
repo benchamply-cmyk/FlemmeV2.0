@@ -118,6 +118,7 @@ Attention : ces ZIP contiennent encore flemme.fr, le jaune, la grille à plat et
 - V5 UX : menus déroulants gardés sur ordinateur, menu burger sous 1100 px (mobile et tablette), en-tête collant, bouton « Confier ma flemme » collant sur mobile, étapes du formulaire (1 sur 2, environ 1 minute).
 - V5 Mon espace et Mes conversations (branche feature/manager-espace-v5) : en-tête V5 avec menus et burger, connexion sur deux colonnes, tableau de bord avec raccourcis, frise d’avancement horizontale, conversations du Manager en bulles avec colonne latérale (espace-v5.css, logique Supabase et Manager inchangée). Intègre aussi l’accès administrateur des agents de la PR #39 (rôles, plans à valider) habillé en V5.
 - Espace client et espace admin séparés (branche feature/espace-admin-separes) : /espace ne contient que les fonctions client (demandes, discussion, compte, conversations Flemme Manager en lecture seule) ; tout le Flemme Manager administrateur passe dans l’onglet « Flemme Manager » de /gestionadmin ; /manager redirige vers /espace.
+- Le client écrit à Flemme Manager depuis /espace (branche feature/espace-ecrire-manager) : bouton « Nouvelle conversation » et zone d’envoi ; agents, plans et suivi de mission restent réservés à /gestionadmin. Nécessite supabase/manager-client-messages.sql et le backend à jour.
 
 ## Reste à faire
 - Application : compiler et tester sur de vrais téléphones (Xcode, Android Studio).

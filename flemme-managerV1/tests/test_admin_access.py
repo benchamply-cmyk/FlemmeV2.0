@@ -42,7 +42,22 @@ def test_access_and_read_history(admin, monkeypatch):
     finally: app.dependency_overrides.clear()
 
 
-@pytest.mark.parametrize('suffix', ['','/messages','/mission/events','/messages/recover'])
+def test_customer_can_write_to_manager(monkeypatch):
+    calls = []
+    async def turn(memory, cid, rid, text, revision):
+        calls.append(text); return {'revision': revision + 2}
+    monkeypatch.setattr('flemme_manager.routes.memory_v2.submit_turn', turn)
+    app.dependency_overrides[get_memory] = lambda: Memory(False)
+    try:
+        client, cid = TestClient(app), str(uuid4())
+        assert client.post('/api/v2/conversations', json={'conversation_id': cid}).status_code == 201
+        response = client.post('/api/v2/conversations/'+cid+'/messages',
+                               json={'request_id': str(uuid4()), 'expected_revision': 0, 'request': 'Compare mes devis'})
+        assert response.status_code == 201 and calls == ['Compare mes devis']
+    finally: app.dependency_overrides.clear()
+
+
+@pytest.mark.parametrize('suffix', ['/mission/events','/messages/recover'])
 def test_customer_cannot_mutate_v2(suffix):
     app.dependency_overrides[get_memory] = lambda: Memory(False)
     try:

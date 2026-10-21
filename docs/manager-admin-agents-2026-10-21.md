@@ -5,6 +5,13 @@ Les lancements, messages au Manager, changements de mission et récupérations s
 
 Les clients conservent la lecture de leurs propres conversations, résultats et originaux. Les règles de propriété existantes restent appliquées, y compris pour les administrateurs : cette évolution ne crée pas de consultation transverse des données clients.
 
+## Mise à jour du 21/10/2026 : les clients écrivent au Manager
+Demande de Ben : le client écrit au Manager depuis /espace. Le client peut désormais créer sa conversation et envoyer ses messages (`POST /api/v2/conversations` et `/messages` n’exigent plus que la session confirmée). Chaque message déclenche l’analyse du Manager, donc un appel au modèle. Restent réservés à l’administrateur : événements de mission (statut, action, résultat), récupération, plans d’agents, livrables des spécialistes et acquisitions.
+
+Installation, dans cet ordre : appliquer `supabase/manager-client-messages.sql` (après `manager-admin-agents.sql`), déployer le backend, puis le site. Le script retire les gardes INSERT sur `fm_v2.conversations`, `missions`, `messages` et `events`, et remet une garde administrateur sur les événements `status`, `action` et `result`. Les tables `fm_v3` et `fm_v4` ne changent pas.
+
+Limite connue : la base ne distingue pas un appel du backend d’un appel RPC direct du client avec sa propre session. Un client peut donc, sur sa seule conversation, écrire lui-même une réponse « assessment » ou marquer son tour en échec. Les administrateurs ne doivent pas se fier à l’état « Brief qualifié » comme preuve d’une analyse du Manager.
+
 ## Répartition visible
 Search recherche sur le Web, Document extrait les documents, Compare compare les valeurs disponibles et Quality contrôle les citations/calculs pris en charge. Le suivi enregistré distingue les étapes effectuées de celles non sollicitées. Les anciens résultats et les tentatives interrompues sans détail ne reçoivent pas d’étapes inventées. Le pipeline historique fourni sélectionne uniquement les sources saisies, sans prétendre naviguer sur Internet. Writer reste le formatteur interne compatible avec le stockage V3.
 
