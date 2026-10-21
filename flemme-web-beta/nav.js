@@ -97,6 +97,11 @@ if (nav) {
   document.addEventListener('click', e => { if (!e.target.closest('.nav-item')) closeAll(); });
 }
 
+// « Mon espace » : visible dès que l'espace personnel est configuré (même règle que sb.js).
+const SPACE = (window.FLEMME || {}).supabase || {};
+const spaceLink = document.getElementById('spaceLink');
+if (spaceLink && SPACE.url && SPACE.cle) spaceLink.hidden = false;
+
 /* ---------- 3. Menu burger (mobile et petits écrans) ---------- */
 
 // Sous 1100 px, les onglets sont masqués (CSS) et le bouton « Menu » ouvre un panneau :
