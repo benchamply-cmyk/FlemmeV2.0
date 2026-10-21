@@ -447,24 +447,37 @@ h3, .cat-title, .how b, .rank-list b, .faq summary {
 :root {
   --acid: #a5ccff;
   --glacier-deep: #4f86d9;
-  --paper: #eaf2ff;
+  --paper: #e3eeff;
   --soft: #f3f7ff;
 }
 .logo span { color: var(--glacier-deep); }
+/* Titres plus lisibles : plus d'espace entre les mots (la chute « Pas nous. » garde le sien). */
+h1, h2, .ideas-title, .menu-home, .menu-title { word-spacing: .22em; letter-spacing: .01em; }
+.hero h1 { letter-spacing: .01em; }
+.hero h1 .not-us { word-spacing: normal; }
+/* Le mot « flemme » du titre d'accueil reste surligné en vert, seule touche verte du site. */
+.hero h1 .fl { background: #57d68d; }
 
-/* Fond bleu pastel : nappes lilas, rose et aqua qui dérivent lentement, et un reflet nacré. */
+/* Fond « Glacier profond » : nappes lilas, rose, aqua et bleu qui dérivent, ombres bleues dans
+   les coins, deux sphères floues, un reflet nacré qui passe et un léger grain. */
 body { background: var(--paper); position: relative; isolation: isolate; }
 body::before, body::after { content: ""; position: fixed; inset: -20vmax; z-index: -1; pointer-events: none; }
 body::before {
   background:
-    radial-gradient(38vmax 30vmax at 12% 18%, rgba(196, 178, 255, .55), transparent 70%),
-    radial-gradient(34vmax 28vmax at 88% 22%, rgba(255, 196, 226, .45), transparent 70%),
-    radial-gradient(40vmax 32vmax at 70% 85%, rgba(160, 232, 230, .45), transparent 70%),
-    radial-gradient(36vmax 30vmax at 20% 90%, rgba(165, 204, 255, .7), transparent 70%);
+    radial-gradient(60vmax 40vmax at 100% 0%, rgba(40, 80, 170, .28), transparent 65%),
+    radial-gradient(55vmax 40vmax at 0% 100%, rgba(40, 80, 170, .28), transparent 65%),
+    radial-gradient(18vmax 18vmax at 18% 55%, rgba(170, 150, 255, .55), transparent 70%),
+    radial-gradient(18vmax 18vmax at 84% 70%, rgba(120, 220, 225, .5), transparent 70%),
+    radial-gradient(38vmax 30vmax at 12% 18%, rgba(170, 150, 255, .6), transparent 70%),
+    radial-gradient(34vmax 28vmax at 88% 22%, rgba(255, 182, 220, .5), transparent 70%),
+    radial-gradient(40vmax 32vmax at 70% 85%, rgba(120, 220, 225, .55), transparent 70%),
+    radial-gradient(36vmax 30vmax at 20% 90%, rgba(120, 175, 255, .75), transparent 70%);
   animation: v5-drift 28s ease-in-out infinite alternate;
 }
 body::after {
-  background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, .55) 47%, rgba(255, 255, 255, .15) 53%, transparent 65%);
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, .7) 47%, rgba(255, 255, 255, .12) 53%, transparent 65%);
   animation: v5-sheen 16s ease-in-out infinite alternate;
 }
 @keyframes v5-drift { to { transform: translate3d(4vmax, -3vmax, 0) rotate(8deg) scale(1.08); } }
