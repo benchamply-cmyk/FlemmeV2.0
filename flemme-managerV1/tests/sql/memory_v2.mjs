@@ -149,4 +149,19 @@ assert.equal((await command('snapshot',customerCid)).revision,0); // Entire tran
 await reject(()=>command('event',customerCid,randomUUID(),0,{kind:'action',state:null,note:'Forbidden',result:null}),'42501');
 await actor(b); await reject(()=>command('snapshot',adminCid),'PT404');
 console.log('Admin guard: administrator creation allowed, customer creation denied, histories readable, ownership preserved.');
+// Clients write to the Manager from /espace; mission events stay administrator-only.
+await db.exec('reset role');
+const clientSql=await readFile(new URL('../../../supabase/manager-client-messages.sql',import.meta.url),'utf8');
+await db.exec(clientSql); await db.exec(clientSql);
+await actor(b); const ownCid=randomUUID(), turn=randomUUID();
+assert.equal((await command('create',ownCid)).revision,0);
+assert.equal((await command('user',ownCid,turn,0,{content:'Peux-tu comparer mes deux devis ?'})).revision,1);
+const answer=await command('assessment',ownCid,turn,null,{mission_status:'needs_information',user_response:{message:'Envoie-moi les deux devis.'}});
+assert.equal(answer.revision,2); assert.equal(answer.mission.state,'waiting_information');
+await reject(()=>command('event',ownCid,randomUUID(),2,{kind:'action',state:null,note:'Forbidden',result:null}),'42501');
+await reject(()=>command('event',ownCid,randomUUID(),2,{kind:'status',state:'cancelled',note:'Forbidden',result:null}),'42501');
+assert.equal((await command('snapshot',ownCid)).revision,2);
+await actor(a); await reject(()=>command('snapshot',ownCid),'PT404');
+assert.equal((await command('event',adminCid,randomUUID(),0,{kind:'action',state:null,note:'Admin action',result:null})).revision,1);
+console.log('Client messages: customers create and write, mission events and agents stay administrator-only.');
 await db.close();

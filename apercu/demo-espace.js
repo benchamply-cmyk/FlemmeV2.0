@@ -87,10 +87,16 @@
       { agent: 'Compare', actions: ['Comparer prix, prestations et délais'], parameters: { max_price: '9000', currency: 'EUR' } },
       { agent: 'Quality', actions: ['Contrôler citations et calculs'], parameters: { required: true } }] } }),
     approvePlan: async id => ok({ snapshot: structuredClone(conv[id]), approval_id: 'ok' }),
-    list: async () => ok(Object.values(conv).map(c => ({ id: c.id, created_at: c.created_at, state: c.mission.state }))),
+    list: async () => ok(Object.values(conv).sort((x, y) => y.created_at.localeCompare(x.created_at)).map(c => ({ id: c.id, created_at: c.created_at, state: c.mission.state }))),
     read: async id => ok(structuredClone(conv[id])),
-    create: async () => ok({ id: 'c3', revision: 1, created_at: new Date().toISOString(), pending_request_id: null, mission: { state: 'draft' }, messages: [], events: [{ kind: 'created', created_at: new Date().toISOString(), payload: {} }] }),
-    send: async (id, body) => { const c = conv[id] || conv.c1; c.messages.push({ role: 'user', content: body.request, created_at: new Date().toISOString() }); c.revision++; return ok(structuredClone(c)); },
+    create: async id => { const now = new Date().toISOString(); conv[id] = { id, revision: 0, created_at: now, pending_request_id: null, mission: { state: 'draft' }, messages: [], events: [{ kind: 'created', created_at: now, payload: {} }] }; return ok(structuredClone(conv[id])); },
+    send: async (id, body) => {
+      const c = conv[id], now = new Date().toISOString();
+      c.messages.push({ role: 'user', content: body.request, created_at: now },
+        { role: 'assistant', created_at: now, assessment: { mission_status: 'needs_information', user_response: { message: 'Bien noté ! Pour avancer, j’ai besoin de deux précisions.' },
+          qualification_questions: [{ question: 'Quelle est ta date limite ?' }, { question: 'As-tu un budget en tête ?' }] } });
+      c.revision += 2; c.mission.state = 'waiting_information'; return ok(structuredClone(c));
+    },
     event: async id => ok(structuredClone(conv[id])),
     recover: async id => ok(structuredClone(conv[id])),
     deliveries: async () => ok([]),
