@@ -2,8 +2,8 @@
 /* =========================================================================
    FLEMME — menu, en-tête et recherche (toutes les pages publiques)
    Le HTML de chaque page contient déjà les liens des onglets (lisibles sans
-   JavaScript) ; ce fichier les remplace par un menu burger et ajoute l'en-tête
-   collant, le bouton « Confier ma flemme » sur mobile et la recherche.
+   JavaScript) ; ce fichier ajoute les menus déroulants (ordinateur), le menu burger
+   (mobile), l'en-tête collant, le bouton « Confier ma flemme » sur mobile et la recherche.
    Un seul endroit à modifier pour changer l'arborescence : MENU ci-dessous.
    ========================================================================= */
 (() => {
@@ -59,14 +59,50 @@ function icon(name) {
 }
 const page = (location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '') + '.html';
 
-/* ---------- 2. Menu burger (ordinateur et mobile) ---------- */
+/* ---------- 2. Menus déroulants ---------- */
 
-// Les onglets de l'en-tête sont remplacés par un bouton « Menu » qui ouvre un panneau :
-// sur ordinateur une colonne par onglet, sur mobile une liste plein écran.
+// Ordinateur : onglets avec menus déroulants. Au survol (souris) le menu s'ouvre en CSS ; la flèche l'ouvre au clic, au toucher et au clavier.
 const nav = document.querySelector('.site-nav');
+const items = [];
+const closeAll = except => items.forEach(it => { if (it !== except) { it.classList.remove('open'); it.querySelector('.nav-toggle').setAttribute('aria-expanded', 'false'); } });
+if (nav) {
+  MENU.forEach((m, i) => {
+    const link = nav.querySelector('a[href="' + m.href + '"]');
+    if (!link) return;
+    if (page === m.href) link.setAttribute('aria-current', 'page');
+    const item = el('div', 'nav-item');
+    link.replaceWith(item);
+    const toggle = el('button', 'nav-toggle');
+    toggle.type = 'button';
+    toggle.append(icon('chevron-down'));
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-controls', 'navSub' + i);
+    toggle.setAttribute('aria-label', 'Ouvrir le menu ' + m.label);
+    const sub = el('ul', 'nav-sub');
+    sub.id = 'navSub' + i;
+    m.items.forEach(s => { const li = el('li', ''); const a = el('a', '', s.label); a.href = s.href; li.append(a); sub.append(li); });
+    item.append(link, toggle, sub);
+    toggle.addEventListener('click', () => {
+      const open = !item.classList.contains('open');
+      closeAll(item);
+      item.classList.toggle('open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+      if (open) sub.querySelector('a').focus();
+    });
+    item.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') closeAll(); });
+    items.push(item);
+  });
+  const home = nav.querySelector('a[href="./"]');
+  if (home && page === 'index.html') home.setAttribute('aria-current', 'page');
+  document.addEventListener('click', e => { if (!e.target.closest('.nav-item')) closeAll(); });
+}
+
+/* ---------- 3. Menu burger (mobile et petits écrans) ---------- */
+
+// Sous 1100 px, les onglets sont masqués (CSS) et le bouton « Menu » ouvre un panneau :
+// deux colonnes sur tablette, une liste plein écran sur mobile.
 const right = document.querySelector('.head-right');
 if (!nav || !right) return;
-document.documentElement.classList.add('has-burger');
 
 const menuBtn = el('button', 'menu-btn');
 menuBtn.type = 'button';
@@ -116,7 +152,7 @@ menuClose.addEventListener('click', () => menu.close());
 menu.addEventListener('close', () => menuBtn.setAttribute('aria-expanded', 'false'));
 menu.addEventListener('click', e => { if (e.target === menu || e.target.closest('a')) menu.close(); });
 
-/* ---------- 3. En-tête collant et bouton « Confier ma flemme » ---------- */
+/* ---------- 4. En-tête collant et bouton « Confier ma flemme » ---------- */
 
 // L'en-tête reste en haut de l'écran ; il prend un fond dès qu'on a défilé.
 const header = document.querySelector('header');
@@ -147,7 +183,7 @@ addEventListener('popstate', onScroll);
 document.addEventListener('click', () => setTimeout(onScroll));
 onScroll();
 
-/* ---------- 4. Recherche ---------- */
+/* ---------- 5. Recherche ---------- */
 
 // Index : onglets, entrées des menus, autres pages et tous les services de content.js.
 const norm = s => (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[’']/g, ' ');
@@ -214,6 +250,7 @@ dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
 list.addEventListener('click', e => { if (e.target.closest('a')) dlg.close(); });
 // « / » ou Ctrl+K ouvrent la recherche, sauf pendant la saisie dans un champ.
 document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeAll();
   const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName) || document.activeElement.isContentEditable;
   if ((e.key === '/' && !typing) || (e.key === 'k' && (e.ctrlKey || e.metaKey))) { e.preventDefault(); if (!dlg.open) open(); }
 });
