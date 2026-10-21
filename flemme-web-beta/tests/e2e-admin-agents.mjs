@@ -8,6 +8,7 @@ try {
   page.on('pageerror',e=>errors.push(e.message));
   await page.route('**/*',async route=>{
    const req=route.request(),url=new URL(req.url());
+   if(url.hostname!== 'flemme.test')return route.fulfill({status:200,contentType:'text/css',body:''});
    if(req.method()!=='GET') {writes.push(url.pathname);throw new Error('Unexpected mutation');}
    if(url.pathname==='/api/v2/access')return route.fulfill({status:role==='unavailable'?503:200,json:{can_run_agents:role==='admin'}});
    if(url.pathname==='/api/v2/conversations')return route.fulfill({json:[{id:'cid',created_at:'2026-10-21T04:00:00Z',state:'qualified'}]});
