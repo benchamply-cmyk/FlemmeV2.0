@@ -115,6 +115,7 @@ Attention : ces ZIP contiennent encore flemme.fr, le jaune, la grille à plat et
 ## À venir
 - Design V5 (branche feature/design-v5) : nouvelle version du design, travaillée sur un aperçu commentable (apercu/construire.py).
 - V5 : menus déroulants au survol des onglets, pages dédiées Services, Notre démarche et Ambassadeurs (accueil inchangé), onglet La Brigade vers rejoindre.html, recherche sur le site (nav.js), bleu glacier #a5ccff à la place du vert et fond bleu pastel à reflets.
+- V5 UX : menu burger sur ordinateur et mobile (remplace les menus déroulants), en-tête collant, bouton « Confier ma flemme » collant sur mobile, étapes du formulaire (1 sur 2, environ 1 minute).
 
 ## Reste à faire
 - Application : compiler et tester sur de vrais téléphones (Xcode, Android Studio).

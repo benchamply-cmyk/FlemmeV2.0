@@ -1,15 +1,16 @@
 'use strict';
 /* =========================================================================
-   FLEMME — menu principal et recherche (toutes les pages publiques)
+   FLEMME — menu, en-tête et recherche (toutes les pages publiques)
    Le HTML de chaque page contient déjà les liens des onglets (lisibles sans
-   JavaScript) ; ce fichier ajoute les menus déroulants et la recherche.
+   JavaScript) ; ce fichier les remplace par un menu burger et ajoute l'en-tête
+   collant, le bouton « Confier ma flemme » sur mobile et la recherche.
    Un seul endroit à modifier pour changer l'arborescence : MENU ci-dessous.
    ========================================================================= */
 (() => {
 
 /* ---------- 1. Arborescence ---------- */
 
-// Chaque onglet mène à sa page ; « items » sont les entrées du menu déroulant.
+// Chaque onglet mène à sa page ; « items » sont ses entrées dans le menu.
 // « mots » sert seulement à la recherche (synonymes que le visiteur pourrait taper).
 const MENU = [
   { href: 'services.html', label: 'Services', items: [
@@ -58,45 +59,95 @@ function icon(name) {
 }
 const page = (location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '') + '.html';
 
-/* ---------- 2. Menus déroulants ---------- */
+/* ---------- 2. Menu burger (ordinateur et mobile) ---------- */
 
-// Au survol (souris) le menu s'ouvre en CSS ; la flèche l'ouvre au clic, au toucher et au clavier.
+// Les onglets de l'en-tête sont remplacés par un bouton « Menu » qui ouvre un panneau :
+// sur ordinateur une colonne par onglet, sur mobile une liste plein écran.
 const nav = document.querySelector('.site-nav');
-const items = [];
-const closeAll = except => items.forEach(it => { if (it !== except) { it.classList.remove('open'); it.querySelector('.nav-toggle').setAttribute('aria-expanded', 'false'); } });
-if (nav) {
-  MENU.forEach((m, i) => {
-    const link = nav.querySelector('a[href="' + m.href + '"]');
-    if (!link) return;
-    if (page === m.href) link.setAttribute('aria-current', 'page');
-    const item = el('div', 'nav-item');
-    link.replaceWith(item);
-    const toggle = el('button', 'nav-toggle');
-    toggle.type = 'button';
-    toggle.append(icon('chevron-down'));
-    toggle.setAttribute('aria-expanded', 'false');
-    toggle.setAttribute('aria-controls', 'navSub' + i);
-    toggle.setAttribute('aria-label', 'Ouvrir le menu ' + m.label);
-    const sub = el('ul', 'nav-sub');
-    sub.id = 'navSub' + i;
-    m.items.forEach(s => { const li = el('li', ''); const a = el('a', '', s.label); a.href = s.href; li.append(a); sub.append(li); });
-    item.append(link, toggle, sub);
-    toggle.addEventListener('click', () => {
-      const open = !item.classList.contains('open');
-      closeAll(item);
-      item.classList.toggle('open', open);
-      toggle.setAttribute('aria-expanded', String(open));
-      if (open) sub.querySelector('a').focus();
-    });
-    item.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') closeAll(); });
-    items.push(item);
-  });
-  const home = nav.querySelector('a[href="./"]');
-  if (home && page === 'index.html') home.setAttribute('aria-current', 'page');
-  document.addEventListener('click', e => { if (!e.target.closest('.nav-item')) closeAll(); });
-}
+const right = document.querySelector('.head-right');
+if (!nav || !right) return;
+document.documentElement.classList.add('has-burger');
 
-/* ---------- 3. Recherche ---------- */
+const menuBtn = el('button', 'menu-btn');
+menuBtn.type = 'button';
+menuBtn.setAttribute('aria-haspopup', 'dialog');
+menuBtn.setAttribute('aria-expanded', 'false');
+const bars = el('span', 'menu-bars');
+bars.setAttribute('aria-hidden', 'true');
+bars.append(el('i', ''), el('i', ''), el('i', ''));
+menuBtn.append(bars, el('span', 'menu-btn-txt', 'Menu'));
+right.append(menuBtn);
+
+const menu = el('dialog', 'menu-dlg');
+menu.setAttribute('aria-label', 'Menu du site');
+const menuHead = el('div', 'menu-head');
+const menuClose = el('button', 'search-close');
+menuClose.type = 'button';
+menuClose.setAttribute('aria-label', 'Fermer le menu');
+menuClose.append(icon('x'));
+const homeLink = el('a', 'menu-home', 'Accueil');
+homeLink.href = './';
+if (page === 'index.html') homeLink.setAttribute('aria-current', 'page');
+menuHead.append(homeLink, menuClose);
+const cols = el('div', 'menu-cols');
+MENU.forEach(m => {
+  const col = el('section', 'menu-col');
+  const title = el('a', 'menu-title', m.label);
+  title.href = m.href;
+  if (page === m.href) title.setAttribute('aria-current', 'page');
+  const ul = el('ul', '');
+  m.items.forEach(s => { const li = el('li', ''); const a = el('a', '', s.label); a.href = s.href; li.append(a); ul.append(li); });
+  col.append(title, ul);
+  cols.append(col);
+});
+const menuFoot = el('div', 'menu-foot');
+const menuCta = el('a', 'primary btn-link', 'Confier ma flemme →');
+menuCta.href = './';
+const menuSearch = el('button', 'secondary');
+menuSearch.type = 'button';
+menuSearch.append(icon('search'), document.createTextNode(' Rechercher'));
+menuFoot.append(menuCta, menuSearch);
+menu.append(menuHead, cols, menuFoot);
+document.body.append(menu);
+
+const openMenu = () => { menu.showModal(); menuBtn.setAttribute('aria-expanded', 'true'); };
+menuBtn.addEventListener('click', openMenu);
+menuClose.addEventListener('click', () => menu.close());
+menu.addEventListener('close', () => menuBtn.setAttribute('aria-expanded', 'false'));
+menu.addEventListener('click', e => { if (e.target === menu || e.target.closest('a')) menu.close(); });
+
+/* ---------- 3. En-tête collant et bouton « Confier ma flemme » ---------- */
+
+// L'en-tête reste en haut de l'écran ; il prend un fond dès qu'on a défilé.
+const header = document.querySelector('header');
+// Mobile : bouton collant en bas de l'écran. Sur l'accueil, il amène au champ de saisie
+// et disparaît quand ce champ est visible ou pendant le formulaire de demande.
+const stickyCta = el('a', 'sticky-cta primary btn-link', 'Confier ma flemme →');
+stickyCta.href = './';
+document.body.append(stickyCta);
+const ask = document.querySelector('#flemmeForm');
+const homeView = document.getElementById('home');
+let askVisible = false;
+if (ask) {
+  stickyCta.addEventListener('click', e => {
+    e.preventDefault();
+    const task = document.getElementById('task');
+    task.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    task.focus({ preventScroll: true });
+  });
+  new IntersectionObserver(([entry]) => { askVisible = entry.isIntersecting; onScroll(); }).observe(ask);
+}
+function onScroll() {
+  if (header) header.classList.toggle('scrolled', scrollY > 8);
+  const hide = ask ? (askVisible || !homeView.classList.contains('active')) : false;
+  stickyCta.classList.toggle('off', hide);
+}
+addEventListener('scroll', onScroll, { passive: true });
+addEventListener('popstate', onScroll);
+document.addEventListener('click', () => setTimeout(onScroll));
+onScroll();
+
+/* ---------- 4. Recherche ---------- */
 
 // Index : onglets, entrées des menus, autres pages et tous les services de content.js.
 const norm = s => (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[’']/g, ' ');
@@ -112,8 +163,6 @@ const DISPO = new Set(['boulot', 'rdv', 'achats']);
   (g.sous || []).forEach(c => add(c.nom, './?service=' + encodeURIComponent(c.id), 'Confier cette flemme', (c.mots_cles || []).join(' ') + ' ' + (c.exemple || '')));
 });
 
-const right = document.querySelector('.head-right');
-if (!right) return;
 const btn = el('button', 'search-btn');
 btn.type = 'button';
 btn.setAttribute('aria-label', 'Rechercher sur le site');
@@ -157,6 +206,7 @@ function search() {
 }
 const open = () => { input.value = ''; search(); dlg.showModal(); input.focus(); };
 btn.addEventListener('click', open);
+menuSearch.addEventListener('click', () => { menu.close(); open(); });
 input.addEventListener('input', search);
 // Entrée : ouvre le premier résultat.
 input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); const a = list.querySelector('a'); if (a) location.href = a.href; } });
@@ -164,7 +214,6 @@ dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
 list.addEventListener('click', e => { if (e.target.closest('a')) dlg.close(); });
 // « / » ou Ctrl+K ouvrent la recherche, sauf pendant la saisie dans un champ.
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeAll();
   const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName) || document.activeElement.isContentEditable;
   if ((e.key === '/' && !typing) || (e.key === 'k' && (e.ctrlKey || e.metaKey))) { e.preventDefault(); if (!dlg.open) open(); }
 });

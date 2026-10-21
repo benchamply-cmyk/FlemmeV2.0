@@ -539,7 +539,9 @@ else { history.replaceState(null, '', './'); show('home', false, false); }
 // directement la demande pour ce service, ./?ambassadeur=1 coche l'option ambassadeur.
 const params = new URLSearchParams(location.search);
 const askedService = byId(params.get('service'));
-if (askedService) startOffer(askedService.n, askedService);
+// Après la fin du chargement : sinon le navigateur, qui voit « #offer » dans l'adresse,
+// fait défiler la page jusqu'au formulaire et le haut se retrouve sous l'en-tête.
+if (askedService) addEventListener('DOMContentLoaded', () => setTimeout(() => startOffer(askedService.n, askedService)));
 if (params.get('ambassadeur') === '1') { $('#missionForm input[name=ambassadeur]').checked = true; taskInput.focus(); }
 
 // Service worker : permet au site de s'afficher même hors connexion.
