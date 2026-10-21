@@ -7,7 +7,7 @@
   const eventLabels={created:'Mission créée',user:'Message envoyé',qualification:'Qualification',failure:'Analyse non aboutie',late_result:'Résultat reçu après interruption',status:'Statut',action:'Action',result:'Résultat'};
   let canRun = false;
   function permissions() {
-    for (const id of ['newConversation','managerMessage','missionUpdate']) $(id).hidden=!canRun;
+    for (const id of ['newConversation','managerMessage','missionUpdate','adminHistoryHint']) $(id).hidden=!canRun;
     if(!canRun) $('recoverMessage').hidden=true;
   }
   let client, snapshot, pendingMessage, pendingEvent, pendingCreation, listOffset = 0, busy = false;
