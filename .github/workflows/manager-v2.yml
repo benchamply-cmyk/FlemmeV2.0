@@ -75,7 +75,12 @@ jobs:
         env:
           PLAYWRIGHT_MODULE: /tmp/flemme-e2e/node_modules/playwright/index.mjs
           E2E_SCREENSHOT: /tmp/flemme-acquisition-e2e.png
+      - run: node flemme-web-beta/tests/e2e-admin-agents.mjs
+        env:
+          PLAYWRIGHT_MODULE: /tmp/flemme-e2e/node_modules/playwright/index.mjs
       - uses: actions/upload-artifact@v4
         with:
           name: acquisition-browser-simulated
-          path: /tmp/flemme-acquisition-e2e.png
+          path: |
+            /tmp/flemme-acquisition-e2e.png
+            /tmp/flemme-manager-*.png

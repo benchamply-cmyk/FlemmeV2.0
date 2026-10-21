@@ -3,6 +3,7 @@ import base64
 import hashlib
 from datetime import datetime, timezone
 from decimal import Decimal
+from uuid import UUID
 from pydantic import Field
 from flemme_manager.acquisition_schemas import AcquisitionRequest, AcquisitionError
 from flemme_manager.delivery_schemas import StrictModel
@@ -27,6 +28,7 @@ class DocumentUpload(StrictModel):
 
 
 class Acquire(AcquisitionRequest):
+    approval_id: UUID | None = None
     mode: str = Field(pattern='^(web|documents)$')
     documents: list[DocumentUpload] = Field(default_factory=list, max_length=3)
 
@@ -114,6 +116,11 @@ def report(sources, request, workflow, trace):
               'scans et montants ambigus restent non vérifiés.']
     return {'workflow_id': workflow, 'generated_at': datetime.now(timezone.utc).isoformat(),
             'agents': ['Search', 'Compare', 'Writer', 'Quality'],
+            'agent_activity': [
+                {'agent': 'Search', 'status': 'completed' if request.mode == 'web' else 'skipped', 'task': 'Recherche web outillée' if request.mode == 'web' else 'Aucune recherche web'},
+                {'agent': 'Document', 'status': 'completed' if request.mode == 'documents' else 'skipped', 'task': 'Extraction de ' + str(len(sources)) + ' document(s)' if request.mode == 'documents' else 'Aucun document analysé'},
+                {'agent': 'Compare', 'status': 'completed', 'task': 'Comparaison des données disponibles ; inconnues conservées'},
+                {'agent': 'Quality', 'status': 'completed', 'task': 'Contrôle des citations et montants comparables ; validation humaine requise'}],
             'search': {'mode': request.mode, 'source_ids': [s.id for s in sources], 'trace': trace},
             'sources': [s.model_dump(mode='json') for s in sources], 'comparison': comparisons,
             'markdown': '\n'.join(lines), 'quality': {'passed': True, 'checks': [

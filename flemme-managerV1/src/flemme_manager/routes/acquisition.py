@@ -4,7 +4,7 @@ import os
 from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from pydantic import ValidationError
-from flemme_manager.memory.supabase import get_memory, StorageError
+from flemme_manager.memory.supabase import get_memory, get_admin_memory, StorageError
 from flemme_manager.routes.deliveries_v3 import enabled as v3_enabled
 from flemme_manager.services.acquisition import Acquire, produce
 from flemme_manager.acquisition_schemas import AcquisitionError
@@ -20,7 +20,7 @@ router = APIRouter(prefix='/api/v4/conversations', tags=['acquisition'], depende
 
 
 @router.post('/{conversation_id}/acquisitions', status_code=201)
-async def acquire(conversation_id: UUID, request: Request, memory=Depends(get_memory)):
+async def acquire(conversation_id: UUID, request: Request, memory=Depends(get_admin_memory)):
     if request.headers.get('content-type', '').split(';')[0] != 'application/json':
         raise HTTPException(415, 'Format JSON requis.')
     body = bytearray()
@@ -30,6 +30,8 @@ async def acquire(conversation_id: UUID, request: Request, memory=Depends(get_me
             raise HTTPException(413, 'Trois documents de 1 Mo maximum.')
     try:
         model = Acquire.model_validate_json(body)
+        from flemme_manager.services.agent_plans import require_approval
+        await require_approval(memory, str(conversation_id), "acquisition", model)
         return await produce(memory, str(conversation_id), model)
     except ValidationError:
         raise HTTPException(422, 'Requête ou documents invalides.') from None

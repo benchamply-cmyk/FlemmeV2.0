@@ -13,6 +13,7 @@
       });
       if (!response.ok) {
         const messages = {401: 'Reconnecte-toi et vérifie que ton e-mail est confirmé.',
+          403: 'Les agents sont réservés aux administrateurs.',
           404: 'Conversation introuvable.', 409: 'La conversation a changé. Actualise-la avant de poursuivre.',
           422: 'Vérifie les informations saisies.', 429: 'La limite d’analyse est atteinte. Réessaie plus tard.', 502: 'Analyse non aboutie. Actualise pour retrouver ton message.',
           503: 'Le Manager est indisponible. Actualise pour vérifier si ton message a été enregistré.'};
@@ -21,6 +22,9 @@
       return response.json();
     }
     return {
+      access: () => call('/access'),
+      plan: (id,body) => call('/conversations/'+encodeURIComponent(id)+'/agent-plans','POST',body),
+      approvePlan: (id,plan,body) => call('/conversations/'+encodeURIComponent(id)+'/agent-plans/'+encodeURIComponent(plan)+'/approve','POST',body),
       acquire: (id, body) => call('/conversations/' + encodeURIComponent(id) + '/acquisitions', 'POST', body, '/api/v4'),
       original: async (id, run, index) => {
         const account = await session();

@@ -10,6 +10,10 @@ try{
  page.on('pageerror',error=>errors.push(error.message));
  await page.route('**/*',async route=>{
   const request=route.request(),url=new URL(request.url());
+  if(url.pathname==='/api/v2/conversations/cid/agent-plans'){
+   const body=request.postDataJSON();return route.fulfill({json:{plan:{id:body.plan_id,steps:[{agent:body.request.mode==='web'?'Search':'Document',actions:['Action simulée à valider'],parameters:{query:body.request.query}}]},snapshot:{id:'cid',revision:3}}});
+  }
+  if(url.pathname.endsWith('/approve'))return route.fulfill({json:{approval_id:'approval-demo',snapshot:{id:'cid',revision:4}}});
   if(url.pathname==='/api/v4/conversations/cid/acquisitions'){
    assert.equal(request.headers().authorization,'Bearer simulated-session');
    const input=request.postDataJSON();calls.push(input);
@@ -20,11 +24,11 @@ try{
   if(url.pathname==='/api/v4/conversations/cid/acquisitions/rid/documents/0')return route.fulfill({contentType:'application/octet-stream',body:'original simulated'});
   if(url.pathname==='/manager.html'){
    return route.fulfill({contentType:'text/html; charset=utf-8',body:`<!doctype html><html lang="fr"><head><meta charset="utf-8"><link rel="stylesheet" href="manager-v2.css"></head><body><section id="specialistsPanel"></section>
-    <script>window.FLEMME={managerV2:{url:'https://flemme.test'}};window.SB={session:async()=>({access_token:'simulated-session'})};
+    <script>window.FlemmeAgentAccess={canRun:true};window.FLEMME={managerV2:{url:'https://flemme.test'}};window.SB={session:async()=>({access_token:'simulated-session'})};
     window.ready=function(workflow){window.dispatchEvent(new CustomEvent('flemme:conversation',{detail:{id:'cid',revision:2,pending_request_id:null,mission:{state:'qualified'},messages:[{assessment:{mission_status:'ready',selected_workflow:{workflow_id:workflow}}}]}}))};</script>
-    <script src="manager-v2-api.js"></script><script src="manager-v4.js"></script></body></html>`});
+    <script src="manager-v2-api.js"></script><script src="manager-agent-plans.js"></script><script src="manager-v4.js"></script></body></html>`});
   }
-  if(['manager-v2-api.js','manager-v4.js','manager-v2.css'].includes(url.pathname.slice(1)))return route.fulfill({
+  if(['manager-v2-api.js','manager-agent-plans.js','manager-v4.js','manager-v2.css'].includes(url.pathname.slice(1)))return route.fulfill({
     contentType:url.pathname.endsWith('.js')?'application/javascript; charset=utf-8':'text/css; charset=utf-8',
     body:await readFile(new URL('../'+url.pathname.slice(1),import.meta.url))});
   throw new Error('Unexpected browser network request: '+url.pathname);
@@ -33,7 +37,15 @@ try{
  assert.deepEqual(errors,[]);assert.equal(await page.locator('#acquisitionQuery').count(),1);
  await page.evaluate(()=>ready('rechercher_produit'));
  await page.fill('#acquisitionQuery','Trois offres leasing hybride moins de 300 EUR/mois');await page.fill('#acquisitionBudget','300');
- await page.click('#acquisitionSubmit');await page.waitForFunction(()=>document.getElementById('acquisitionNotice').textContent.includes('Résultat enregistré'));
+ await page.click('#acquisitionSubmit');
+ assert.equal(calls.length,0);
+ await page.fill('#acquisitionQuery','Trois offres hybrides en France à moins de 300 EUR/mois');
+ assert.equal(await page.getByRole('button',{name:'Valider ce plan',exact:true}).isEnabled(),false);
+ await page.click('#acquisitionSubmit');
+ await page.getByRole('button',{name:'Valider ce plan',exact:true}).click();
+ assert.equal(calls.length,0);
+ await page.getByRole('button',{name:'Exécuter le plan validé',exact:true}).click();
+ await page.waitForFunction(()=>document.getElementById('acquisitionNotice').textContent.includes('Résultat enregistré'));
  assert.equal(calls[0].mode,'web');assert.equal(calls[0].constraints.price_basis,'per_month');
  assert.equal(await page.locator('#acquisitionResult img').count(),0);assert.equal(await page.evaluate(()=>!!window.hacked),false);
  assert.equal(await page.locator('#acquisitionResult a').getAttribute('href'),'https://example.com/source');
@@ -42,12 +54,20 @@ try{
  await page.setInputFiles('#acquisitionFiles',[
   {name:'A.txt',mimeType:'text/plain',buffer:Buffer.from('Total TTC : 1200 EUR')},
   {name:'B.txt',mimeType:'text/plain',buffer:Buffer.from('Total TTC : 1400 EUR')}]);
- await page.click('#acquisitionSubmit');await page.waitForFunction(()=>document.querySelector('#acquisitionResult button'));
+ await page.click('#acquisitionSubmit');
+ await page.getByRole('button',{name:'Valider ce plan',exact:true}).click();
+ await page.getByRole('button',{name:'Exécuter le plan validé',exact:true}).click();
+ await page.waitForFunction(()=>document.querySelector('#acquisitionResult button'));
  assert.equal(calls[1].mode,'documents');assert.equal(calls[1].documents.length,2);
  assert.equal(Buffer.from(calls[1].documents[0].content_base64,'base64').toString(),'Total TTC : 1200 EUR');
  const download=page.waitForEvent('download');await page.locator('#acquisitionResult button').first().click();
  assert.equal((await download).suggestedFilename(),'A.txt');
  await page.screenshot({path:process.env.E2E_SCREENSHOT||join(tmpdir(),'flemme-acquisition-e2e.png'),fullPage:true});
+ await page.evaluate(()=>{window.FlemmeAgentAccess={canRun:false};ready('rechercher_produit');});
+ assert.equal(await page.locator('#acquisitionForm').isVisible(),false);
+ const previousCalls=calls.length;
+ await page.evaluate(()=>document.getElementById('acquisitionForm').dispatchEvent(new Event('submit',{cancelable:true})));
+ assert.equal(calls.length,previousCalls);
  assert.deepEqual(errors,[]);
  console.log('Browser E2E passed: web request, two quotes, literal safe rendering, source link, authenticated original download. All upstreams simulated.');
 }finally{await browser.close();}

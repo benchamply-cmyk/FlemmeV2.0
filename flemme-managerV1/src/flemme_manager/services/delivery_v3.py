@@ -51,4 +51,10 @@ async def produce_delivery(memory, conversation_id, request):
             'failure':'execution_error','note':'Production non aboutie ; sources et tentative conservées.'})
         raise DeliveryQualityError('Specialist execution failed') from error
     return await memory.delivery_command('finish',conversation_id,run_id,payload={
-        'result':result.model_dump(mode='json'),'note':'Livrable produit à partir des sources fournies.'})
+        'result':result.model_dump(mode='json'),
+        'agent_activity': [
+            {'agent':'Search','status':'completed','task':'Sélection des sources fournies ; aucune recherche Internet'},
+            {'agent':'Document','status':'skipped','task':'Aucun document extrait'},
+            {'agent':'Compare','status':'completed','task':'Comparaison des critères fournis'},
+            {'agent':'Quality','status':'completed','task':'Contrôle de cohérence du rapport'}],
+        'note':'Livrable produit à partir des sources fournies.'})

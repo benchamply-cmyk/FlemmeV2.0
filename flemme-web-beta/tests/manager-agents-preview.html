@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Mes conversations — Flemme</title><link rel="icon" href="../favicon.ico"><link rel="stylesheet" href="../styles.css"><link rel="stylesheet" href="../espace.css"><link rel="stylesheet" href="../manager-v2.css"></head>
+<body><p>Aperçu du 21/10/2026 — données fictives, aucune action réelle. <a href="?role=admin">Vue administrateur</a> · <a href="?role=customer">Vue client</a></p><header><a class="logo" href="../">FLEMME<span>.</span></a><a href="../espace.html">Mon espace</a></header>
+<main class="espace manager-memory"><h1>Flemme Manager</h1><p>Retrouve tes échanges et le suivi des missions. Les agents sont pilotés par les administrateurs.</p>
+<section id="agentRoles" hidden><h2>À qui le Manager confie les tâches</h2>
+<p>Selon la mission, le Manager utilise les capacités suivantes. Le détail de chaque tentative indique les étapes réellement effectuées.</p>
+<ul><li><strong>Search Agent — Recherche Web</strong> : recherche des offres réelles, conserve les sources et leur date de consultation.</li>
+<li><strong>Compare Agent — Comparaison avancée</strong> : compare les tarifs et conditions disponibles, signale les avantages, exclusions et inconnues.</li>
+<li><strong>Document Agent — Analyse PDF</strong> : extrait le texte des devis PDF et documents, avec références de pages ou de blocs.</li>
+<li><strong>Quality Agent — Vérification</strong> : contrôle les citations et calculs pris en charge, signale les informations manquantes. Une validation humaine reste nécessaire.</li></ul></section>
+<p id="managerNotice" role="status" aria-live="polite"></p><a id="managerLogin" href="../espace.html" hidden>Me connecter</a>
+<section id="managerPanel" hidden><div class="manager-toolbar"><button id="newConversation" hidden type="button">Nouvelle conversation</button><button id="refreshConversation" type="button">Actualiser</button></div>
+<label for="conversationList">Reprendre une conversation</label><select id="conversationList"><option value="">Choisis une conversation</option></select><button id="olderConversations" type="button" hidden>Charger les conversations plus anciennes</button>
+<section id="conversationPanel" hidden><h2 id="missionState"></h2><div id="conversationMessages" aria-live="polite"></div>
+<form id="managerMessage" hidden><label for="messageText">Ton besoin ou tes précisions</label><textarea id="messageText" rows="5" maxlength="5000" required></textarea><button type="submit" id="sendMessage">Envoyer</button></form>
+<details><summary>Historique de la mission</summary><ol id="missionEvents"></ol></details>
+<form id="missionUpdate" hidden><label for="eventKind">Ajouter à l’historique</label><select id="eventKind"><option value="action">Action effectuée</option><option value="result">Résultat obtenu</option><option value="status">Changer le statut</option></select><label for="eventState">Nouveau statut, pour un changement de statut</label><select id="eventState"><option value="in_progress">En cours</option><option value="blocked">Bloquée</option><option value="completed">Terminée</option><option value="cancelled">Annulée</option></select><label for="eventNote">Note</label><input id="eventNote" maxlength="300" required><label for="eventResult">Résultat, si tu en ajoutes un</label><textarea id="eventResult" maxlength="5000" rows="3"></textarea><button type="submit">Enregistrer</button></form>
+<button type="button" id="recoverMessage" hidden>Libérer l’analyse interrompue</button>
+<p id="adminHistoryHint" class="hint" hidden>Les actions et résultats ajoutés ici sont tes déclarations. Annuler une mission conserve son historique.</p></section>
+<section id="specialistsPanel" hidden><h2>Livrables de la mission</h2>
+<p id="specialistsNotice" role="status" aria-live="polite"></p>
+<form id="specialistsForm" hidden><h3>Préparer un livrable</h3><p>Fournis les offres à analyser. Le Manager sélectionne les sources, compare les critères, rédige le rapport et contrôle sa cohérence. Les liens ne sont pas consultés.</p><div id="specialistSources"></div><button type="button" id="addSpecialistSource">Ajouter une offre</button>
+<fieldset><legend>Critères à vérifier</legend><p>Les critères non renseignés restent non vérifiés, même s’ils figurent dans le brief.</p>
+<label for="deliveryBudget">Budget maximal (facultatif)</label><input id="deliveryBudget" type="number" min="0" step="0.01">
+<label for="deliveryCurrency">Devise du budget</label><select id="deliveryCurrency"><option>EUR</option><option>USD</option><option>GBP</option><option>CHF</option></select>
+<label for="deliveryBasis">Base du budget</label><select id="deliveryBasis"><option value="total">Total</option><option value="per_hour">Par heure</option><option value="per_night">Par nuit</option><option value="per_person">Par personne</option><option value="per_month">Par mois</option></select>
+<label for="deliveryTax">Taxes du budget</label><select id="deliveryTax"><option value="included">Incluses</option><option value="excluded">Exclues</option></select>
+<label for="deliveryLocation">Lieu souhaité (facultatif)</label><input id="deliveryLocation" maxlength="100">
+<label for="deliveryDate">Date souhaitée (facultatif)</label><input id="deliveryDate" type="date">
+<label for="deliveryDuration">Durée en mois (facultatif)</label><input id="deliveryDuration" type="number" min="1" max="120">
+<label for="deliveryUpfront">Apport maximal (facultatif)</label><input id="deliveryUpfront" type="number" min="0" step="0.01">
+</fieldset><button type="submit" id="produceDelivery">Préparer le plan des agents</button></form>
+<button type="button" id="readDeliveries">Voir les livrables enregistrés</button><div id="specialistDeliveries"></div>
+</section></section></main>
+<script src="../manager-v2-api.js" defer></script><script src="manager-agents-fixture.js" defer></script><script src="../manager-agent-plans.js" defer></script><script src="../manager-v2.js" defer></script><script src="../manager-v3.js" defer></script><script src="../manager-v4.js" defer></script><script src="../manager-routing.js" defer></script></body></html>
