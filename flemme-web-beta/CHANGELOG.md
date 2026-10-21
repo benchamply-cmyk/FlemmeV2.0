@@ -112,6 +112,11 @@ Attention : ces ZIP contiennent encore flemme.fr, le jaune, la grille à plat et
 - Typographie « Affiche condensée » sur tout le site : Archivo condensé (titres, sous-titres, boutons), Instrument Sans (texte), Instrument Serif italique (« Pas nous. »), Geist Mono (étiquettes).
 - sw.js : déclarations en double retirées (erreur de syntaxe), cache passé en flemme-v4.100-typo.
 
+## À venir
+- Design V5 (branche feature/design-v5) : nouvelle version du design, travaillée sur un aperçu commentable (apercu/construire.py).
+- V5 : menus déroulants au survol des onglets, pages dédiées Services, Notre démarche et Ambassadeurs (accueil inchangé), onglet La Brigade vers rejoindre.html, recherche sur le site (nav.js), bleu glacier #a5ccff à la place du vert et fond bleu pastel à reflets.
+- V5 UX : menus déroulants gardés sur ordinateur, menu burger sous 1100 px (mobile et tablette), en-tête collant, bouton « Confier ma flemme » collant sur mobile, étapes du formulaire (1 sur 2, environ 1 minute).
+
 ## Reste à faire
 - Application : compiler et tester sur de vrais téléphones (Xcode, Android Studio).
 - Compléter les passages [...] des mentions légales et de la confidentialité, retirer le noindex.
