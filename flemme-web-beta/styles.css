@@ -503,10 +503,10 @@ body::after {
 @keyframes menu-in { from { opacity: 0; transform: translateY(-12px); } }
 .menu-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 18px; margin-bottom: 24px; border-bottom: 2px solid var(--ink); }
 .menu-home, .menu-title { font-family: var(--display); font-stretch: 62%; font-weight: 900; text-transform: uppercase; color: var(--ink); text-decoration: none; line-height: .95; }
-.menu-home { font-size: 28px; }
+.menu-home { font-size: 32px; }
 .menu-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
 .menu-title { display: inline-block; font-size: clamp(28px, 2.6vw, 36px); margin-bottom: 14px; padding: 0 .1em; border-radius: .14em; }
-.menu-title:hover, .menu-title:focus-visible, .menu-home:hover, .menu-home:focus-visible, .menu-dlg [aria-current="page"] { background: var(--acid); }
+.menu-title:hover, .menu-title:focus-visible, .menu-title[aria-current="page"] { background: var(--acid); }
 .menu-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
 .menu-col li a { display: flex; align-items: center; min-height: 40px; padding: 6px 10px; margin-left: -10px; border-radius: 12px; color: var(--ink); text-decoration: none; font-size: 16px; }
 .menu-col li a:hover, .menu-col li a:focus-visible { background: var(--soft); text-decoration: underline; }

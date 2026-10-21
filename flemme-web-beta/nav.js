@@ -92,8 +92,6 @@ if (nav) {
     item.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') closeAll(); });
     items.push(item);
   });
-  const home = nav.querySelector('a[href="./"]');
-  if (home && page === 'index.html') home.setAttribute('aria-current', 'page');
   document.addEventListener('click', e => { if (!e.target.closest('.nav-item')) closeAll(); });
 }
 
@@ -126,7 +124,10 @@ const menuClose = el('button', 'search-close');
 menuClose.type = 'button';
 menuClose.setAttribute('aria-label', 'Fermer le menu');
 menuClose.append(icon('x'));
-const homeLink = el('a', 'menu-home', 'Accueil');
+// Pas d'onglet « Accueil » : on revient à l'accueil par le logo, ici comme dans l'en-tête.
+const homeLink = el('a', 'menu-home logo', 'FLEMME');
+homeLink.append(el('span', '', '.'));
+homeLink.setAttribute('aria-label', 'Accueil');
 homeLink.href = './';
 if (page === 'index.html') homeLink.setAttribute('aria-current', 'page');
 menuHead.append(homeLink, menuClose);
