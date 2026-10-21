@@ -8,27 +8,33 @@
 </header>
 <main class="page app-page manager-memory">
 <nav class="crumbs" aria-label="Fil d’Ariane"><a href="./">Accueil</a> <span aria-hidden="true">/</span> <a href="espace.html">Mon espace</a> <span aria-hidden="true">/</span> <span aria-current="page">Mes conversations</span></nav>
-<section class="app-hero"><div class="eyebrow">Flemme Manager</div><h1>Mes conversations.</h1><p class="lead">Retrouve tes échanges et suis tes missions.</p></section>
+<section class="app-hero"><div class="eyebrow">Flemme Manager</div><h1>Mes conversations.</h1><p class="lead">Retrouve tes échanges et le suivi des missions. Les agents sont pilotés par les administrateurs.</p></section>
+<section id="agentRoles" class="mgr-card mgr-roles" hidden><div class="eyebrow">Administrateurs</div><h2>À qui le Manager confie les tâches</h2>
+<p>Selon la mission, le Manager utilise les capacités suivantes. Le détail de chaque tentative indique les étapes réellement effectuées.</p>
+<ul><li><strong>Search Agent — Recherche Web</strong> : recherche des offres réelles, conserve les sources et leur date de consultation.</li>
+<li><strong>Compare Agent — Comparaison avancée</strong> : compare les tarifs et conditions disponibles, signale les avantages, exclusions et inconnues.</li>
+<li><strong>Document Agent — Analyse PDF</strong> : extrait le texte des devis PDF et documents, avec références de pages ou de blocs.</li>
+<li><strong>Quality Agent — Vérification</strong> : contrôle les citations et calculs pris en charge, signale les informations manquantes. Une validation humaine reste nécessaire.</li></ul></section>
 <p id="managerNotice" class="app-notice" role="status" aria-live="polite"></p><a id="managerLogin" class="primary btn-link" href="espace.html" hidden>Me connecter →</a>
 <section id="managerPanel" class="mgr-layout" hidden>
 <aside class="mgr-side mgr-card">
-<div class="manager-toolbar"><button id="newConversation" class="primary" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="icons.svg#i-plus"/></svg>Nouvelle conversation</button><button id="refreshConversation" class="secondary" type="button">Actualiser</button></div>
+<div class="manager-toolbar"><button id="newConversation" class="primary" hidden type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="icons.svg#i-plus"/></svg>Nouvelle conversation</button><button id="refreshConversation" class="secondary" type="button">Actualiser</button></div>
 <label for="conversationList">Reprendre une conversation</label><select id="conversationList"><option value="">Choisis une conversation</option></select><button id="olderConversations" class="link-btn" type="button" hidden>Charger les conversations plus anciennes</button>
 <p class="hint">Chaque conversation suit une mission : le Manager qualifie ton besoin, puis l’équipe ou les agents s’en occupent.</p>
 </aside>
 <div class="mgr-main">
-<div class="mgr-empty mgr-card"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="icons.svg#i-message-circle"/></svg><h2>Aucune conversation ouverte.</h2><p>Choisis une conversation à gauche, ou lance-en une nouvelle pour confier un besoin au Manager.</p></div>
+<div class="mgr-empty mgr-card"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="icons.svg#i-message-circle"/></svg><h2>Aucune conversation ouverte.</h2><p>Choisis une conversation pour retrouver ses échanges et le suivi de la mission.</p></div>
 <section id="conversationPanel" class="mgr-thread mgr-card" hidden><div class="mgr-thread-head"><div class="eyebrow">Mission</div><h2 id="missionState"></h2></div><div id="conversationMessages" aria-live="polite"></div>
-<form id="managerMessage" class="mgr-composer"><label for="messageText">Ton besoin ou tes précisions</label><textarea id="messageText" rows="4" maxlength="5000" required placeholder="Raconte ton besoin, ou réponds aux questions du Manager…"></textarea><button type="submit" class="primary" id="sendMessage">Envoyer →</button></form>
+<form id="managerMessage" class="mgr-composer" hidden><label for="messageText">Ton besoin ou tes précisions</label><textarea id="messageText" rows="4" maxlength="5000" required placeholder="Raconte ton besoin, ou réponds aux questions du Manager…"></textarea><button type="submit" class="primary" id="sendMessage">Envoyer →</button></form>
 <button type="button" class="secondary" id="recoverMessage" hidden>Libérer l’analyse interrompue</button>
 <details class="mgr-fold"><summary>Historique de la mission</summary><ol id="missionEvents" class="mgr-events"></ol></details>
-<details class="mgr-fold"><summary>Ajouter à l’historique</summary>
-<form id="missionUpdate"><label for="eventKind">Type d’ajout</label><select id="eventKind"><option value="action">Action effectuée</option><option value="result">Résultat obtenu</option><option value="status">Changer le statut</option></select><label for="eventState">Nouveau statut, pour un changement de statut</label><select id="eventState"><option value="in_progress">En cours</option><option value="blocked">Bloquée</option><option value="completed">Terminée</option><option value="cancelled">Annulée</option></select><label for="eventNote">Note</label><input id="eventNote" maxlength="300" required><label for="eventResult">Résultat, si tu en ajoutes un</label><textarea id="eventResult" maxlength="5000" rows="3"></textarea><button type="submit" class="secondary">Enregistrer</button></form>
-<p class="hint">Les actions et résultats ajoutés ici sont tes déclarations. Annuler une mission conserve son historique.</p></details>
+<div class="mgr-fold mgr-add"><h3>Ajouter à l’historique</h3>
+<form id="missionUpdate" hidden><label for="eventKind">Type d’ajout</label><select id="eventKind"><option value="action">Action effectuée</option><option value="result">Résultat obtenu</option><option value="status">Changer le statut</option></select><label for="eventState">Nouveau statut, pour un changement de statut</label><select id="eventState"><option value="in_progress">En cours</option><option value="blocked">Bloquée</option><option value="completed">Terminée</option><option value="cancelled">Annulée</option></select><label for="eventNote">Note</label><input id="eventNote" maxlength="300" required><label for="eventResult">Résultat, si tu en ajoutes un</label><textarea id="eventResult" maxlength="5000" rows="3"></textarea><button type="submit" class="secondary">Enregistrer</button></form>
+<p id="adminHistoryHint" class="hint" hidden>Les actions et résultats ajoutés ici sont tes déclarations. Annuler une mission conserve son historique.</p></div>
 </section>
-<section id="specialistsPanel" class="mgr-card mgr-tools" hidden><div class="eyebrow">Agents exécutants</div><h2>Préparer un livrable</h2><p>Fournis les offres à analyser. Le Manager sélectionne les sources, compare les critères, rédige le rapport et contrôle sa cohérence. Les liens ne sont pas consultés.</p>
+<section id="specialistsPanel" class="mgr-card mgr-tools" hidden><div class="eyebrow">Agents exécutants</div><h2>Livrables de la mission</h2>
 <p id="specialistsNotice" role="status" aria-live="polite"></p>
-<form id="specialistsForm"><div id="specialistSources"></div><button type="button" class="secondary" id="addSpecialistSource">Ajouter une offre</button>
+<form id="specialistsForm" hidden><h3>Préparer un livrable</h3><p>Fournis les offres à analyser. Le Manager sélectionne les sources, compare les critères, rédige le rapport et contrôle sa cohérence. Les liens ne sont pas consultés.</p><div id="specialistSources"></div><button type="button" class="secondary" id="addSpecialistSource">Ajouter une offre</button>
 <fieldset class="criteria"><legend>Critères à vérifier</legend><p>Les critères non renseignés restent non vérifiés, même s’ils figurent dans le brief.</p>
 <label for="deliveryBudget">Budget maximal (facultatif)</label><input id="deliveryBudget" type="number" min="0" step="0.01">
 <label for="deliveryCurrency">Devise du budget</label><select id="deliveryCurrency"><option>EUR</option><option>USD</option><option>GBP</option><option>CHF</option></select>
@@ -38,11 +44,11 @@
 <label for="deliveryDate">Date souhaitée (facultatif)</label><input id="deliveryDate" type="date">
 <label for="deliveryDuration">Durée en mois (facultatif)</label><input id="deliveryDuration" type="number" min="1" max="120">
 <label for="deliveryUpfront">Apport maximal (facultatif)</label><input id="deliveryUpfront" type="number" min="0" step="0.01">
-</fieldset><button type="submit" class="primary" id="produceDelivery">Produire le rapport</button></form>
+</fieldset><button type="submit" class="primary" id="produceDelivery">Préparer le plan des agents</button></form>
 <button type="button" class="secondary" id="readDeliveries">Voir les livrables enregistrés</button><div id="specialistDeliveries"></div>
 </section>
 </div>
 </section>
 </main>
 <footer><b>FLEMME.</b><span>Les besoins du quotidien. La suite, avec toi.</span><nav><a href="services.html">Services</a><a href="demarche.html">Notre démarche</a><a href="ambassadeurs.html">Ambassadeurs</a><a href="rejoindre.html">Rejoindre la Brigade</a><a href="mentions.html">Mentions légales</a><a href="confidentialite.html">Confidentialité</a><a href="mailto:ben.champly@gmail.com">Contact</a></nav></footer>
-<script src="content.js" defer></script><script src="nav.js" defer></script><script src="sb.js" defer></script><script src="manager-v2-api.js" defer></script><script src="manager-v2.js" defer></script><script src="manager-v3.js" defer></script><script src="manager-v4.js" defer></script></body></html>
+<script src="content.js" defer></script><script src="nav.js" defer></script><script src="sb.js" defer></script><script src="manager-v2-api.js" defer></script><script src="manager-agent-plans.js" defer></script><script src="manager-v2.js" defer></script><script src="manager-v3.js" defer></script><script src="manager-v4.js" defer></script><script src="manager-routing.js" defer></script></body></html>

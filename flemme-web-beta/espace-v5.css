@@ -223,3 +223,27 @@ body:has(.app-page) .sticky-cta { display: none !important; }
 @media (prefers-reduced-motion: reduce) { .tile { transition: none; } }
 
 @media (max-width: 600px) { .espace .auth-card { box-shadow: 5px 5px 0 var(--violet); } }
+
+/* Manager : accès administrateur (PR #39) */
+.mgr-fold:has(#missionUpdate[hidden]) { display: none; }
+.mgr-roles { margin-bottom: 28px; }
+.mgr-roles h2 { font-size: clamp(30px, 3.6vw, 44px); margin: 8px 0 12px; }
+.mgr-roles > p { color: var(--muted); line-height: 1.55; max-width: 760px; }
+.mgr-roles ul { list-style: none; margin: 18px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.mgr-roles li { padding: 16px 18px; background: var(--soft); border: 2px solid var(--ink); border-radius: 18px; line-height: 1.5; }
+.mgr-roles strong { font-family: var(--display); font-stretch: 62%; font-weight: 800; font-size: 20px; text-transform: uppercase; }
+#specialistsForm h3, #agentPlanHistory h3, .mgr-card section.manager-message h3 { font-size: 24px; margin: 24px 0 8px; }
+/* Plan des agents à valider (manager-agent-plans.js) */
+.manager-memory section.manager-message { max-width: none; margin: 20px 0 0; padding: 20px 22px; background: var(--soft); border-style: dashed; }
+section.manager-message h3 { margin-top: 0 !important; }
+section.manager-message ol { margin: 12px 0 0; padding-left: 22px; display: grid; gap: 14px; }
+section.manager-message h4 { margin: 0 0 6px; font: 500 12px var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--violet); }
+section.manager-message ul { margin: 0 0 6px; padding-left: 18px; line-height: 1.5; }
+section.manager-message p[role=status] { padding: 10px 14px; background: #fff; border: 2px solid var(--ink); border-radius: 14px; font-weight: 600; }
+/* Historique des plans (manager-routing.js) */
+#agentPlanHistory { margin-top: 26px; padding-top: 16px; border-top: 2px solid var(--ink); }
+#agentPlanHistory details { margin-top: 10px; padding: 12px 16px; background: var(--soft); border: 2px solid var(--ink); border-radius: 16px; }
+#agentPlanHistory summary { cursor: pointer; font: 500 13px var(--mono); }
+#agentPlanHistory ul { padding-left: 18px; line-height: 1.5; }
+@media (max-width: 700px) { .mgr-roles ul { grid-template-columns: 1fr; } }
+.mgr-add h3 { margin: 0 0 4px; font-size: 24px; }

@@ -22,6 +22,10 @@ def assessment():
 
 
 class FakeMemory:
+    async def request(self, method, path, payload):
+        assert path == "/rest/v1/rpc/est_admin"
+        return True
+
     def __init__(self):
         self.calls = []
         self.snapshot = {"id": CID, "revision": 1, "mission": {"id": RID, "state": "draft"},

@@ -134,4 +134,19 @@ const {testV4}=await import('./acquisition_v4.mjs');
 const v4Checks=await testV4(db,actor,command,a,b);
 console.log(`${v4Checks} V4 PostgreSQL assertions passed; originals immutable, private and replay preserved.`);
 console.log(`${checks} V2 and ${v3Checks} V3 PostgreSQL assertions passed; migration applied 3 times; histories preserved.`);
+await actor(b); const customerCid=randomUUID(); await command('create',customerCid);
+await db.exec('reset role');
+await db.exec(`create function public.est_admin() returns boolean language sql stable as $$ select auth.uid()='${a}'::uuid $$;`);
+// Apply additive guard after legacy preservation tests; seeded customer history stays readable.
+await db.exec(await readFile(new URL('../../../supabase/manager-admin-agents.sql',import.meta.url),'utf8'));
+await actor(a); const adminCid=randomUUID();
+assert.equal((await command('create',adminCid)).revision,0);
+await actor(b); assert.ok(Array.isArray(await command('list')));
+await reject(()=>command('create',randomUUID()),'42501');
+assert.equal((await command('snapshot',customerCid)).revision,0);
+await reject(()=>command('user',customerCid,randomUUID(),0,{content:'Client must not launch agents.'}),'42501');
+assert.equal((await command('snapshot',customerCid)).revision,0); // Entire transaction rolled back.
+await reject(()=>command('event',customerCid,randomUUID(),0,{kind:'action',state:null,note:'Forbidden',result:null}),'42501');
+await actor(b); await reject(()=>command('snapshot',adminCid),'PT404');
+console.log('Admin guard: administrator creation allowed, customer creation denied, histories readable, ownership preserved.');
 await db.close();

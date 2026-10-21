@@ -40,7 +40,7 @@
       const article=document.createElement('article'),heading=document.createElement('h3');heading.textContent='Tentative du '+new Date(row.run.created_at).toLocaleString('fr-FR');article.append(heading);
       const p=document.createElement('p');p.textContent=!row.output?(row.recovery?'Analyse interrompue ; sources conservées.':'Analyse en cours ou interrompue.'):row.output.stale?'Résultat conservé après modification de mission : à valider manuellement.':row.output.payload.failure?'Production non aboutie ; sources conservées.':'Rapport contrôlé et enregistré.';article.append(p);
       if(row.output?.payload.result){const report=document.createElement('pre');report.className='manager-message';report.textContent=row.output.payload.result.markdown;article.append(report);}
-      if(!row.output&&!row.recovery){const recover=document.createElement('button');recover.type='button';recover.textContent='Libérer la tentative après cinq minutes';recover.addEventListener('click',()=>perform(async()=>{
+      if(window.FlemmeAgentAccess?.canRun&&!row.output&&!row.recovery){const recover=document.createElement('button');recover.type='button';recover.textContent='Libérer la tentative après cinq minutes';recover.addEventListener('click',()=>perform(async()=>{
         await api().recoverDelivery(current.id,{request_id:row.run.id,expected_revision:current.revision,note:'Récupération manuelle de la production interrompue.'});
         window.dispatchEvent(new CustomEvent('flemme:refresh'));show(await api().deliveries(current.id));}));article.append(recover);}
       $('specialistDeliveries').append(article);
@@ -52,11 +52,12 @@
     current=saved;const last=[...saved.messages].reverse().find(m=>m.assessment)?.assessment;
     if(last?.selected_workflow.workflow_id==='comparer_devis' && sourceCount<2)addSource();
     $('specialistsPanel').hidden= !last || last.mission_status!=='ready' || !kinds[last.selected_workflow.workflow_id];
-    $('specialistsForm').hidden=!!saved.pending_request_id||!['qualified','in_progress'].includes(saved.mission.state);
+    $('specialistsForm').hidden=!window.FlemmeAgentAccess?.canRun||!!saved.pending_request_id||!['qualified','in_progress'].includes(saved.mission.state);
   });
   $('addSpecialistSource').addEventListener('click',addSource);addSource();
   $('readDeliveries').addEventListener('click',()=>perform(async()=>show(await api().deliveries(current.id))));
   $('specialistsForm').addEventListener('submit',event=>{event.preventDefault();perform(async()=>{
+    if(!window.FlemmeAgentAccess?.canRun)return;
     const last=[...current.messages].reverse().find(m=>m.assessment).assessment;
     const sources=[...$('specialistSources').children].map((box,index)=>{
       const values={};box.querySelectorAll('[data-field]').forEach(input=>values[input.dataset.field]=input.value.trim());
@@ -72,10 +73,8 @@
     if($('deliveryUpfront').value){constraints.max_upfront_payment=$('deliveryUpfront').value;constraints.currency=$('deliveryCurrency').value;constraints.tax_basis=$('deliveryTax').value;}
     if($('deliveryDuration').value)constraints.duration_months=Number($('deliveryDuration').value);
     if($('deliveryLocation').value.trim())constraints.location=$('deliveryLocation').value.trim();if($('deliveryDate').value)constraints.available_on=$('deliveryDate').value;
-    const input={sources,constraints};
-    if(pending && JSON.stringify(pending.input)!==JSON.stringify(input)){ $('specialistsNotice').textContent='Consulte les livrables et actualise la mission avant de modifier une requête dont le résultat est incertain.';return;}
-    pending ||= {input,request_id:crypto.randomUUID(),expected_revision:current.revision};
-    const result=await api().produce(current.id,{...input,request_id:pending.request_id,expected_revision:pending.expected_revision});pending=null;
-    show([result]);$('specialistsNotice').textContent='Tentative et résultat conservés.';window.dispatchEvent(new CustomEvent('flemme:refresh'));
+    await ManagerAgentPlans.prepare({kind:'delivery',current,input:{sources,constraints},form:$('specialistsForm'),
+      onResult:result=>{show([result]);$('specialistsNotice').textContent='Tentative et résultat conservés.';},
+      onError:error=>{$('specialistsNotice').textContent=error.message;}});
   });});
 })();

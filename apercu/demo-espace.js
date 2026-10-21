@@ -81,6 +81,12 @@
       events: [{ kind: 'created', created_at: jour(9), payload: {} }, { kind: 'status', created_at: jour(4), payload: { note: 'Déménagement réservé.' } }] },
   };
   window.ManagerV2API = { createClient: () => ({
+    access: async () => ok({ can_run_agents: etat !== 'client' }),
+    plan: async (id, body) => ok({ snapshot: structuredClone(conv[id]), plan: { id: 'plan-demo-0001', steps: [
+      { agent: 'Document', actions: ['Extraire le texte des deux devis'], parameters: { documents: ['Devis A', 'Devis B'] } },
+      { agent: 'Compare', actions: ['Comparer prix, prestations et délais'], parameters: { max_price: '9000', currency: 'EUR' } },
+      { agent: 'Quality', actions: ['Contrôler citations et calculs'], parameters: { required: true } }] } }),
+    approvePlan: async id => ok({ snapshot: structuredClone(conv[id]), approval_id: 'ok' }),
     list: async () => ok(Object.values(conv).map(c => ({ id: c.id, created_at: c.created_at, state: c.mission.state }))),
     read: async id => ok(structuredClone(conv[id])),
     create: async () => ok({ id: 'c3', revision: 1, created_at: new Date().toISOString(), pending_request_id: null, mission: { state: 'draft' }, messages: [], events: [{ kind: 'created', created_at: new Date().toISOString(), payload: {} }] }),
@@ -100,7 +106,7 @@
     bar.setAttribute('style', 'position:fixed;z-index:99;left:12px;bottom:12px;display:flex;gap:4px;align-items:center;padding:6px;background:#16131f;color:#fff;border-radius:999px;font:12px "Geist Mono",monospace;box-shadow:0 6px 20px rgba(0,0,0,.25)');
     const lbl = document.createElement('span'); lbl.textContent = 'Aperçu'; lbl.setAttribute('style', 'padding:0 8px');
     bar.append(lbl);
-    [['deconnecte', 'Déconnecté'], ['connecte', 'Connecté'], ['vide', 'Sans demande']].forEach(([v, t]) => {
+    [['deconnecte', 'Déconnecté'], ['connecte', 'Admin'], ['client', 'Client'], ['vide', 'Sans demande']].forEach(([v, t]) => {
       const b = document.createElement('button');
       b.textContent = t; b.type = 'button';
       b.setAttribute('style', 'border:0;border-radius:999px;padding:6px 10px;cursor:pointer;font:inherit;' + (v === etat ? 'background:#a5ccff;color:#16131f' : 'background:transparent;color:#fff'));
