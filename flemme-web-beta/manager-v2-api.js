@@ -1,9 +1,22 @@
 (function (root) {
   'use strict';
-  function createClient(base, session, fetcher = fetch) {
+  function createClient(base, session, fetcher = fetch, options = {}) {
+    const unified = options.legacy !== true;
     const url = new URL(base);
     if (url.protocol !== 'https:') throw new Error('Adresse du Manager invalide.');
     async function call(path, method = 'GET', body, prefix = '/api/v2') {
+      if (unified) {
+        if (prefix === '/api/v4') {
+          path = path.replace(/\/acquisitions$/, '/missions');
+          body = {kind: 'acquisition', request: body};
+        } else if (prefix === '/api/v3') {
+          if (method === 'POST' && path.endsWith('/deliveries')) {
+            path = path.replace(/\/deliveries$/, '/missions');
+            body = {kind: 'delivery', request: body};
+          } else path = path.replace('/deliveries/recover', '/missions/recover').replace('/deliveries', '/results');
+        } else path = path.replace('/agent-plans', '/plans').replace('/messages', '/analysis');
+        prefix = '/api/manager';
+      }
       const account = await session();
       if (!account) throw Object.assign(new Error('Connecte-toi pour retrouver tes conversations.'), {status: 401});
       const response = await fetcher(url.origin + prefix + path, {
@@ -29,7 +42,7 @@
       original: async (id, run, index) => {
         const account = await session();
         if (!account) throw Object.assign(new Error('Reconnecte-toi.'), {status:401});
-        const response = await fetcher(url.origin + '/api/v4/conversations/' + encodeURIComponent(id) + '/acquisitions/' + encodeURIComponent(run) + '/documents/' + index,
+        const response = await fetcher(url.origin + (unified ? '/api/manager/conversations/' : '/api/v4/conversations/') + encodeURIComponent(id) + (unified ? '/missions/' : '/acquisitions/') + encodeURIComponent(run) + '/documents/' + index,
           {cache:'no-store',headers:{Authorization:'Bearer '+account.access_token}});
         if (!response.ok) throw Object.assign(new Error('Document indisponible.'), {status:response.status});
         return response.blob();

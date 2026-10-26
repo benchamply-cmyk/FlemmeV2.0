@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import handler from '../netlify/functions/gestionadmin.mjs';
 import {validateQualification} from '../netlify/lib/manager.mjs';
+process.env.FLEMME_LEGACY_NETLIFY_QUALIFIER='true'; // Explicit rollback path remains tested.
 process.env.SUPABASE_URL='https://test.supabase.co';process.env.SUPABASE_ANON_KEY='public';
 delete process.env.FLEMME_MANAGER_URL;delete process.env.FLEMME_MANAGER_TOKEN;
 delete process.env.GESTION_ADMIN_KEY_OPENAI;

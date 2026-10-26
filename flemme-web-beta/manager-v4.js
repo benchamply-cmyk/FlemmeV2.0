@@ -8,10 +8,11 @@
     '<label for="acquisitionQuery">Recherche ou objectif</label><textarea id="acquisitionQuery" minlength="4" maxlength="1000" required rows="3"></textarea>'+
     '<label for="acquisitionFiles">Devis (PDF, DOCX, TXT ; 1 Mo chacun, deux à trois fichiers)</label><input id="acquisitionFiles" type="file" multiple accept=".pdf,.docx,.txt">'+
     '<p>Les scans et PDF chiffrés sont refusés. Les originaux sont conservés dans ton historique privé. DOCX et TXT sont cités par blocs, sans pagination physique.</p>'+
+    '<label for="acquisitionBasis">Base des prix à comparer</label><select id="acquisitionBasis"><option value="total">Prix total (achat ou devis)</option><option value="per_month">Loyer mensuel (leasing ou location)</option></select>'+
     '<label for="acquisitionBudget">Plafond en EUR (facultatif)</label><input id="acquisitionBudget" type="number" min="0" step="0.01">'+
     '<label for="acquisitionTaxes">Taxes du plafond</label><select id="acquisitionTaxes"><option value="included">TTC</option><option value="excluded">HT</option></select>'+
-    '<p>Recherche web : plafond mensuel ; documents : plafond total. Le prix ne suffit pas à confirmer les conditions ou la disponibilité.</p>'+
-    '<button id="acquisitionSubmit" type="submit">Préparer le plan des agents</button></form><p id="acquisitionNotice" role="status" aria-live="polite"></p><div id="acquisitionResult"></div>';
+    '<p>Choisis explicitement prix total ou loyer mensuel. Les taxes et devises incompatibles ne sont pas comparées. Le prix ne suffit pas à confirmer les conditions ou la disponibilité.</p>'+
+    '<button id="acquisitionSubmit" type="submit">Préparer le plan du Manager</button></form><p id="acquisitionNotice" role="status" aria-live="polite"></p><div id="acquisitionResult"></div>';
   section.hidden=true; panel.append(section);
   const $=id=>document.getElementById(id);
   let current,client,busy=false,pending;
@@ -52,7 +53,7 @@
         const bytes=new Uint8Array(await file.arrayBuffer());let binary='';for(const byte of bytes)binary+=String.fromCharCode(byte);
         documents.push({name:file.name,content_base64:btoa(binary)});
       }
-      const constraints={};if($('acquisitionBudget').value){constraints.max_price=$('acquisitionBudget').value;constraints.currency='EUR';constraints.price_basis=mode==='web'?'per_month':'total';constraints.tax_basis=$('acquisitionTaxes').value;}
+      const constraints={price_basis:$('acquisitionBasis').value};if($('acquisitionBudget').value){constraints.max_price=$('acquisitionBudget').value;constraints.currency='EUR';constraints.tax_basis=$('acquisitionTaxes').value;}
       const input={mode,query:$('acquisitionQuery').value.trim(),constraints,documents};
       await ManagerAgentPlans.prepare({kind:'acquisition',current,input,form:$('acquisitionForm'),
         onResult:row=>{
