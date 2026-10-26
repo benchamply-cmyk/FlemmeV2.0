@@ -92,6 +92,9 @@ def qualify_locally(request: UserRequest) -> ManagerAssessment | None:
             "Je peux qualifier une comparaison de devis, un besoin de prestataire, "
             "une recherche de produit ou un projet de voyage.",
         )
+    leasing = qualify_leasing(request)
+    if leasing is not None:
+        return leasing
     # Narrow product qualification: optional brands/noise thresholds never block
     # a washing-machine brief. Safety/external-action rules above take priority.
     if (re.search(r"\b(?:compare|comparer|cherche|recherche)\b", text)
@@ -136,3 +139,37 @@ def qualify_locally(request: UserRequest) -> ManagerAssessment | None:
             "Je ne dispose pas de recherche web ni d'appel ; aucun prestataire n'a été recherché ou contacté.",
         )
     return None
+
+
+def qualify_leasing(request: UserRequest) -> ManagerAssessment | None:
+    """Read-only vehicle search: optional brand/city never blocks the next step."""
+    text = normalized(request.request)
+    if not re.search(r'\b(leasing|loa|lld)\b', text) or not re.search(
+            r'\b(voiture|vehicule|hybride|auto)\b', text):
+        return None
+    if re.search(r'\b(achete|commande|reserve|signe|paie|paye|souscris)\b', text) and not re.search(
+            r"\b(pas|sans|ne|n')\b.{0,20}\b(achete|commande|reserve|signe|paie|paye|souscris)\b", text):
+        return decision(request, ServiceCategory.PRODUCT_RESEARCH,
+                        MissionStatus.HUMAN_INTERVENTION_REQUIRED,
+                        'Une souscription ou un paiement engageant nécessite une personne.',
+                        'Je peux préparer une comparaison, mais pas signer, réserver ou payer. '
+                        'Aucune action engageante n’a été effectuée.')
+    monthly = re.search(r'\b\d+(?:[.,]\d+)?\s*(?:€|euros?|eur)\s*(?:/\s*mois|par mois|mensuels?)\b', text)
+    unknown_budget = re.search(r'\b(sans budget|budget inconnu|budget non defini)\b', text)
+    if monthly and not unknown_budget:
+        return decision(request, ServiceCategory.PRODUCT_RESEARCH, MissionStatus.READY,
+                        'Véhicule, financement et plafond mensuel suffisent pour lancer la préparation.',
+                        'Le besoin est qualifié. Marque et ville restent facultatives pour une première recherche. '
+                        'Le plan devra être validé avant exécution. Aucun prix ni aucune offre ne sont encore vérifiés ; '
+                        'apport, durée, kilométrage, taxes et éligibilité seront signalés ou laissés inconnus.')
+    return validate_manager_assessment(ManagerAssessment(
+        service_category=ServiceCategory.PRODUCT_RESEARCH,
+        expected_result={'description': request.request[:500]},
+        selected_workflow={'workflow_id': WORKFLOW_BY_CATEGORY[ServiceCategory.PRODUCT_RESEARCH],
+                           'reason': 'Le plafond mensuel de la recherche manque.'},
+        missing_information=[{'name': 'monthly_budget', 'reason': 'Délimiter le loyer mensuel souhaité.'}],
+        qualification_questions=[{'question': 'Quel loyer mensuel maximal souhaites-tu ?',
+                                  'why_needed': 'Fixer le plafond de recherche.', 'priority': 1}],
+        mission_status=MissionStatus.NEEDS_INFORMATION, human_intervention_required=False,
+        user_response={'message': 'Quel loyer mensuel maximal souhaites-tu ? La marque est facultative.'},
+    ))

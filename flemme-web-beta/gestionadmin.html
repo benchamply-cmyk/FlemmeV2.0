@@ -26,18 +26,18 @@
 <ol id="list" class="demandes"></ol>
 </section><section id="adminPanel" aria-live="polite" hidden></section>
 <section id="managerView" class="manager-memory" aria-label="Flemme Manager" hidden>
-<section id="agentRoles" class="mgr-card mgr-roles" hidden><div class="eyebrow">Administrateurs</div><h2>À qui le Manager confie les tâches</h2>
+<section id="agentRoles" class="mgr-card mgr-roles" hidden><div class="eyebrow">Administrateurs</div><h2>Un seul Flemme Manager, des outils internes</h2>
 <p>Selon la mission, le Manager utilise les capacités suivantes. Le détail de chaque tentative indique les étapes réellement effectuées.</p>
-<ul><li><strong>Search Agent — Recherche Web</strong> : recherche des offres réelles, conserve les sources et leur date de consultation.</li>
-<li><strong>Compare Agent — Comparaison avancée</strong> : compare les tarifs et conditions disponibles, signale les avantages, exclusions et inconnues.</li>
-<li><strong>Document Agent — Analyse PDF</strong> : extrait le texte des devis PDF et documents, avec références de pages ou de blocs.</li>
-<li><strong>Quality Agent — Vérification</strong> : contrôle les citations et calculs pris en charge, signale les informations manquantes. Une validation humaine reste nécessaire.</li></ul></section>
+<ul><li><strong>Recherche web</strong> : recherche des offres réelles, conserve les sources et leur date de consultation.</li>
+<li><strong>Comparaison</strong> : compare les tarifs et conditions disponibles, signale les avantages, exclusions et inconnues.</li>
+<li><strong>Documents PDF, DOCX et TXT</strong> : extrait le texte des devis PDF et documents, avec références de pages ou de blocs.</li>
+<li><strong>Contrôle qualité</strong> : contrôle les citations et calculs pris en charge, signale les informations manquantes. Une validation humaine reste nécessaire.</li></ul></section>
 <p id="managerNotice" class="app-notice" role="status" aria-live="polite"></p><a id="managerLogin" class="primary btn-link" href="gestionadmin" hidden>Me connecter →</a>
 <section id="managerPanel" class="mgr-layout" hidden>
 <aside class="mgr-side mgr-card">
 <div class="manager-toolbar"><button id="newConversation" class="primary" hidden type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="icons.svg#i-plus"/></svg>Nouvelle conversation</button><button id="refreshConversation" class="secondary" type="button">Actualiser</button></div>
 <label for="conversationList">Reprendre une conversation</label><select id="conversationList"><option value="">Choisis une conversation</option></select><button id="olderConversations" class="link-btn" type="button" hidden>Charger les conversations plus anciennes</button>
-<p class="hint">Chaque conversation suit une mission : le Manager qualifie ton besoin, puis l’équipe ou les agents s’en occupent.</p>
+<p class="hint">Chaque conversation suit une mission : le Manager qualifie ton besoin, puis l’équipe ou le Manager s’en occupent.</p>
 </aside>
 <div class="mgr-main">
 <div class="mgr-empty mgr-card"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="icons.svg#i-message-circle"/></svg><h2>Aucune conversation ouverte.</h2><p>Choisis une conversation pour retrouver ses échanges et le suivi de la mission.</p></div>
@@ -61,7 +61,7 @@
 <label for="deliveryDate">Date souhaitée (facultatif)</label><input id="deliveryDate" type="date">
 <label for="deliveryDuration">Durée en mois (facultatif)</label><input id="deliveryDuration" type="number" min="1" max="120">
 <label for="deliveryUpfront">Apport maximal (facultatif)</label><input id="deliveryUpfront" type="number" min="0" step="0.01">
-</fieldset><button type="submit" class="primary" id="produceDelivery">Préparer le plan des agents</button></form>
+</fieldset><button type="submit" class="primary" id="produceDelivery">Préparer le plan du Manager</button></form>
 <button type="button" class="secondary" id="readDeliveries">Voir les livrables enregistrés</button><div id="specialistDeliveries"></div>
 </section>
 </div>

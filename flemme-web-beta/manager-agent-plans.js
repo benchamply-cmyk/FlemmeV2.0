@@ -1,15 +1,15 @@
 (function(){
  'use strict';
- const names={Search:'Search Agent — Recherche Web',Document:'Document Agent — Analyse PDF',Compare:'Compare Agent — Comparaison avancée',Quality:'Quality Agent — Vérification'};
+ const names={Search:'Recherche web',Document:'Documents',Compare:'Comparaison',Quality:'Qualité',search:'Recherche web',documents:'Documents',compare:'Comparaison',quality:'Qualité'};
  const fields={query:'Recherche validée',documents:'Documents à extraire',sources:'Sources à sélectionner',max_price:'Plafond',currency:'Devise',price_basis:'Base du prix',tax_basis:'Taxes',duration_months:'Durée en mois',max_upfront_payment:'Apport maximal',location:'Lieu',available_on:'Date',required_features:'Critères indispensables',required:'Contrôles obligatoires'};
  const active=new WeakMap();
  async function prepare({kind,current,input,form,onResult,onError}) {
   if(!window.FlemmeAgentAccess?.canRun)return;
   active.get(form)?.dispose();
-  const box=document.createElement('section');box.className='manager-message';box.setAttribute('aria-label','Plan des agents à valider');form.after(box);
+  const box=document.createElement('section');box.className='manager-message';box.setAttribute('aria-label','Plan du Manager à valider');form.after(box);
   const add=(tag,text)=>{const n=document.createElement(tag);n.textContent=text;box.append(n);return n;};
-  add('h3','Affectations et script des tâches');
-  const status=add('p','Préparation du plan, sans lancement des agents.');status.setAttribute('role','status');
+  add('h3','Outils et étapes du Manager');
+  const status=add('p','Préparation du plan, sans exécution des outils.');status.setAttribute('role','status');
   const api=ManagerV2API.createClient(FLEMME.managerV2.url,()=>SB.session());
   let alive=true,dirty=false,revision=current.revision,approved,proposal;
   const request={...input,request_id:crypto.randomUUID(),expected_revision:revision};
@@ -27,7 +27,7 @@
    publish(proposal.snapshot);if(dirty)return;
    const list=document.createElement('ol');
    for(const step of proposal.plan.steps){
-    const li=document.createElement('li'),title=document.createElement('h4');title.textContent='Assigné à '+names[step.agent];li.append(title);
+    const li=document.createElement('li'),title=document.createElement('h4');title.textContent='Outil du Manager : '+names[step.tool || step.agent];li.append(title);
     const tasks=document.createElement('ul');for(const task of step.actions){const n=document.createElement('li');n.textContent=task;tasks.append(n);}li.append(tasks);
     for(const [key,value] of Object.entries(step.parameters)){
      if(value===null||value===undefined||(Array.isArray(value)&&!value.length))continue;
@@ -35,15 +35,15 @@
      const display=Array.isArray(value)?value.map(v=>typeof v==='object'?(v.title||v.name||v.id):v).join(' ; '):value===true?'Oui':String(value);
      p.textContent=(fields[key]||key)+' : '+display;li.append(p);
     }
-    if(step.agent!=='Quality'){
-     const edit=document.createElement('button');edit.type='button';edit.textContent='Modifier les paramètres de '+step.agent;
-     edit.addEventListener('click',()=>{const target=form.querySelector(step.agent==='Document'?'[type=file]':step.agent==='Search'&&kind==='acquisition'?'#acquisitionQuery':step.agent==='Compare'?'#acquisitionBudget, #deliveryBudget':'textarea');target?.focus();target?.scrollIntoView({block:'center',behavior:'smooth'});});li.append(edit);
+    if(!['quality','Quality'].includes(step.tool || step.agent)){
+     const edit=document.createElement('button');edit.type='button';edit.textContent='Modifier les paramètres de '+(step.tool || step.agent);
+     edit.addEventListener('click',()=>{const target=form.querySelector(['documents','Document'].includes(step.tool || step.agent)?'[type=file]':['search','Search'].includes(step.tool || step.agent)&&kind==='acquisition'?'#acquisitionQuery':['compare','Compare'].includes(step.tool || step.agent)?'#acquisitionBudget, #deliveryBudget':'textarea');target?.focus();target?.scrollIntoView({block:'center',behavior:'smooth'});});li.append(edit);
     }
     list.append(li);
    }
    box.insertBefore(list,status);
    const help=document.createElement('p');help.textContent='Modifie la recherche, les documents, les sources ou les critères dans le formulaire, puis prépare un nouveau plan. Les contrôles qualité sont obligatoires. Aucun script système ni instruction arbitraire n’est exécuté.';box.insertBefore(help,status);
-   status.textContent='Plan proposé. Aucun agent n’a été exécuté. Vérifie les tâches avant de valider.';validate.disabled=false;
+   status.textContent='Plan proposé. Aucun outil n’a été exécuté. Vérifie les tâches avant de valider.';validate.disabled=false;
   } catch(error){status.textContent=error.message;onError?.(error);return;}
   const approvalRequestId=crypto.randomUUID();
   validate.addEventListener('click',async()=>{

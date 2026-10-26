@@ -2,7 +2,7 @@
 
 from datetime import UTC, datetime
 
-from flemme_manager.agents import compare, quality, search, writer
+from flemme_manager.capabilities import compare, quality, search, reports as writer
 from flemme_manager.delivery_schemas import DeliveryInput, DeliveryResult, DeliveryQualityError
 from flemme_manager.schemas import WorkflowId
 

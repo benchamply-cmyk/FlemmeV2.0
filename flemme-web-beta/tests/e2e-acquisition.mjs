@@ -10,18 +10,18 @@ try{
  page.on('pageerror',error=>errors.push(error.message));
  await page.route('**/*',async route=>{
   const request=route.request(),url=new URL(request.url());
-  if(url.pathname==='/api/v2/conversations/cid/agent-plans'){
+  if(url.pathname==='/api/manager/conversations/cid/plans'){
    const body=request.postDataJSON();return route.fulfill({json:{plan:{id:body.plan_id,steps:[{agent:body.request.mode==='web'?'Search':'Document',actions:['Action simulée à valider'],parameters:{query:body.request.query}}]},snapshot:{id:'cid',revision:3}}});
   }
   if(url.pathname.endsWith('/approve'))return route.fulfill({json:{approval_id:'approval-demo',snapshot:{id:'cid',revision:4}}});
-  if(url.pathname==='/api/v4/conversations/cid/acquisitions'){
+  if(url.pathname==='/api/manager/conversations/cid/missions'){
    assert.equal(request.headers().authorization,'Bearer simulated-session');
-   const input=request.postDataJSON();calls.push(input);
+   const command=request.postDataJSON();assert.equal(command.kind,'acquisition');const input=command.request;calls.push(input);
    return route.fulfill({contentType:'application/json',body:JSON.stringify({run:{id:'rid',input:{acquisition:{documents:input.documents.map(d=>({name:d.name}))}}},output:{payload:{result:{
     markdown:'Rapport simulé : inconnus conservés. <img src=x onerror="window.hacked=true">',
     sources:[{origin:'web',url:'https://example.com/source',title:'Source citée'}]}}}})});
   }
-  if(url.pathname==='/api/v4/conversations/cid/acquisitions/rid/documents/0')return route.fulfill({contentType:'application/octet-stream',body:'original simulated'});
+  if(url.pathname==='/api/manager/conversations/cid/missions/rid/documents/0')return route.fulfill({contentType:'application/octet-stream',body:'original simulated'});
   if(url.pathname==='/manager.html'){
    return route.fulfill({contentType:'text/html; charset=utf-8',body:`<!doctype html><html lang="fr"><head><meta charset="utf-8"><link rel="stylesheet" href="manager-v2.css"></head><body><section id="specialistsPanel"></section>
     <script>window.FlemmeAgentAccess={canRun:true};window.FLEMME={managerV2:{url:'https://flemme.test'}};window.SB={session:async()=>({access_token:'simulated-session'})};
@@ -36,6 +36,7 @@ try{
  await page.goto('https://flemme.test/manager.html');
  assert.deepEqual(errors,[]);assert.equal(await page.locator('#acquisitionQuery').count(),1);
  await page.evaluate(()=>ready('rechercher_produit'));
+ await page.selectOption('#acquisitionBasis','per_month');
  await page.fill('#acquisitionQuery','Trois offres leasing hybride moins de 300 EUR/mois');await page.fill('#acquisitionBudget','300');
  await page.click('#acquisitionSubmit');
  assert.equal(calls.length,0);
@@ -50,6 +51,7 @@ try{
  assert.equal(await page.locator('#acquisitionResult img').count(),0);assert.equal(await page.evaluate(()=>!!window.hacked),false);
  assert.equal(await page.locator('#acquisitionResult a').getAttribute('href'),'https://example.com/source');
  await page.evaluate(()=>ready('comparer_devis'));
+ await page.selectOption('#acquisitionBasis','total');
  await page.fill('#acquisitionQuery','Comparer les deux devis');
  await page.setInputFiles('#acquisitionFiles',[
   {name:'A.txt',mimeType:'text/plain',buffer:Buffer.from('Total TTC : 1200 EUR')},

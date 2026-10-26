@@ -5,10 +5,11 @@ from datetime import datetime, timezone
 from decimal import Decimal
 from uuid import UUID
 from pydantic import Field
+from fastapi import HTTPException
 from flemme_manager.acquisition_schemas import AcquisitionRequest, AcquisitionError
 from flemme_manager.delivery_schemas import StrictModel
-from flemme_manager.agents import search
-from flemme_manager.agents.writer import escape
+from flemme_manager.capabilities import search
+from flemme_manager.capabilities.reports import escape
 from flemme_manager.memory.supabase import StorageError
 from flemme_manager.services.delivery_v3 import require_qualification
 from flemme_manager.tools.pdf_reader import validate_upload, read_document
@@ -59,7 +60,10 @@ def report(sources, request, workflow, trace):
     comparisons, price_groups = [], {}
     for source in sources:
         check_source(source)
-        price = source.facts['monthly_price' if request.mode == 'web' else 'total_price']
+        basis = request.constraints.price_basis or ('per_month' if request.mode == 'web' else 'total')
+        if basis not in {'total', 'per_month'}:
+            basis = None
+        price = source.facts['monthly_price' if basis == 'per_month' else 'total_price']
         # Currency and tax must be explicit on the same price citation before comparing.
         tax = None
         if price.citations:
@@ -69,7 +73,6 @@ def report(sources, request, workflow, trace):
             elif 'HT' in quote and 'TTC' not in quote:
                 tax = 'excluded'
         c = request.constraints
-        basis = 'per_month' if request.mode == 'web' else 'total'
         within = (Decimal(price.value) <= c.max_price) if (
             price.value is not None and c.max_price is not None and c.currency == 'EUR'
             and c.price_basis == basis and c.tax_basis == tax) else None
@@ -79,7 +82,7 @@ def report(sources, request, workflow, trace):
                                 if source.facts['duration_months'].value is not None and c.duration_months is not None else None,
                             'location_match': None, 'upfront_within_budget': None,
                             'feature_matches': {feature: None for feature in c.required_features}})
-        if price.value is not None and tax is not None:
+        if price.value is not None and tax is not None and basis is not None:
             price_groups.setdefault(tax, []).append((source.id, Decimal(price.value)))
         lines.append(f'| {escape(source.title)} | {price.value or "Inconnu"} '
                      f'{"EUR" if price.value else ""} | '
@@ -90,7 +93,7 @@ def report(sources, request, workflow, trace):
         if len(values) >= 2:
             amounts = [amount for _, amount in values]
             lines.append(f'- EUR {"TTC" if tax == "included" else "HT"}, '
-                         f'{"par mois" if request.mode == "web" else "total"} : '
+                         f'{"par mois" if basis == "per_month" else "total"} : '
                          f'écart {max(amounts) - min(amounts):.2f} EUR entre '
                          + ', '.join(source_id for source_id, _ in values) + '.')
     lines.append('Un écart de prix ne prouve pas des prestations équivalentes. '
@@ -170,6 +173,6 @@ async def produce(memory, conversation_id, request):
         await memory.delivery_command('finish', conversation_id, str(request.request_id), payload={
             'failure': 'execution_error', 'note': 'Acquisition non aboutie ; tentative et documents conservés.',
             'draft': {'sources': [s.model_dump(mode='json') for s in sources], 'trace': trace}})
-        if isinstance(error, (AcquisitionError, StorageError)):
+        if isinstance(error, (AcquisitionError, StorageError, HTTPException)):
             raise
         raise AcquisitionError('Acquisition non aboutie ; données conservées.') from None

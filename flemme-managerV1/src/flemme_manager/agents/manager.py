@@ -2,7 +2,8 @@
 
 from importlib.resources import files
 
-from agents import Agent, Runner
+import asyncio
+from agents import Agent, Runner, ModelSettings, RunConfig
 
 from flemme_manager.schemas import (
 	ManagerAssessment,
@@ -24,6 +25,7 @@ manager_agent = Agent(
 	model=settings.openai_model,
 	output_type=ManagerAssessment,
 	tools=[],
+	model_settings=ModelSettings(max_tokens=2000),
 )
 
 
@@ -36,7 +38,8 @@ class ManagerExecutionError(Exception):
 
 
 async def _run_agent(request_text: str) -> ManagerAssessment:
-	result = await Runner.run(manager_agent, request_text, max_turns=1)
+	result = await asyncio.wait_for(Runner.run(manager_agent, request_text, max_turns=1,
+	                               run_config=RunConfig(tracing_disabled=True)), timeout=30)
 	if not isinstance(result.final_output, ManagerAssessment):
 		raise ManagerExecutionError("Manager returned an unexpected result")
 	return result.final_output
