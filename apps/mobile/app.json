@@ -3,12 +3,21 @@
     "name": "FLEMME",
     "slug": "flemme-mobile",
     "scheme": "flemme-mobile",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
-    "ios": { "supportsTablet": true, "bundleIdentifier": "org.flemme.mobile", "config": { "usesNonExemptEncryption": false } },
-    "android": { "package": "org.flemme.mobile", "edgeToEdgeEnabled": true },
-    "plugins": ["expo-secure-store"]
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "org.flemme.mobile",
+      "config": {
+        "usesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "org.flemme.mobile"
+    },
+    "plugins": [
+      "expo-secure-store"
+    ]
   }
 }
