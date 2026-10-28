@@ -26,3 +26,18 @@ app.include_router(acquisition_router)
 
 from flemme_manager.routes.agent_plans import router as agent_plans_router
 app.include_router(agent_plans_router)
+
+from flemme_manager.routes.unified import router as unified_router
+from flemme_manager.memory.http_limits import ManagerBodyLimit
+from fastapi.exceptions import RequestValidationError
+from fastapi.exception_handlers import request_validation_exception_handler
+from fastapi.responses import JSONResponse
+app.include_router(unified_router)
+app.add_middleware(ManagerBodyLimit)
+
+
+@app.exception_handler(RequestValidationError)
+async def redact_validation(request, error):
+    if request.url.path.startswith('/api/manager/'):
+        return JSONResponse({'detail': 'Requête invalide.', 'code': 'invalid_request'}, 422)
+    return await request_validation_exception_handler(request, error)

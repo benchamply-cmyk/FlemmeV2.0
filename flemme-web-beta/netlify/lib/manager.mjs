@@ -1,4 +1,5 @@
 import {produce} from './specialists.mjs';
+import {qualifyWithManager, managerURL} from './manager-api-bridge.mjs';
 // Netlify qualification adapter. Owner JWT and Supabase RLS; no service-role key.
 const stable=value=>Array.isArray(value)?value.map(stable):value&&typeof value==='object'?Object.fromEntries(Object.keys(value).sort().map(k=>[k,stable(value[k])])):value;
 const workflows = ['comparer_devis','trouver_prestataire','rechercher_produit','organiser_voyage','other'];
@@ -65,10 +66,15 @@ export async function managerNative(req, resource, {sb,key,authorization}, json)
       if(req.method!=='POST') return json({message:'Méthode refusée.'},405);
       const keyName=process.env.GESTION_ADMIN_KEY_OPENAI?'GESTION_ADMIN_KEY_OPENAI':'OPENAI_API_KEY';
       const aiKey=process.env[keyName];
-      if(!aiKey) return json({message:'Ajouter GESTION_ADMIN_KEY_OPENAI ou OPENAI_API_KEY aux fonctions Netlify.'},503);
+      const legacy=process.env.FLEMME_LEGACY_NETLIFY_QUALIFIER==='true';
+      if(legacy&&!aiKey) return json({message:'Ajouter GESTION_ADMIN_KEY_OPENAI ou OPENAI_API_KEY aux fonctions Netlify.'},503);
+      if(!legacy)managerURL(); // Validate configured origin before reserving work.
       const job=await db('rpc/manager_reserver',{cible:resource.slice(10),travail:crypto.randomUUID()});
       let result;
       try {
+        if(!legacy) {
+          result=await qualifyWithManager(job.request_text,authorization);
+        } else {
         const response=await fetch('https://api.openai.com/v1/responses',{method:'POST',redirect:'error',signal:AbortSignal.timeout(25000),
           headers:{Authorization:'Bearer '+aiKey,'Content-Type':'application/json'},
           body:JSON.stringify({model:process.env.OPENAI_MODEL||'gpt-4.1-mini',store:false,max_output_tokens:1600,
@@ -88,6 +94,7 @@ export async function managerNative(req, resource, {sb,key,authorization}, json)
         const output=(data.output||[]).flatMap(v=>v.content||[]).filter(v=>v.type==='output_text').map(v=>v.text).join('');
         if(!output) throw Object.assign(new Error('OpenAI n’a pas retourné de texte de qualification exploitable.'),{safe:true});
         result={...validateQualification(JSON.parse(output)),request_text:job.request_text,model:process.env.OPENAI_MODEL||'gpt-4.1-mini'};
+        }
       } catch(error) {
         const message=error.safe?error.message:'Réponse IA absente, incomplète ou invalide. Aucun résultat de qualification validé.';
         await db('rpc/manager_terminer',{mission:job.mission_id,travail:job.job_id,resultat:{request_text:job.request_text,state:'waiting_information',assessment:{user_response:{message}}},erreur:true});

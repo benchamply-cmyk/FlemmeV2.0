@@ -1,6 +1,6 @@
 """Execute the four specialists against supplied evidence, with durable attempts."""
 from flemme_manager.delivery_schemas import DeliveryInput, DeliveryInputError, DeliveryQualityError, DeliveryResult
-from flemme_manager.agents import quality
+from flemme_manager.capabilities import quality
 from flemme_manager.schemas import ManagerAssessment, MissionStatus, validate_manager_assessment
 from flemme_manager.memory.supabase import StorageError
 from flemme_manager.workflows.pipeline import run as run_pipeline

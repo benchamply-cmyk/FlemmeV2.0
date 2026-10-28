@@ -10,6 +10,9 @@ from flemme_manager.tools.evidence_extraction import extract
 
 
 async def discover(query, client=None):
+    from flemme_manager.services.run_budget import paid_budget_required, check_web_budget
+    if paid_budget_required.get() or os.getenv('FLEMME_RUN_BUDGET_USD'):
+        check_web_budget()
     key = os.getenv('OPENAI_API_KEY')
     if client is None and not key:
         raise AcquisitionError('Recherche web non configurée.')

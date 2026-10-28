@@ -218,8 +218,8 @@ def test_sdk_runner_accepts_structured_output_without_network(monkeypatch):
         status=MissionStatus.READY,
     )
 
-    async def fake_runner(_runner, agent, request_text, *, max_turns):
-        assert max_turns == 1
+    async def fake_runner(_runner, agent, request_text, *, max_turns, run_config):
+        assert max_turns == 1 and run_config.tracing_disabled
         assert agent is manager.manager_agent
         assert request_text == "Compare ces devis."
         return SimpleNamespace(final_output=assessment)
