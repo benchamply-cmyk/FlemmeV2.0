@@ -18,6 +18,8 @@ jobs:
           node-version: '22'
       - name: Resolve SDK 58 dependencies
         run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Align tools with installed SDK
+        run: npx expo install --fix --npm
       - name: Pin direct dependencies
         run: |
           node --input-type=module <<'JS'
