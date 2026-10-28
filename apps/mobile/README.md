@@ -10,6 +10,20 @@ Après récupération de cette version, arrêter Metro avec Ctrl+C, exécuter np
 
 Sources vérifiées le 28/10/2026 : https://docs.expo.dev/workflow/upgrading-expo-sdk-walkthrough/ ; https://expo.dev/changelog/sdk-58 ; https://github.com/expo/expo/blob/sdk-58/packages/expo/bundledNativeModules.json
 
+## Identité flemme.org — 28/10/2026
+
+Le thème natif reprend les valeurs finales du CSS du site : bleu glacier #a5ccff, fond #e3eeff, surface douce #f3f7ff, encre #16131f, violet #3a2fa0 et bleu profond #4f86d9. Les variables historiques vertes du CSS sont surchargées par la version V5 ; ce sont bien les valeurs finales qui sont utilisées. Source : https://github.com/benchamply-cmyk/FlemmeV2.0/blob/beta/flemme-web-beta/styles.css ; aspect également vérifié sur https://flemme.org/ le 28/10/2026.
+
+src/brand.ts centralise la palette et le fond statique à dégradés lilas, rose, aqua et glacier. Les contours sombres, ombres violettes décalées, boutons pilules et titres en capitales reprennent les traitements du site. Le navigateur utilise Archivo via Google Fonts ; le natif utilise des caractères système condensés disponibles sur iOS/Android, sans téléchargement de police ni nouvelle dépendance.
+
+assets/flemme-logo.png est une adaptation sur fond transparent du logo sticker de la planche fournie par l’utilisateur (lettrage noir, vert, contour blanc et ombre violette). assets/flemme-icon.png est sa déclinaison carrée opaque sur fond glacier/lilas, référencée par expo.icon. Les deux images sont dérivées du visuel fourni avec l’outil d’image ; elles ne constituent pas des fichiers vectoriels originaux. Le logo conserve son vert ; la couleur d’action de l’interface devient le bleu glacier.
+
+Recharger Expo actualise l’interface. L’icône système ne se remplace pas dans Expo Go, qui garde sa propre icône ; elle est utilisée lors d’une compilation native de FLEMME.
+
+## Accueil à deux actions — 28/10/2026
+
+L’écran initial affiche deux grands boutons centraux, Mes flemmes et Résoudre une flemme. Les listes apparaissent uniquement après le choix. Mes flemmes donne accès au dépôt et au suivi des demandes ; Résoudre une flemme montre les tâches disponibles et les propositions du Brigadier. Le bouton Accueil revient au choix initial ; la navigation Android suit le même parcours. La barre d’onglets inférieure est remplacée par cet accueil. Les descriptions antérieures avec deux onglets restent ci-dessous comme historique de la première version.
+
 ## Décision d’architecture
 
 Même dépôt que le site, application indépendante dans apps/mobile, branche feature/flemme-mobile issue de beta. Aucune dépendance à l’interface web, aucun déplacement ni remplacement de fichiers existants. L’app n’est pas une WebView. Un nouveau dépôt serait utile si une équipe, des droits d’accès ou un cycle de livraison séparés le justifient ; ce n’est pas nécessaire pour ce premier test.

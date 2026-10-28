@@ -18,6 +18,7 @@
     },
     "plugins": [
       "expo-secure-store"
-    ]
+    ],
+    "icon": "./assets/flemme-icon.png"
   }
 }
