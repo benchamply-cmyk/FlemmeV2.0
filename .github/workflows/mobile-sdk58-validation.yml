@@ -1,0 +1,55 @@
+name: Mobile SDK 58 validation
+on:
+  push:
+    branches: [fix/mobile-expo-go-sdk58]
+    paths: ['.github/workflows/mobile-sdk58-validation.yml']
+permissions:
+  contents: read
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Resolve SDK 58 dependencies
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Align tools with installed SDK
+        run: npx expo install --fix --npm
+      - name: Pin direct dependencies
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          const pkg = JSON.parse(fs.readFileSync('package.json'));
+          for (const section of ['dependencies','devDependencies'])
+            for (const name of Object.keys(pkg[section]))
+              pkg[section][name] = JSON.parse(fs.readFileSync('node_modules/' + name + '/package.json')).version;
+          fs.writeFileSync('package.json', JSON.stringify(pkg,null,2)+'\n');
+          JS
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Check native dependency alignment
+        run: npx expo install --check
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run export:ios
+        env:
+          EXPO_OFFLINE: '1'
+      - run: npm run export:android
+        env:
+          EXPO_OFFLINE: '1'
+      - name: SQL tests
+        run: npm ci --ignore-scripts && npm test
+        working-directory: apps/mobile/backend
+      - name: Return validated package manifests
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import zlib from 'node:zlib';
+          const files = Object.fromEntries(['package.json','package-lock.json'].map(p=>[p,fs.readFileSync(p,'utf8')]));
+          const encoded=zlib.gzipSync(JSON.stringify(files)).toString('base64');
+          for(let i=0;i<encoded.length;i+=3000) console.log('FLEMME58:' + String(i/3000).padStart(3,'0') + ':' + encoded.slice(i,i+3000));
+          JS

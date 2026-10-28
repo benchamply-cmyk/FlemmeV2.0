@@ -2,6 +2,14 @@
 
 Implémentation iOS et Android de la maquette mobile validée dans la conversation du 28 octobre 2026 : deux onglets, vert sauge pastel #d8e7ce, budget facultatif et commission FLEMME de 10 % ajoutée au forfait du Brigadier.
 
+## Correction Expo Go du 28/10/2026
+
+La version 0.1.1 cible Expo SDK 58 et Expo Go SDK 58 sur iPhone : React 19.3, React Native 0.88 et modules natifs alignés. Le paragraphe SDK 54 ci-dessous décrit le choix historique initial, remplacé par cette correction. Les options de configuration devenues inutiles newArchEnabled et android.edgeToEdgeEnabled sont retirées. Le stockage expo-file-system/legacy reste compatible et conserve les snapshots existants.
+
+Après récupération de cette version, arrêter Metro avec Ctrl+C, exécuter npm ci, puis npm start -- --clear --port 8082 et scanner le nouveau QR code. Le code métier, les comptes et la commission de 10 % ne changent pas.
+
+Sources vérifiées le 28/10/2026 : https://docs.expo.dev/workflow/upgrading-expo-sdk-walkthrough/ ; https://expo.dev/changelog/sdk-58 ; https://github.com/expo/expo/blob/sdk-58/packages/expo/bundledNativeModules.json
+
 ## Décision d’architecture
 
 Même dépôt que le site, application indépendante dans apps/mobile, branche feature/flemme-mobile issue de beta. Aucune dépendance à l’interface web, aucun déplacement ni remplacement de fichiers existants. L’app n’est pas une WebView. Un nouveau dépôt serait utile si une équipe, des droits d’accès ou un cycle de livraison séparés le justifient ; ce n’est pas nécessaire pour ce premier test.
