@@ -75,13 +75,46 @@
 .faq details[open] summary::after { content: "–"; }
 .faq details p { margin: 8px 0 0; }
 
+
+/* Métiers ouverts pendant la phase de lancement */
+.trades { list-style: none; padding: 0; margin: 28px 0 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.trades li { background: #fff; border: 3px solid var(--ink); border-radius: 24px; padding: 22px; display: flex; flex-direction: column; gap: 8px; }
+.trades .trade-num { font-family: var(--mono); color: var(--glacier-deep, var(--violet)); }
+.trades b { font-size: 22px; font-weight: 800; letter-spacing: -.01em; word-spacing: .22em; line-height: 1.1; }
+.trades span { font-size: 15px; line-height: 1.5; color: var(--muted); }
+.trades small { margin-top: auto; align-self: flex-start; font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; background: var(--acid); border-radius: 999px; padding: 6px 12px; }
+
+/* Profils de démonstration (fictifs) */
+.demo-warn { display: inline-block; background: var(--soft); border: 2px dashed var(--ink); border-radius: 16px; padding: 12px 16px; font-size: 15px; }
+.demo-grid { list-style: none; padding: 0; margin: 24px 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.demo-card { position: relative; background: #fff; border: 3px solid var(--ink); border-radius: 24px; padding: 22px; display: flex; flex-direction: column; gap: 10px; }
+.demo-flag { position: absolute; top: -12px; right: 16px; background: var(--ink); color: #fff; font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; border-radius: 999px; padding: 4px 10px; }
+.demo-head { display: flex; gap: 12px; align-items: center; }
+.demo-head b { display: block; font-size: 20px; font-weight: 800; }
+.demo-head div span { display: block; font-size: 14px; color: var(--muted); }
+.avatar { flex: none; width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--ink); background: var(--acid); display: grid; place-items: center; font-family: var(--mono); font-weight: 700; }
+.demo-card p { margin: 0; }
+.demo-grade { font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--glacier-deep, var(--violet)); }
+.demo-quote { font-size: 15px; line-height: 1.5; }
+.demo-tags { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.demo-tags li { font-size: 13px; background: var(--soft); border-radius: 999px; padding: 4px 10px; }
+.demo-meta { margin-top: auto !important; padding-top: 10px; border-top: 2px dashed var(--ink); font-family: var(--mono); font-size: 12px; color: var(--muted); }
+
+/* Formulaire : spécialités par métier, lien vers les réalisations */
+.spec-title { margin: 14px 0 8px; font-size: 13px; color: var(--muted); }
+.spec-group .chips { margin-top: 4px; }
+.card input[type=url] { width: 100%; padding: 15px; border: 2px solid var(--ink); border-radius: 14px; background: var(--soft); font: inherit; font-size: 16px; }
+
 @media (max-width: 900px) {
+  .trades { grid-template-columns: repeat(2, 1fr); }
+  .demo-grid { grid-template-columns: repeat(2, 1fr); }
   .how { grid-template-columns: repeat(2, 1fr); }
   .rank-list { grid-template-columns: 1fr; }
 }
 @media (max-width: 600px) {
   .brigade { padding: 0 16px; }
   .how { grid-template-columns: 1fr; }
+  .trades, .demo-grid { grid-template-columns: 1fr; }
   .letter { box-shadow: 8px 8px 0 var(--acid); }
   .apply { margin: 56px auto; }
   .brigade-hero .cta-row a { width: 100%; }
