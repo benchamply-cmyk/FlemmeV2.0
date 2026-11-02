@@ -84,6 +84,9 @@
 .trades span { font-size: 15px; line-height: 1.5; color: var(--muted); }
 .trades small { margin-top: auto; align-self: flex-start; font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; background: var(--acid); border-radius: 999px; padding: 6px 12px; }
 
+.partners { margin: 24px 0 0; background: #fff; border: 3px solid var(--ink); border-radius: 24px; padding: 20px 22px; box-shadow: 8px 8px 0 var(--acid); line-height: 1.5; }
+.partners a { font-weight: 700; color: var(--ink); white-space: nowrap; }
+
 /* Profils de démonstration (fictifs) */
 .demo-warn { display: inline-block; background: var(--soft); border: 2px dashed var(--ink); border-radius: 16px; padding: 12px 16px; font-size: 15px; }
 .demo-grid { list-style: none; padding: 0; margin: 24px 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
