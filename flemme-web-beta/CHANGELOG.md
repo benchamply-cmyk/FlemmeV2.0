@@ -132,6 +132,9 @@ Attention : ces ZIP contiennent encore flemme.fr, le jaune, la grille à plat et
 - Accueil à deux actions « Mes flemmes » et « Résoudre une flemme », identité Glacier de flemme.org et logo autocollant (#51).
 
 ## À venir
+- Candidature Brigade limitée à 4 métiers pour la phase de lancement (branche feature/candidature-brigade) : artisan du bâtiment (peintre, maçon, électricien, plombier), déménagement et transport, décoration et design d’intérieur, gestion digitale. Section « 4 métiers ouverts », métier obligatoire à l’étape 1, spécialités du métier choisi, expérience, rayon, assurance et lien vers les réalisations à l’étape 2 (formulaire Netlify « facilitateur », champ mode retiré). Six profils de Brigadiers de démonstration, signalés comme fictifs, et fiches persona dans docs/personas-brigade.md. Cache passé en flemme-v5-brigade. Accroche de la page : « Deviens Coordinateur chez Flemme et solutionne les problèmes de nos utilisateurs. Tu es organisé et autonome ? Ton profil nous intéresse ! ». Encart « On recherche aussi des professionnels partenaires » sous les 4 métiers, introduction « Deviens un de nos partenaires pour te déléguer les missions de nos clients ».
+- apps/web : configuration Netlify (apps/web/netlify.toml) pour un site de test séparé de flemme.org, non indexé (branche feature/apps-web-netlify).
+- Le nouveau site apps/web et l’app apps/mobile continuent dans le dépôt flemme.org-web-app (publié sur https://flemme-web-app.netlify.app) ; ce dépôt garde le site historique flemme.org.
 - Nouveau site web dans apps/web (Vite + React), aligné sur l’app mobile simplifiée (PR #56, branche feature/flemmeV3-web-app). Pas encore publié : Netlify sert toujours le dossier flemme-web-beta.
 - CHANGELOG : l’ancienne section « À venir » rangée en V5, ajout du Manager unifié et de l’app mobile (branche docs/changelog-v5).
 

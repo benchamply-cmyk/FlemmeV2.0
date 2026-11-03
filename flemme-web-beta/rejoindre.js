@@ -8,6 +8,8 @@
    Les deux envois portent le même identifiant « candidat » (ex. BR-K7M2Q)
    pour les rapprocher dans Netlify Forms.
    Sans JavaScript, le formulaire s'envoie en une seule fois (etape=2).
+   Phase de lancement : 4 métiers seulement (champ « metier », obligatoire).
+   À l'étape 2, seules les spécialités du métier choisi sont affichées.
    ========================================================================= */
 
 const CT = (window.FLEMME && window.FLEMME.contact) || {};
@@ -41,7 +43,8 @@ function saveDraft() {
   const d = { phase, candidat: form.candidat.value, champs: {} };
   for (const el of form.elements) {
     if (!el.name || el.type === 'hidden' || el.name === 'bot-field') continue;
-    if (el.type === 'checkbox') { if (el.checked) (d.champs[el.name] = d.champs[el.name] || []).push(el.value); }
+    if (el.type === 'radio') { if (el.checked) d.champs[el.name] = el.value; }
+    else if (el.type === 'checkbox') { if (el.checked) (d.champs[el.name] = d.champs[el.name] || []).push(el.value); }
     else d.champs[el.name] = el.value;
   }
   safe(() => SS.setItem(KEY, JSON.stringify(d)));
@@ -53,7 +56,8 @@ function loadDraft() {
   for (const el of form.elements) {
     if (!el.name || el.type === 'hidden' || !(el.name in d.champs)) continue;
     const v = d.champs[el.name];
-    if (el.type === 'checkbox') el.checked = Array.isArray(v) && v.includes(el.value);
+    if (el.type === 'radio') el.checked = v === el.value;
+    else if (el.type === 'checkbox') el.checked = Array.isArray(v) && v.includes(el.value);
     else el.value = v;
   }
   if (d.candidat) form.candidat.value = d.candidat;
@@ -62,12 +66,24 @@ function loadDraft() {
 
 /* ---------- Affichage des étapes ---------- */
 
+// Spécialités : on ne montre que celles du métier choisi (les autres sont décochées).
+function filterSpecs() {
+  const m = form.querySelector('input[name=metier]:checked');
+  for (const g of $$('.spec-group')) {
+    const show = !m || g.dataset.metier === m.value;
+    g.hidden = !show;
+    if (!show) for (const c of g.querySelectorAll('input')) c.checked = false;
+  }
+  $$('.spec-title').forEach(t => { t.hidden = !!m; });
+}
+
 function showStep2(focus = true) {
   phase = 2;
   step1.hidden = true;
   step2.hidden = false;
   $('#step2Ok').hidden = false;
   $('#skip').hidden = false;
+  filterSpecs();
   $('#applyProgress').classList.add('done');
   $('#applyStep').textContent = 'Étape 2 sur 2 · 2 minutes, facultatif';
   $('#applyTitle').textContent = 'Parle-nous de toi.';
@@ -87,7 +103,7 @@ function showDone() {
 
 /* ---------- Envoi à Netlify Forms ---------- */
 
-// Les cases à cocher multiples (mode, compétences, disponibilités) sont réunies
+// Les cases à cocher multiples (spécialités, disponibilités) sont réunies
 // en une seule valeur « A, B, C » pour être lisibles dans Netlify Forms.
 function encode(fd) {
   const out = new URLSearchParams(), seen = {};
@@ -124,8 +140,8 @@ form.addEventListener('submit', async e => {
   e.preventDefault();
   if (phase === 1) {
     const err = $('#err1');
-    if (!form.querySelector('input[name=mode]:checked')) {
-      err.textContent = 'Choisis au moins une façon d’intervenir : à distance ou sur place.';
+    if (!form.querySelector('input[name=metier]:checked')) {
+      err.textContent = 'Choisis ton métier parmi les quatre ouverts pendant la phase de lancement.';
       err.hidden = false;
       return;
     }
