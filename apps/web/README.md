@@ -36,6 +36,6 @@ Même backend que le mobile (`apps/mobile/backend/install.sql`, RPC `flemme_mobi
     npm test
     npm run build
 
-`npm run build` produit `dist/` (site statique). La configuration Netlify du dépôt n’est pas modifiée : elle publie toujours `flemme-web-beta`. Pour publier ce site, créer un site Netlify séparé avec base `apps/web`, commande `npm run build`, dossier `dist`.
+`npm run build` produit `dist/` (site statique). La configuration Netlify du dépôt n’est pas modifiée : elle publie toujours `flemme-web-beta`. Ce site se publie sur un site Netlify de test séparé : créer un projet depuis ce dépôt avec la branche `beta` et « Base directory » = `apps/web`. Le reste (commande, dossier `dist`, Node 22, noindex) vient de `apps/web/netlify.toml`.
 
 Limites : identiques à celles du mobile (pas d’encaissement, paiement direct et déclaratif, pas de pagination, pas de synchronisation continue).
