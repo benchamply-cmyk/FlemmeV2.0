@@ -112,7 +112,7 @@ Attention : ces ZIP contiennent encore flemme.fr, le jaune, la grille à plat et
 - Typographie « Affiche condensée » sur tout le site : Archivo condensé (titres, sous-titres, boutons), Instrument Sans (texte), Instrument Serif italique (« Pas nous. »), Geist Mono (étiquettes).
 - sw.js : déclarations en double retirées (erreur de syntaxe), cache passé en flemme-v4.100-typo.
 
-## À venir
+## V5 — mise en production (21 oct. 2026, PR #38 à #47, tag V.5.1000)
 - Design V5 (branche feature/design-v5) : nouvelle version du design, travaillée sur un aperçu commentable (apercu/construire.py).
 - V5 : menus déroulants au survol des onglets, pages dédiées Services, Notre démarche et Ambassadeurs (accueil inchangé), onglet La Brigade vers rejoindre.html, recherche sur le site (nav.js), bleu glacier #a5ccff à la place du vert et fond bleu pastel à reflets.
 - V5 UX : menus déroulants gardés sur ordinateur, menu burger sous 1100 px (mobile et tablette), en-tête collant, bouton « Confier ma flemme » collant sur mobile, étapes du formulaire (1 sur 2, environ 1 minute).
@@ -122,6 +122,18 @@ Attention : ces ZIP contiennent encore flemme.fr, le jaune, la grille à plat et
 - Accueil : accroche « Pas envie ? Pas le temps ? Pas motivé ? On le fait pour toi, délègue-nous tes tâches ! » et lien « T’as aussi la flemme d’écrire ? Laisse-toi guider… » (branche fix/accroche-accueil).
 - Accueil : le mot « flemme » du titre est surligné en vert espoir #57d68d au lieu du bleu glacier (branche fix/accroche-accueil, choisi par Ben parmi 5 verts).
 - V5 fond « Glacier profond » (ombres bleues dans les coins, sphères floues, reflet nacré, léger grain) et titres plus aérés (espace entre les mots .22em), choisis par Ben sur une planche de 5 fonds et 6 typos (branche fix/accroche-accueil).
+
+## Flemme Manager unifié (26 oct. 2026, PR #48)
+- Flemme Manager, ses outils internes et son API regroupés (PR #48, fusionnée directement dans main, reportée dans beta par #52). Le backend Render se redéploie à la main après chaque fusion dans main.
+
+## App mobile FLEMME (28 oct. 2026, PR #49 à #51, dans main via #53)
+- App native dans apps/mobile (Expo) : délégation, Brigadiers et commission de 10 % (#49).
+- Compatibilité Expo Go SDK 58, versions de dépendances verrouillées (#50).
+- Accueil à deux actions « Mes flemmes » et « Résoudre une flemme », identité Glacier de flemme.org et logo autocollant (#51).
+
+## À venir
+- Nouveau site web dans apps/web (Vite + React), aligné sur l’app mobile simplifiée (PR #56, branche feature/flemmeV3-web-app). Pas encore publié : Netlify sert toujours le dossier flemme-web-beta.
+- CHANGELOG : l’ancienne section « À venir » rangée en V5, ajout du Manager unifié et de l’app mobile (branche docs/changelog-v5).
 
 ## Reste à faire
 - Application : compiler et tester sur de vrais téléphones (Xcode, Android Studio).
