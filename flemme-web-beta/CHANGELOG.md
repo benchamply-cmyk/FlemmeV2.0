@@ -122,6 +122,7 @@ Attention : ces ZIP contiennent encore flemme.fr, le jaune, la grille à plat et
 - Accueil : accroche « Pas envie ? Pas le temps ? Pas motivé ? On le fait pour toi, délègue-nous tes tâches ! » et lien « T’as aussi la flemme d’écrire ? Laisse-toi guider… » (branche fix/accroche-accueil).
 - Accueil : le mot « flemme » du titre est surligné en vert espoir #57d68d au lieu du bleu glacier (branche fix/accroche-accueil, choisi par Ben parmi 5 verts).
 - V5 fond « Glacier profond » (ombres bleues dans les coins, sphères floues, reflet nacré, léger grain) et titres plus aérés (espace entre les mots .22em), choisis par Ben sur une planche de 5 fonds et 6 typos (branche fix/accroche-accueil).
+- apps/web : configuration Netlify (apps/web/netlify.toml) pour un site de test séparé de flemme.org, non indexé (branche feature/apps-web-netlify).
 
 ## Reste à faire
 - Application : compiler et tester sur de vrais téléphones (Xcode, Android Studio).
