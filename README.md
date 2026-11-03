@@ -1,3 +1,5 @@
+> **Dépôt archivé en lecture.** Depuis le 03/11/2026, flemme.org (site, app mobile et, après son transfert, Flemme Manager) vit dans [flemme.org-web-app](https://github.com/benchamply-cmyk/flemme.org-web-app). Ce dépôt garde l'historique du site V1 à V5 et l'ancien espace client. Voir [docs/archivage-2026-11.md](docs/archivage-2026-11.md).
+
 # FLEMME — V2 (prête pour Netlify)
 
 Site statique. Les demandes sont envoyées via **Netlify Forms** (formulaire `mission`).
