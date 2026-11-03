@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#a5ccff">
+<title>FLEMME — Le droit d’avoir la flemme</title>
+<meta name="description" content="Dépose ce que tu as la flemme de faire. Un Brigadier propose son forfait, tu choisis. FLEMME ajoute 10 %, rien de plus.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="FLEMME">
+<meta property="og:title" content="FLEMME — Le droit d’avoir la flemme">
+<meta property="og:description" content="Déléguer un peu. Aider quelqu’un. Un forfait clair, 10 % pour FLEMME.">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/flemme-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800;900&display=swap">
+</head>
+<body>
+<header class="top">
+  <a href="./"><img src="/flemme-logo.png" alt="FLEMME"></a>
+  <nav aria-label="Navigation principale"><a class="btn small secondary" href="#comment">Comment ça marche</a><a class="btn small" href="app.html">Ouvrir l’app</a></nav>
+</header>
+
+<main class="site">
+  <section class="hero">
+    <div>
+      <p class="eyebrow">Le droit d’avoir la flemme.</p>
+      <h1 class="display">On fait quoi aujourd’hui&#8239;?</h1>
+      <p class="lead">Déléguer un peu. Aider quelqu’un. Tu déposes ce que tu repousses, un Brigadier propose son forfait, tu choisis.</p>
+    </div>
+    <div class="choices wide">
+      <a class="choice" href="app.html#mine"><span class="choice-icon" aria-hidden="true">☕</span><span class="choice-title">Mes flemmes</span><span class="choice-hint">Déposer et suivre mes demandes</span></a>
+      <a class="choice secondary" href="app.html#find"><span class="choice-icon" aria-hidden="true">↗</span><span class="choice-title">Résoudre une flemme</span><span class="choice-hint">Trouver quelqu’un à aider</span></a>
+    </div>
+  </section>
+
+  <section id="comment" class="block">
+    <p class="eyebrow">Comment ça marche</p>
+    <h2 class="heading">Quatre étapes, pas une de plus.</h2>
+    <ol class="steps">
+      <li class="card"><span class="step-n">1</span><h3>Tu déposes ta flemme</h3><p>Ce qu’il faut faire, quelques détails, la ville ou « À distance ». Budget facultatif. Pas de date d’expiration.</p></li>
+      <li class="card"><span class="step-n">2</span><h3>Les Brigadiers proposent</h3><p>Chacun annonce son forfait, ses disponibilités, ce qui est inclus et ce qui ne l’est pas. Vous en discutez en privé.</p></li>
+      <li class="card"><span class="step-n">3</span><h3>Tu acceptes une offre</h3><p>Un récapitulatif clair : forfait, frais FLEMME, total. Une seule personne prend le relais, les autres offres restent dans l’historique.</p></li>
+      <li class="card"><span class="step-n">4</span><h3>C’est fait</h3><p>Tu confirmes que la tâche est terminée et tu paies le Brigadier directement. Il confirme la réception.</p></li>
+    </ol>
+  </section>
+
+  <section class="block split">
+    <div>
+      <p class="eyebrow">Le prix, sans surprise</p>
+      <h2 class="heading">Le forfait du Brigadier + 10&#8239;%.</h2>
+      <p>Le Brigadier fixe son prix. FLEMME ajoute 10&#8239;%, arrondis au centime, et c’est tout : pas de frais minimum, pas d’abonnement.</p>
+    </div>
+    <form class="card calc" id="calc" novalidate>
+      <div class="field"><label for="amount">Forfait Brigadier</label><input id="amount" inputmode="decimal" value="40" autocomplete="off" aria-describedby="calcError"></div>
+      <div class="row"><span>Forfait Brigadier</span><span class="strong" id="cBase">40,00 €</span></div>
+      <div class="row"><span>FLEMME · 10&#8239;%</span><span class="strong" id="cFee">4,00 €</span></div>
+      <div class="divider"></div>
+      <div class="row"><span class="strong">Total déposant</span><span class="price" id="cTotal">44,00 €</span></div>
+      <p class="note" id="calcError" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">À toi de jouer, Brigadier.</p>
+    <h2 class="heading">Tu sais faire&#8239;? Propose ton aide.</h2>
+    <p class="narrow">Retours de colis, meuble à monter, CV à remettre au propre… Choisis les flemmes qui te parlent, annonce ton forfait et tes disponibilités. Tu es payé directement par la personne que tu aides.</p>
+    <a class="btn wide-btn" href="app.html#find">Voir les flemmes disponibles</a>
+  </section>
+
+  <section class="block honest">
+    <p class="eyebrow">Version de test</p>
+    <h2 class="heading">Ce que cette version fait, et ne fait pas.</h2>
+    <ul class="facts">
+      <li><b>Paiement direct.</b> Tu paies le Brigadier toi-même. FLEMME n’encaisse encore ni la prestation ni ses 10&#8239;%.</li>
+      <li><b>Déclaratif.</b> « J’ai payé » et « J’ai reçu » sont des déclarations, pas une vérification bancaire.</li>
+      <li><b>Rien n’est effacé.</b> Offres, messages et historique sont conservés. Un désaccord peut être signalé pour un examen humain.</li>
+      <li><b>Pas d’achats à avancer</b> et pas de changement de prix après accord dans ce premier test.</li>
+    </ul>
+  </section>
+</main>
+
+<footer class="foot">
+  <b>FLEMME.</b> Déléguer un peu. Aider quelqu’un.
+  <nav><a href="https://www.flemme.org/mentions.html">Mentions légales</a><a href="https://www.flemme.org/confidentialite.html">Confidentialité</a><a href="mailto:ben.champly@gmail.com">Contact</a></nav>
+</footer>
+<script type="module" src="/src/landing.ts"></script>
+</body>
+</html>
